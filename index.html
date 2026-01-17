@@ -42,6 +42,13 @@
             color: rgb(233, 213, 255); /* purple-200 */
         }
         
+        /* Specific color themes for selection states */
+        .btn-selected-purple {
+            background-color: rgba(168, 85, 247, 0.2);
+            border-color: rgb(168, 85, 247);
+            color: rgb(233, 213, 255);
+        }
+        
         .btn-selected-blue {
             background-color: rgba(59, 130, 246, 0.2);
             border-color: rgb(59, 130, 246);
@@ -66,6 +73,49 @@
             color: #fca5a5 !important;
             border: 1px solid #ef4444 !important;
         }
+
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #e2e8f0; 
+            cursor: pointer;
+            margin-top: -8px; 
+            box-shadow: 0 0 0 2px #475569; 
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        input[type=range]:hover::-webkit-slider-thumb {
+            transform: scale(1.1);
+            background: #fff;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #334155; 
+            border-radius: 2px;
+        }
+        
+        /* Specific Slider Thumb Colors based on ID context (using CSS vars or explicit rules) */
+        #dial-weirdness::-webkit-slider-thumb { background: #a855f7; box-shadow: 0 0 0 2px #581c87; }
+        #dial-era::-webkit-slider-thumb { background: #10b981; box-shadow: 0 0 0 2px #064e3b; }
+        #dial-intensity::-webkit-slider-thumb { background: #facc15; box-shadow: 0 0 0 2px #713f12; }
+        #dial-tempo::-webkit-slider-thumb { background: #ef4444; box-shadow: 0 0 0 2px #7f1d1d; }
+        #dial-vocals::-webkit-slider-thumb { background: #3b82f6; box-shadow: 0 0 0 2px #1e3a8a; }
+
+        .tag-pill {
+            transition: all 0.3s ease;
+        }
+
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans selection:bg-purple-500 selection:text-white min-h-screen flex flex-col">
@@ -74,28 +124,31 @@
     <header class="bg-slate-950 border-b border-slate-800 p-4 sticky top-0 z-20 shadow-xl">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-gradient-to-br from-purple-500 to-blue-600 p-2 rounded-lg">
+                <div class="bg-gradient-to-br from-purple-500 to-blue-600 p-2 rounded-lg shadow-lg shadow-purple-900/20">
                     <i data-lucide="music" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
                         Suno Architect
                     </h1>
-                    <p class="text-xs text-slate-400">Professional Prompt & Structure Generator</p>
+                    <p class="text-xs text-slate-400">Parameter & Prompt Generator</p>
                 </div>
             </div>
-            <div class="flex space-x-1 bg-slate-800 rounded-lg p-1">
-                <button onclick="switchTab('style')" id="tab-btn-style" class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-slate-700 text-white shadow-sm">
-                    Sonic Blueprint
+            <div class="flex space-x-1 bg-slate-800 rounded-lg p-1 overflow-x-auto border border-slate-700">
+                <button onclick="switchTab('dials')" id="tab-btn-dials" class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-slate-700 text-white shadow-sm whitespace-nowrap">
+                    <i data-lucide="sliders-horizontal" class="w-4 h-4 inline mr-1 mb-0.5"></i> Style Tuner
                 </button>
-                <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    Lyrics & Structure
+                <button onclick="switchTab('style')" id="tab-btn-style" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="layout-grid" class="w-4 h-4 inline mr-1 mb-0.5"></i> Blueprint
                 </button>
-                <button onclick="switchTab('json')" id="tab-btn-json" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    JSON Output
+                <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="mic-2" class="w-4 h-4 inline mr-1 mb-0.5"></i> Lyrics
                 </button>
-                <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    Guide
+                <button onclick="switchTab('library')" id="tab-btn-library" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="save" class="w-4 h-4 inline mr-1 mb-0.5"></i> Library
+                </button>
+                <button onclick="switchTab('json')" id="tab-btn-json" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="code" class="w-4 h-4 inline mr-1 mb-0.5"></i> JSON
                 </button>
             </div>
         </div>
@@ -103,8 +156,213 @@
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
         
+        <!-- TAB: STYLE TUNER (DIALS) -->
+        <div id="tab-dials" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Controls -->
+                <div class="lg:col-span-7 space-y-6 pb-10">
+                    
+                    <!-- Intro Box -->
+                    <div class="bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-4 flex items-start space-x-4">
+                        <div class="bg-slate-700 p-2 rounded-full mt-1">
+                            <i data-lucide="info" class="w-5 h-5 text-slate-300"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-200">How to use the Tuner</h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                1. Select a base <strong>Genre</strong>.<br>
+                                2. Move the sliders to inject specific <strong>keywords</strong> into your prompt.<br>
+                                3. Watch the "Active Tags" under each slider to see exactly what is being added.
+                            </p>
+                        </div>
+                    </div>
+
+                    <section class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 shadow-sm">
+                        <div class="flex items-center space-x-2 mb-4">
+                             <h2 class="text-lg font-semibold text-slate-200">1. Base Foundation</h2>
+                        </div>
+                        <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-purple-500 text-slate-200 shadow-inner">
+                            <option value="">Select a Genre (Required)...</option>
+                            <!-- JS Populated -->
+                        </select>
+                    </section>
+
+                    <section class="space-y-4">
+                        <!-- Weirdness Slider -->
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden group hover:border-purple-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full blur-xl pointer-events-none"></div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-sm font-bold text-purple-200 flex items-center">
+                                    <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i> Weirdness
+                                </label>
+                                <div class="text-[10px] text-purple-300 bg-purple-900/40 px-2 py-1 rounded">Controls: Innovation Tags</div>
+                            </div>
+                            
+                            <input type="range" id="dial-weirdness" min="0" max="100" value="0" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-4" oninput="updateDials()">
+                            
+                            <div class="bg-slate-950/50 rounded-lg p-3 border border-slate-700/50 flex flex-col items-center">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Active Tags Added</span>
+                                <span id="tags-weirdness" class="text-sm font-mono text-purple-400 font-bold transition-all text-center">Standard</span>
+                            </div>
+                        </div>
+
+                        <!-- Era Slider -->
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden group hover:border-emerald-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl pointer-events-none"></div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-sm font-bold text-emerald-200 flex items-center">
+                                    <i data-lucide="history" class="w-4 h-4 mr-2"></i> Era / Texture
+                                </label>
+                                <div class="text-[10px] text-emerald-300 bg-emerald-900/40 px-2 py-1 rounded">Controls: Production Tags</div>
+                            </div>
+                            
+                            <input type="range" id="dial-era" min="0" max="100" value="50" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-4" oninput="updateDials()">
+                            
+                            <div class="bg-slate-950/50 rounded-lg p-3 border border-slate-700/50 flex flex-col items-center">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Active Tags Added</span>
+                                <span id="tags-era" class="text-sm font-mono text-emerald-400 font-bold transition-all text-center">Clean Mix</span>
+                            </div>
+                        </div>
+
+                        <!-- Intensity Slider -->
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden group hover:border-yellow-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-yellow-500/5 rounded-full blur-xl pointer-events-none"></div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-sm font-bold text-yellow-200 flex items-center">
+                                    <i data-lucide="zap" class="w-4 h-4 mr-2"></i> Intensity
+                                </label>
+                                <div class="text-[10px] text-yellow-300 bg-yellow-900/40 px-2 py-1 rounded">Controls: Mood Tags</div>
+                            </div>
+                            
+                            <input type="range" id="dial-intensity" min="0" max="100" value="50" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-4" oninput="updateDials()">
+                            
+                            <div class="bg-slate-950/50 rounded-lg p-3 border border-slate-700/50 flex flex-col items-center">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Active Tags Added</span>
+                                <span id="tags-intensity" class="text-sm font-mono text-yellow-400 font-bold transition-all text-center">Balanced</span>
+                            </div>
+                        </div>
+
+                        <!-- Tempo Slider -->
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden group hover:border-red-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-red-500/5 rounded-full blur-xl pointer-events-none"></div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-sm font-bold text-red-200 flex items-center">
+                                    <i data-lucide="gauge" class="w-4 h-4 mr-2"></i> Tempo
+                                </label>
+                                <div class="text-[10px] text-red-300 bg-red-900/40 px-2 py-1 rounded">Controls: Speed Tags</div>
+                            </div>
+                            
+                            <input type="range" id="dial-tempo" min="0" max="100" value="50" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-4" oninput="updateDials()">
+                            
+                            <div class="bg-slate-950/50 rounded-lg p-3 border border-slate-700/50 flex flex-col items-center">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Active Tags Added</span>
+                                <span id="tags-tempo" class="text-sm font-mono text-red-400 font-bold transition-all text-center">Mid-Tempo</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Vocals Slider -->
+                        <div class="bg-slate-800/80 p-5 rounded-xl border border-slate-700 shadow-lg relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-full blur-xl pointer-events-none"></div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="text-sm font-bold text-blue-200 flex items-center">
+                                    <i data-lucide="mic" class="w-4 h-4 mr-2"></i> Vocals
+                                </label>
+                                <div class="text-[10px] text-blue-300 bg-blue-900/40 px-2 py-1 rounded">Controls: Vocal Type</div>
+                            </div>
+                            
+                            <input type="range" id="dial-vocals" min="0" max="100" value="75" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer mb-4" oninput="updateDials()">
+                            
+                            <div class="bg-slate-950/50 rounded-lg p-3 border border-slate-700/50 flex flex-col items-center">
+                                <span class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Active Tags Added</span>
+                                <span id="tags-vocals" class="text-sm font-mono text-blue-400 font-bold transition-all text-center">Male/Female Vocals</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="lg:col-span-5">
+                    <div class="sticky top-24 bg-slate-900 border border-slate-700 rounded-xl p-1 shadow-2xl">
+                        <div class="bg-slate-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold text-white mb-6 flex items-center">
+                                <i data-lucide="monitor-play" class="w-5 h-5 mr-2 text-purple-400"></i>
+                                Tuner Output Preview
+                            </h3>
+                            
+                            <p class="text-xs text-slate-400 mb-4">
+                                This is the prompt stack you are building. The colors match the sliders that control them.
+                            </p>
+
+                            <div class="space-y-3 font-mono text-sm leading-relaxed">
+                                <!-- Genre Block -->
+                                <div class="bg-slate-950 border border-slate-700 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-slate-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-slate-500 font-bold">Base</div>
+                                        <div id="preview-genre" class="text-slate-200">Select Genre...</div>
+                                    </div>
+                                </div>
+
+                                <!-- Weirdness Block -->
+                                <div class="bg-slate-950 border border-purple-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-purple-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-purple-500 font-bold">Weirdness Tags</div>
+                                        <div id="preview-weirdness" class="text-purple-200">...</div>
+                                    </div>
+                                </div>
+
+                                <!-- Era Block -->
+                                <div class="bg-slate-950 border border-emerald-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-emerald-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-emerald-500 font-bold">Era Tags</div>
+                                        <div id="preview-era" class="text-emerald-200">...</div>
+                                    </div>
+                                </div>
+
+                                <!-- Intensity Block -->
+                                <div class="bg-slate-950 border border-yellow-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-yellow-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-yellow-500 font-bold">Intensity Tags</div>
+                                        <div id="preview-intensity" class="text-yellow-200">...</div>
+                                    </div>
+                                </div>
+
+                                <!-- Tempo Block -->
+                                <div class="bg-slate-950 border border-red-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-red-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-red-500 font-bold">Tempo Tags</div>
+                                        <div id="preview-tempo" class="text-red-200">...</div>
+                                    </div>
+                                </div>
+
+                                <!-- Vocals Block -->
+                                <div class="bg-slate-950 border border-blue-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div class="w-1 self-stretch bg-blue-500 rounded-full"></div>
+                                    <div>
+                                        <div class="text-[10px] uppercase text-blue-500 font-bold">Vocal Tags</div>
+                                        <div id="preview-vocals" class="text-blue-200">...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="applyDialsToMain()" class="group w-full mt-6 py-4 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white transition-all shadow-lg hover:shadow-purple-500/25 relative overflow-hidden">
+                                <span class="relative z-10 flex items-center justify-center">
+                                    Send to Blueprint
+                                    <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- TAB: SONIC BLUEPRINT -->
-        <div id="tab-style" class="tab-content active">
+        <div id="tab-style" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <!-- Left Column: Controls -->
@@ -130,18 +388,21 @@
                     <!-- Instruments & Voice -->
                     <section class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
                         <div class="flex items-center space-x-2 mb-4">
-                            <i data-lucide="music" class="w-5 h-5 text-blue-400"></i>
+                            <i data-lucide="mic-vocal" class="w-5 h-5 text-blue-400"></i>
                             <h2 class="text-lg font-semibold text-slate-200">2. The Players (Instruments & Voice)</h2>
                         </div>
                         
                         <div class="mb-6">
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Instrumentation</p>
-                            <div id="instruments-container" class="flex flex-wrap gap-2"></div>
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Vocals</p>
+                            <div id="voices-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
                         <div>
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Vocals</p>
-                            <div id="voices-container" class="flex flex-wrap gap-2"></div>
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Instrumentation</p>
+                            <div class="relative">
+                                <input type="text" id="instrument-search" placeholder="Filter instruments..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-3 focus:outline-none focus:border-blue-500">
+                                <div id="instruments-container" class="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
+                            </div>
                         </div>
                     </section>
 
@@ -169,7 +430,7 @@
                     <!-- Production -->
                     <section class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
                         <div class="flex items-center space-x-2 mb-4">
-                            <i data-lucide="sliders" class="w-5 h-5 text-emerald-400"></i>
+                            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-400"></i>
                             <h2 class="text-lg font-semibold text-slate-200">4. The Engineer (Mix & Texture)</h2>
                         </div>
                         <div id="production-container" class="flex flex-wrap gap-2"></div>
@@ -182,6 +443,9 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-bold text-white">Style Prompt</h3>
                             <div class="flex space-x-2">
+                                <button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-400 transition-colors rounded" title="Save to Library">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                </button>
                                 <button id="btn-clear-all" onclick="clearAll()" class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded" title="Clear All">
                                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                                 </button>
@@ -189,7 +453,7 @@
                         </div>
 
                         <div class="relative mb-4">
-                            <textarea id="style-output" readonly class="w-full h-40 bg-slate-950 border border-slate-600 rounded-lg p-4 text-slate-200 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500" placeholder="Select options from the left to build your prompt..."></textarea>
+                            <textarea id="style-output" readonly class="w-full h-40 bg-slate-950 border border-slate-600 rounded-lg p-4 text-slate-200 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500" placeholder="Use the Style Tuner tab or select options here..."></textarea>
                             <div id="char-count" class="absolute bottom-3 right-3 text-xs text-slate-500 bg-slate-950/80 px-2 py-1 rounded">
                                 0/120 chars
                             </div>
@@ -204,18 +468,18 @@
                             
                             <div id="length-warning" class="hidden flex items-start space-x-2 text-amber-400 bg-amber-900/20 p-3 rounded-lg text-xs">
                                 <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-                                <p>Your prompt is long (>120 chars). Suno works best with concise prompts. Consider removing less critical tags.</p>
+                                <p>Your prompt is long (>120 chars). Suno works best with concise prompts.</p>
                             </div>
                         </div>
 
                         <div class="mt-6 pt-6 border-t border-slate-700">
                             <h4 class="text-sm font-semibold text-slate-300 mb-2">Structure Preview</h4>
                             <p class="text-xs text-slate-400 mb-3">
-                                Switch to the "Lyrics & Structure" tab to write your song content using metatags.
+                                Switch to the "Lyrics" tab to write your song content using metatags.
                             </p>
                             <button onclick="switchTab('lyrics')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg transition-colors flex items-center justify-center space-x-2">
                                 <span>Go to Lyrics Editor</span>
-                                <i data-lucide="play" class="w-3 h-3"></i>
+                                <i data-lucide="arrow-right" class="w-3 h-3"></i>
                             </button>
                         </div>
                     </div>
@@ -266,6 +530,30 @@ Make it catchy!
                <!-- Toolbox -->
                <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10">
                  
+                 <!-- Magic Lyrics Generator -->
+                 <div class="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 border border-indigo-500/30 rounded-xl p-5 shadow-lg">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i data-lucide="wand-2" class="w-5 h-5 text-indigo-400"></i>
+                        <h3 class="font-semibold text-indigo-200">Magic Lyric Ideas</h3>
+                    </div>
+                    <div class="space-y-3">
+                         <select id="lyric-theme" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-2">
+                             <option value="generic">Theme: Generic / Pop</option>
+                             <option value="love">Theme: Love & Heartbreak</option>
+                             <option value="dark">Theme: Dark & Moody</option>
+                             <option value="party">Theme: Party & Hype</option>
+                         </select>
+                         <div class="grid grid-cols-2 gap-2">
+                             <button onclick="generateLyrics('verse')" class="px-3 py-2 bg-indigo-600/50 hover:bg-indigo-600 border border-indigo-500/50 rounded-lg text-xs text-white transition-colors">
+                                 + Verse Idea
+                             </button>
+                             <button onclick="generateLyrics('chorus')" class="px-3 py-2 bg-purple-600/50 hover:bg-purple-600 border border-purple-500/50 rounded-lg text-xs text-white transition-colors">
+                                 + Chorus Idea
+                             </button>
+                         </div>
+                    </div>
+                 </div>
+
                  <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
                    <div class="flex items-center space-x-2 mb-4">
                      <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
@@ -285,32 +573,29 @@ Make it catchy!
                         <!-- JS Injected -->
                    </div>
                  </div>
-   
-                 <div class="bg-blue-900/20 border border-blue-800/50 rounded-xl p-5">
-                   <div class="flex items-center space-x-2 mb-4">
-                     <i data-lucide="type" class="w-5 h-5 text-blue-400"></i>
-                     <h3 class="font-semibold text-blue-200">Phrasing Guide</h3>
-                   </div>
-                   <ul class="space-y-3 text-sm text-slate-300">
-                     <li class="flex gap-2">
-                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">,</span>
-                       <span>Short pause (breath/rest).</span>
-                     </li>
-                     <li class="flex gap-2">
-                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">.</span>
-                       <span>Full stop (longer rest).</span>
-                     </li>
-                     <li class="flex gap-2">
-                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">--</span>
-                       <span>Melisma (stretching a wo-o-rd).</span>
-                     </li>
-                     <li class="flex gap-2">
-                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">CAPS</span>
-                       <span>Accent/Strong emphasis.</span>
-                     </li>
-                   </ul>
-                 </div>
                </div>
+             </div>
+        </div>
+        
+        <!-- TAB: LIBRARY (IndexedDB) -->
+        <div id="tab-library" class="tab-content">
+             <div class="max-w-4xl mx-auto space-y-6 pb-20">
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i data-lucide="library" class="w-6 h-6 mr-2 text-blue-400"></i>
+                        Saved Prompts
+                    </h2>
+                    <p class="text-sm text-slate-400 mb-6">
+                        Prompts are saved locally in your browser. Click to load a prompt.
+                    </p>
+                    
+                    <div id="library-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS populated -->
+                        <div class="text-center py-10 text-slate-500 col-span-2 italic">
+                            No saved prompts yet. Create a style and click the Save icon!
+                        </div>
+                    </div>
+                </div>
              </div>
         </div>
 
@@ -340,46 +625,6 @@ Make it catchy!
             </div>
         </div>
 
-        <!-- TAB: GUIDE -->
-        <div id="tab-guide" class="tab-content">
-            <div class="max-w-3xl mx-auto space-y-8 pb-20">
-                <div class="bg-slate-800 border border-slate-700 rounded-xl p-8">
-                  <h2 class="text-2xl font-bold text-white mb-6">The "Vibe-Locked" Musician</h2>
-                  <p class="text-slate-300 leading-relaxed mb-6">
-                    Treat Suno as a session musician who cannot read notes, but follows a strict "Lead Sheet." 
-                    Your job is to architect the constraints.
-                  </p>
-                  
-                  <div class="space-y-6">
-                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
-                      <h3 class="text-lg font-semibold text-purple-400 mb-2">1. The Sonic Blueprint</h3>
-                      <p class="text-sm text-slate-400 mb-4">
-                        The <strong>Style Prompt</strong> is a stack of layers. Order matters less than clarity, but a good habit is:
-                      </p>
-                      <ul class="list-disc list-inside space-y-1 text-slate-300 text-sm">
-                        <li><strong>Foundation:</strong> Genre/Subgenre (e.g., Melodic Techno)</li>
-                        <li><strong>Players:</strong> Instruments (e.g., Moog Bass, 808s)</li>
-                        <li><strong>Grid:</strong> Tempo & Feel (e.g., 120 BPM, Syncopated)</li>
-                        <li><strong>Engineer:</strong> Mix (e.g., Sidechained, Analog warmth)</li>
-                      </ul>
-                    </div>
-    
-                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
-                      <h3 class="text-lg font-semibold text-blue-400 mb-2">2. The Comping Workflow</h3>
-                      <p class="text-sm text-slate-400 mb-4">
-                        Never generate a full song at once.
-                      </p>
-                      <ul class="list-disc list-inside space-y-2 text-slate-300 text-sm">
-                        <li><strong>Work in Sections:</strong> Generate 60-90s blocks.</li>
-                        <li><strong>The Overlap Stitch:</strong> When extending, set the continuation point 0.5-1.0s <em>before</em> the actual end to allow the AI to crossfade.</li>
-                        <li><strong>Surgical Edits:</strong> Use "Replace Section" to re-roll specific verses without changing the whole track.</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-        </div>
-
     </main>
 
     <script>
@@ -388,48 +633,51 @@ Make it catchy!
             "Rock": [
                 "Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", 
                 "Industrial Rock", "Math Rock", "Post-Rock", "Progressive Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Shoegaze", "Soft Rock", "Southern Rock", 
-                "Stoner Rock", "Surf Rock"
+                "Stoner Rock", "Surf Rock", "Yacht Rock", "Arena Rock", "Krautrock", "Noise Rock", "Slowcore", "Space Rock", "J-Rock", "Visual Kei"
             ],
             "Metal": [
                 "Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal", 
                 "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Latin Metal", "Metalcore", "Nu Metal", "Power Metal", "Progressive Metal", 
-                "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal", "Viking Metal"
+                "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal", "Viking Metal", "Kawaii Metal", "Post-Metal", "Stoner Metal"
             ],
             "Electronic": [
-                "Acid House", "Ambient", "Big Beat", "Breakbeat", "Chiptune", "Deep House", "Drum and Bass", "Dubstep", "Electro", "Eurodance", "Future Bass", 
-                "Gabber", "Garage", "Hardstyle", "House", "IDM", "Industrial", "Interstellar Synth", "Jungle", "Lo-Fi", "Minimal", "Synthwave", "Techno", 
-                "Trance", "Trap", "Trip-Hop", "UK Garage", "Vaporwave"
+                "Acid House", "Acid Techno", "Ambient", "Big Beat", "Breakbeat", "Chillstep", "Chillwave", "Chiptune", "Deep House", "Downtempo", "Drum and Bass", 
+                "Dubstep", "Electro", "Electro-Swing", "Eurodance", "Future Bass", "Gabber", "Garage", "Glitch", "Glitch Hop", "Hardcore", "Hardstyle", "House", 
+                "IDM", "Industrial", "Interstellar Synth", "Jungle", "Lo-Fi", "Melodic Techno", "Minimal", "Phonk", "Progressive House", "Psytrance", "Synth-Pop", 
+                "Synthwave", "Tech House", "Techno", "Trance", "Trap", "Trip-Hop", "UK Garage", "Vaporwave", "Witch House"
             ],
             "Pop": [
-                "Art Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "Chamber Pop", "City Pop", "Dance-Pop", "Dream Pop", "Electropop", "Europop", "Hyperpop", 
-                "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Progressive Pop", "Psychedelic Pop", "Somber Pop", "Sophisti-Pop", "Synth-Pop", "Teen Pop"
+                "Art Pop", "Baroque Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "Chamber Pop", "City Pop", "Country-Pop", "Dance-Pop", "Dream Pop", "Electropop", 
+                "Europop", "Hyperpop", "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Progressive Pop", "Psychedelic Pop", "Somber Pop", "Sophisti-Pop", 
+                "Sunshine Pop", "Synth-Pop", "Teen Pop", "Wonky Pop"
             ],
             "Hip Hop": [
-                "Alternative Hip Hop", "Boom Bap", "Conscious Hip Hop", "Crunk", "Drill", "Experimental Hip Hop", "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", 
-                "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", "Turntablism", "Underground Hip Hop"
+                "Abstract Hip Hop", "Alternative Hip Hop", "Boom Bap", "Cloud Rap", "Conscious Hip Hop", "Crunk", "Drill", "East Coast Hip Hop", "Experimental Hip Hop", 
+                "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", "Horrorcore", "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", 
+                "Trip Hop", "Turntablism", "UK Drill", "Underground Hip Hop", "West Coast Hip Hop"
             ],
             "R&B/Soul": [
-                "Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Motown", "Neo-Soul", "New Jack Swing", 
-                "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul", "Southern Soul"
+                "Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Modern Soul", "Motown", "Neo-Soul", "New Jack Swing", 
+                "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul", "Southern Soul", "P-Funk"
             ],
             "Jazz": [
                 "Acid Jazz", "Afro-Cuban Jazz", "Atmospheric Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz", 
-                "Fusion", "Gypsy Jazz", "Hard Bop", "Latin Jazz", "Modal Jazz", "Smooth Jazz", "Soul Jazz", "Swing", "Third Stream"
+                "Fusion", "Gypsy Jazz", "Hard Bop", "Jazz-Funk", "Latin Jazz", "Modal Jazz", "Orchestral Jazz", "Smooth Jazz", "Soul Jazz", "Swing", "Third Stream"
             ],
             "Folk/Country": [
-                "Alt-Country", "Americana", "Appalachian Folk", "Bluegrass", "Contemporary Folk", "Country Pop", "Country Rock", "Dark Folk", "Experimental Folk", 
-                "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", "Neofolk", "Outlaw Country", "Psychedelic Folk", "Traditional Country", 
-                "Traditional Folk", "Western Swing"
+                "Alt-Country", "Americana", "Anti-Folk", "Appalachian Folk", "Bakersfield Sound", "Bluegrass", "Celtic Folk", "Contemporary Folk", "Country & Western", 
+                "Country Pop", "Country Rock", "Countrypolitan", "Dark Folk", "Experimental Folk", "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", 
+                "Neofolk", "Outlaw Country", "Progressive Country", "Progressive Folk", "Psychedelic Folk", "Traditional Country", "Traditional Folk", "Western Swing"
             ],
             "Classical/Score": [
                 "Ambient", "Avant-Garde", "Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Contemporary Classical", "Drone", 
-                "Early Music", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Creative", "Musique Concrète", "Neoclassical", 
-                "Noise", "Opera", "Orchestral", "Renaissance", "Romantic Period", "Sound Art", "Soundtrack", "String Quartet", "Symphonic"
+                "Early Music", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Classical", "Modern Creative", "Musique Concrète", 
+                "Neoclassical", "Noise", "Opera", "Orchestral", "Renaissance", "Romantic Period", "Score", "Sound Art", "Soundtrack", "String Quartet", "Symphonic"
             ],
             "Latin/World": [
-                "Afrobeat", "Bachata", "Bhangra", "Bolero", "Bossa Nova", "Calypso", "Cumbia", "Dancehall", "Flamenco", "Highlife", "Klezmer", "Latin Groove", 
-                "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Merengue", "Polka", "Raggamuffin", "Reggae", "Reggaeton", "Salsa", "Samba", "Ska", "Soca", 
-                "Tango", "Tejano", "Tropicalia", "Zouk"
+                "Afrobeat", "Afro-Cuban", "Bachata", "Baile Funk", "Bhangra", "Bollywood", "Bolero", "Bossa Nova", "Calypso", "Celtic", "Cumbia", "Dancehall", "Dub", 
+                "Fado", "Flamenco", "Highlife", "Jùjú", "Kizomba", "Klezmer", "Latin Groove", "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Mbalax", 
+                "Merengue", "Polka", "Raggamuffin", "Reggae", "Reggaeton", "Roots Reggae", "Rumba", "Salsa", "Samba", "Ska", "Soca", "Tango", "Tejano", "Tropicalia", "Zouk"
             ],
              "Blues/Roots": [
                 "Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Gospel", "Jump Blues", "Piedmont Blues", "Rhythm and Blues", 
@@ -437,54 +685,63 @@ Make it catchy!
              ],
              "Experimental/Odd": [
                  "Avant-Garde", "Breakcore", "Dark Ambient", "Dungeon Synth", "Glitch", "Hauntology", "Japanoise", "Lowercase", "Musique Concrète", "No Wave", 
-                 "Noise", "Outsider Music", "Plunderphonics", "Sound Collage", "Vaporwave", "Witch House"
+                 "Noise", "Outsider Music", "Plunderphonics", "Sound Collage", "Vaporwave", "Witch House", "Extratone", "Flashcore", "Danger Music", "Black MIDI"
+             ],
+             "Other": [
+                 "Acapella", "Barbershop Quartet", "Cabaret", "Children's Music", "Comedy Rock", "Dungeon Synth", "Exotica", "Lounge", "Marching Band", "New Age", 
+                 "Sea Shanty", "Spoken Word", "Vaudeville"
              ]
         };
 
         const INSTRUMENTS = [
-            "Acoustic Guitar", "Electric Guitar", "Distorted Guitar", "Bass Guitar", "808 Bass", "Upright Bass",
-            "Piano", "Rhodes", "Wurlitzer", "Synthesizer", "Analog Synth", "Pad", "Arpeggiator",
-            "Drums", "808 Drums", "909 Kit", "Acoustic Drums", "Breakbeat", "Congas", "Timbales",
-            "Strings", "Cello", "Violin", "Brass Section", "Saxophone", "Trumpet", "Flute", "Toy Piano",
-            "Accordion", "Bagpipes", "Banjo", "Clarinet", "Didgeridoo", "Glockenspiel", "Harmonica", "Harp", 
-            "Harpsichord", "Kalimba", "Mandolin", "Marimba", "Mellotron", "Oboe", "Organ", "Sitar", "Steel Drums", 
-            "Theremin", "Trombone", "Tuba", "Ukulele", "Vibraphone", "Xylophone", "Zither"
+            "808 Drums", "808 Sub Bass", "909 Kit", "303 Acid Bassline", "Accordion", "Acoustic Drums", "Acoustic Guitar", "Alto Saxophone", "Analog Synth", 
+            "Bagpipes", "Banjo", "Baritone Saxophone", "Bass Drum", "Bass Guitar", "Bassoon", "Bongos", "Brass Section", "Breakbeat", "Brown Noise", "Celesta", 
+            "Cello", "Chimes", "Clarinet", "Clavinet", "Congas", "Contrabass", "Cowbell", "Didgeridoo", "Distorted Bass", "Distorted Guitar", "Double Bass", 
+            "Drone", "Drum Machine", "Duduk", "Electric Guitar", "Electric Piano", "Erhu", "Fiddle", "Flute", "French Horn", "Fretless Bass", "Gamelan", 
+            "Gated Reverb Drums", "Glass Harmonica", "Glitch Drums", "Glockenspiel", "Gong", "Granular Synthesis", "Guiro", "Hammond Organ", "Handclaps", 
+            "Handpan", "Harmonica", "Harp", "Harpsichord", "Hurdy-Gurdy", "Kalimba", "Koto", "Lute", "Lyre", "Mandolin", "Marimba", "Mellotron", "Minimal Synth", 
+            "Modular Synth", "Moog Bass", "Nyckelharpa", "Oboe", "Ondes Martenot", "Organ", "Oud", "Pan Flute", "Piano", "Pink Noise", "Pipa", "Portamento Synth", 
+            "Prepared Piano", "Recorder", "Rhodes Piano", "Sampler", "Sarangi", "Saxophone", "Shaker", "Shamisen", "Shehnai", "Sitar", "Slide Guitar", "Snare Drum", 
+            "Steel Drums", "String Quartet", "Strings", "Sub Bass", "Synth Arpeggio", "Synth Bass", "Synth Lead", "Synth Pad", "Tabla", "Taiko Drums", "Tambourine", 
+            "Tape Loops", "Tenor Saxophone", "Theremin", "Timbales", "Timpani", "Toy Piano", "Triangle", "Trombone", "Trumpet", "Tuba", "Turntables", "Ukulele", 
+            "Upright Bass", "Vibraphone", "Viola", "Violin", "Vocoder", "Wah-Wah Guitar", "Waterphone", "White Noise", "Wind Chimes", "Wurlitzer Piano", 
+            "Xylophone", "Zither"
         ];
 
         const VOICES = [
-            "Male Vocals", "Female Vocals", "Androgynous Vocals", "Choir", "Group Backing Vocals", 
+            "Male Vocals", "Female Vocals", "Androgynous Vocals", "Choir", "Group Backing Vocals", "Children's Choir", "Gospel Choir", "Gang Vocals",
             "Whisper", "Screaming", "Growling", "Spoken Word", "Rap Flow", "Autotune", "Operatic", "Ethereal",
             "Baritone", "Bass", "Alto", "Soprano", "Falsetto", "Raspy", "Breathy", "Guttural", "Robot", "Vocoder", 
-            "Chant", "Gang Vocals", "Children's Choir", "Gospel Choir"
+            "Chant", "Crooner", "Scat Singing", "Yodeling", "Throat Singing", "Beatboxing"
         ];
 
         const MOODS = [
-            "Aggressive", "Anxious", "Calm", "Chaotic", "Cinematic", "Dark", "Dreamy", "Driving", 
-            "Eerie", "Energetic", "Epic", "Ethereal", "Euphoric", "Gloomy", "Groovy", "Haunting", 
-            "Hopeful", "Hypnotic", "Intense", "Melancholy", "Nostalgic", "Passionate", "Playful", "Psychedelic", 
-            "Romantic", "Sad", "Sentimental", "Spooky", "Swirling", "Tense", "Uplifting", "Whimsical",
-            "Angry", "Bittersweet", "Bouncy", "Chill", "Confident", "Dramatic", "Emotional", "Enigmatic", 
-            "Funky", "Happy", "Heavy", "Inspirational", "Joyful", "Laid-back", "Light", "Lush", "Majestic", 
-            "Mellow", "Mysterious", "Optimistic", "Peaceful", "Powerful", "Quirky", "Reflective", "Relaxing", 
-            "Retro", "Serious", "Sexy", "Silly", "Soothing", "Sophisticated", "Soulful", "Spacey", "Spiritual", 
-            "Suspenseful", "Sweet", "Trippy", "Upbeat", "Warm"
+            "Aggressive", "Angular", "Anxious", "Bittersweet", "Bouncy", "Brooding", "Calm", "Chaotic", "Chill", "Cinematic", "Cold", "Comforting", "Confident", 
+            "Cosmic", "Dark", "Detached", "Dissociative", "Dramatic", "Dreamy", "Driving", "Eerie", "Elegant", "Emotional", "Energetic", "Enigmatic", "Epic", 
+            "Ethereal", "Euphoric", "Festive", "Floating", "Funky", "Gloomy", "Groovy", "Happy", "Haunting", "Heartbreaking", "Heavy", "Hopeful", "Hypnotic", 
+            "Industrial", "Inspirational", "Intense", "Intimate", "Isolated", "Joyful", "Joyous", "Jubilant", "Laid-back", "Lazy", "Light", "Lonely", "Lush", 
+            "Majestic", "Melancholy", "Mellow", "Mournful", "Mysterious", "Nostalgic", "Ominous", "Optimistic", "Passionate", "Peaceful", "Playful", "Powerful", 
+            "Psychedelic", "Pulsing", "Quirky", "Reflective", "Relaxing", "Retro", "Romantic", "Sad", "Sentimental", "Serene", "Serious", "Sexy", "Silly", 
+            "Somber", "Soothing", "Sophisticated", "Sorrowful", "Soulful", "Spacey", "Spiritual", "Spooky", "Suspenseful", "Sweet", "Swirling", "Tense", 
+            "Tranquil", "Trippy", "Upbeat", "Uplifting", "Warm", "Whimsical", "Witty", "Yearning"
         ];
 
         const TEMPO_FEEL = [
             "Slow (Adagio)", "Walking Pace (Andante)", "Fast (Allegro)", "Very Fast (Presto)",
             "Driving 4/4", "Groove", "Half-time", "Shuffle", "Syncopated", "Swing", "Triplet Feel",
-            "Rubato", "Free Tempo", "60 BPM", "88 BPM", "90 BPM", "120 BPM", "125 BPM", "140 BPM", "170 BPM",
+            "Rubato", "Free Tempo", "60 BPM", "70 BPM", "80 BPM", "88 BPM", "90 BPM", "100 BPM", "110 BPM", "120 BPM", "125 BPM", "128 BPM", "130 BPM", "140 BPM", "150 BPM", "160 BPM", "170 BPM", "180 BPM",
             "Blast Beat", "Breakbeat", "D-Beat", "Double Time", "Down-tempo", "Four-on-the-Floor", "Latin Groove", 
-            "Motorik", "Polyrhythmic", "Skank", "Slow Jam", "Straight", "Up-tempo", "Waltz (3/4)"
+            "Motorik", "Off-beat", "Polyrhythmic", "Pulsing", "Skank", "Slow Burn", "Slow Jam", "Staccato", "Steady Beat", "Straight", "Up-tempo", "Waltz (3/4)"
         ];
 
         const PRODUCTION = [
-            "Analog Warmth", "Clean", "Compressed", "Distorted", "Dry Mix", "Gated Reverb", 
-            "Heavy Reverb", "Hi-Fi", "Lo-Fi", "Minimal", "Muddy", "Raw", "Saturated", 
-            "Sidechained", "Spacious", "Vinyl Crackle", "Wide Stereo", "8-bit", "Wall of Sound",
-            "Bright", "Crisp", "Dark Mix", "Dense", "Echoey", "Flat", "Grainy", "Gritty", "Harsh", "Hollow", 
-            "Loud", "Modern", "Muffled", "Noisy", "Old School", "Polished", "Punchy", "Retro", "Rich", "Sharp", 
-            "Smooth", "Soft", "Sparse", "Thick", "Thin", "Tight", "Vintage", "Warm"
+            "8-bit", "Analog Warmth", "Atmospheric", "Binaural", "Breathy", "Bright", "Brittle", "Cinematic Production", "Clean", "Close Mic", "Compressed", 
+            "Crisp", "Crunchy", "Dark Mix", "Dense", "Digital", "Distorted", "Dry Mix", "Dull", "Echoey", "Flat", "Fuzzy", "Gated Reverb", "Glassy", 
+            "Glitched", "Glossy", "Grainy", "Gritty", "Harsh", "Heavy Bass", "Heavy Reverb", "Hi-Fi", "Hollow", "Immersive Soundstage", "Instrument-forward Balance", 
+            "Live Room", "Lo-Fi", "Loud Master", "Minimal", "Modern Production", "Monophonic", "Muddy", "Muffled", "Noisy", "Old School", "Organic", "Polished", 
+            "Polyphonic", "Punchy", "Raw", "Retro", "Rich", "Room Reverb", "Room Tone", "Saturated", "Sharp", "Sidechained", "Sloppy", "Smooth", "Soft", 
+            "Sparse", "Stereo", "Swirling Textures", "Synthetic", "Tape Saturation", "Thick", "Thin", "Tight", "Twangy", "Underwater", "Vintage", 
+            "Vinyl Crackle", "Wall of Sound", "Warm", "Wet Mix", "Wide Stereo", "Wide Stereo Field"
         ];
 
         const METATAGS = [
@@ -498,6 +755,11 @@ Make it catchy!
             { label: "Solo", tag: "[Guitar Solo]" },
             { label: "Outro", tag: "[Outro]" },
             { label: "End", tag: "[End]" },
+            { label: "Drop", tag: "[Drop]" },
+            { label: "Instrumental", tag: "[Instrumental]" },
+            { label: "Interlude", tag: "[Interlude]" },
+            { label: "Big Finish", tag: "[Big Finish]" },
+            { label: "Silence", tag: "[Silence]" }
         ];
 
         const PERFORMANCE_TAGS = [
@@ -505,32 +767,122 @@ Make it catchy!
             { label: "Shout", tag: "[Shout]" },
             { label: "Spoken", tag: "[Spoken Word]" },
             { label: "Crescendo", tag: "[Crescendo]" },
+            { label: "Decrescendo", tag: "[Decrescendo]" },
             { label: "Stop", tag: "[Sudden Stop]" },
             { label: "Fade", tag: "[Fade Out]" },
+            { label: "Pause", tag: "[Pause]" },
+            { label: "Giggle", tag: "[Giggle]" },
+            { label: "Sigh", tag: "[Sigh]" },
+            { label: "Applause", tag: "[Applause]" },
+            { label: "Cheer", tag: "[Cheer]" }
         ];
+
+        // --- LYRIC TEMPLATES ---
+        const LYRIC_TEMPLATES = {
+            "generic": {
+                "verse": "Walking down the street, lights are flashing by\nThinking 'bout the days, looking at the sky\nEverything is changing, nothing stays the same\nTrying to remember the sound of your name",
+                "chorus": "Oh, it's a new day, coming my way\nYeah, we're gonna make it, gonna be okay\nShining like a diamond, burning so bright\nDancing in the shadows, into the light"
+            },
+            "love": {
+                "verse": "I saw you from across the room, time stood still\nHeart beating faster, against my will\nYour smile like the sunrise, chasing the dark\nYou lit a fire, a sudden spark",
+                "chorus": "Baby, hold me closer, never let me go\nYou're the only rhythm that I really know\nIn your arms is where I wanna be\nForever and always, just you and me"
+            },
+            "dark": {
+                "verse": "Shadows creeping on the wall, silence is loud\nLost in the fog, lost in the crowd\nVoices whispering secrets I can't understand\nSlipping through my fingers like grains of sand",
+                "chorus": "Can't escape the echo, ringing in my head\nHaunted by the words that we never said\nDarkness falling, swallowing the light\nNo one's gonna save us in the dead of night"
+            },
+            "party": {
+                "verse": "Pull up to the club, bass kicking low\nEverybody moving, ready for the show\nDrinks in the air, hands to the roof\nWe living legend, yeah that's the proof",
+                "chorus": "Let's go! Turn the volume up to ten\nWe ain't never stopping, do it all again\nParty till the morning, sun coming up\nFill another bottle, fill another cup"
+            }
+        };
 
         // --- STATE ---
         let state = {
             genreCat: "",
-            subgenres: [], // Changed from string to array for multi-select
+            subgenres: [], 
             instruments: [],
             voices: [],
             moods: [],
             tempo: "",
             production: []
         };
+        
+        let dialState = {
+            previewGenre: "",
+            previewInstruments: [],
+            previewVoices: [],
+            previewMoods: [],
+            previewProduction: [],
+            previewTempo: ""
+        };
+
         let deleteConfirm = false;
+
+        // Dial Tag Mappings - DIRECT VISIBLE TAGS
+        const TAGS_WEIRDNESS = [
+            ["Conventional", "Standard Structure"],
+            ["Experimental", "Unconventional"],
+            ["Avant-Garde", "Abstract"],
+            ["Chaotic", "Non-linear"]
+        ];
+        
+        const TAGS_ERA = [
+            ["Vintage", "Lo-Fi", "Analog Warmth"],
+            ["Retro", "Old School"],
+            ["Modern", "Clean Mix"],
+            ["Futuristic", "Hi-Fi", "Digital"]
+        ];
+
+        const TAGS_INTENSITY = [
+            ["Ambient", "Serene"],
+            ["Chill", "Mellow"],
+            ["Balanced", "Groovy"],
+            ["Energetic", "Driving"],
+            ["Aggressive", "Intense"]
+        ];
+
+        const TAGS_TEMPO = [
+            ["Downtempo", "Slow"],
+            ["Mid-Tempo", "Groove"],
+            ["Up-Tempo", "Fast"],
+            ["Speed", "Rapid"]
+        ];
+        
+        const TAGS_VOCALS = [
+            ["Instrumental"],
+            ["Minimal Vocals", "Backing Vocals"],
+            ["Male Vocals", "Female Vocals"],
+            ["Lyrical", "Rap Flow"]
+        ];
+
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initGenreUI();
+            initDialsGenreUI(); 
             initMultiSelectUI("instruments-container", INSTRUMENTS, "instruments", "btn-selected-blue", "text-blue-200", "bg-blue-500/20", "border-blue-500");
             initMultiSelectUI("voices-container", VOICES, "voices", "btn-selected-blue", "text-blue-200", "bg-blue-500/20", "border-blue-500");
             initMultiSelectUI("moods-container", MOODS, "moods", "btn-selected-yellow", "text-yellow-200", "bg-yellow-500/20", "border-yellow-500");
             initMultiSelectUI("production-container", PRODUCTION, "production", "btn-selected-emerald", "text-emerald-200", "bg-emerald-500/20", "border-emerald-500");
             initTempoUI();
             initLyricsTags();
+            initDB();
+            
+            // Search Listener
+            document.getElementById('instrument-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const container = document.getElementById('instruments-container');
+                Array.from(container.children).forEach(btn => {
+                    const txt = btn.textContent.toLowerCase();
+                    if(txt.includes(term)) btn.style.display = 'block';
+                    else btn.style.display = 'none';
+                });
+            });
+
+            // Initialize default visuals for dials
+            updateDials();
             updatePrompt();
         });
 
@@ -543,25 +895,66 @@ Make it catchy!
                 const btn = document.createElement('button');
                 btn.className = `p-2 rounded-lg text-sm border transition-all text-left bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500`;
                 btn.textContent = cat;
+                // Pass false initially, but the click handler handles the toggle logic
                 btn.onclick = () => selectGenreCat(cat, btn);
                 btn.dataset.val = cat;
                 container.appendChild(btn);
             });
         }
 
+        function initDialsGenreUI() {
+            const select = document.getElementById('dial-genre-select');
+            Object.keys(GENRES).forEach(cat => {
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = cat;
+                GENRES[cat].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    option.dataset.category = cat; 
+                    optGroup.appendChild(option);
+                });
+                select.appendChild(optGroup);
+            });
+        }
+
         function initMultiSelectUI(containerId, dataList, stateKey, activeClass, activeText, activeBg, activeBorder) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
+            
             dataList.forEach(item => {
                 const btn = document.createElement('button');
                 btn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-slate-800 border-slate-700 hover:border-slate-500 text-slate-300";
+                
+                if(state[stateKey].includes(item)) {
+                    btn.classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-300');
+                    btn.classList.add(...activeClass.split(' '), activeText, activeBorder, 'bg-opacity-20');
+                    if(activeClass.includes('purple')) btn.style.backgroundColor = "rgba(147, 51, 234, 0.2)";
+                    if(activeClass.includes('blue')) btn.style.backgroundColor = "rgba(59, 130, 246, 0.2)";
+                    if(activeClass.includes('yellow')) btn.style.backgroundColor = "rgba(234, 179, 8, 0.2)";
+                    if(activeClass.includes('emerald')) btn.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+                }
+
                 btn.textContent = item;
+                btn.dataset.value = item;
+                
                 btn.onclick = () => {
                     toggleSelection(item, stateKey);
-                    updateBtnState(btn, state[stateKey].includes(item), activeClass);
+                    updateBtnVisual(btn, state[stateKey].includes(item), activeClass);
                 };
                 container.appendChild(btn);
             });
+        }
+
+        function updateBtnVisual(btn, isSelected, activeClass) {
+             if (isSelected) {
+                btn.classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-300');
+                btn.classList.add(...activeClass.split(' '));
+             } else {
+                btn.classList.remove(...activeClass.split(' '));
+                btn.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
+                btn.style.backgroundColor = ""; 
+             }
         }
 
         function initTempoUI() {
@@ -597,37 +990,44 @@ Make it catchy!
         // --- LOGIC ---
 
         function switchTab(tabName) {
-            // Hide all
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('header button').forEach(btn => {
                 btn.classList.remove('bg-slate-700', 'text-white', 'shadow-sm');
                 btn.classList.add('text-slate-400', 'hover:text-white');
             });
 
-            // Show selected
             document.getElementById(`tab-${tabName}`).classList.add('active');
             const activeBtn = document.getElementById(`tab-btn-${tabName}`);
             activeBtn.classList.remove('text-slate-400', 'hover:text-white');
             activeBtn.classList.add('bg-slate-700', 'text-white', 'shadow-sm');
             
-            // If switching to JSON, refresh the JSON content
             if (tabName === 'json') {
                 generateJsonOutput();
             }
+            if (tabName === 'library') {
+                renderLibrary();
+            }
         }
 
-        function selectGenreCat(cat, btnElement) {
+        // MODIFIED: Added preserveSelection flag
+        function selectGenreCat(cat, btnElement, preserveSelection = false) {
             state.genreCat = cat;
-            state.subgenres = []; // Reset subgenres when changing main category
+            if (!preserveSelection) {
+                state.subgenres = []; 
+            }
 
-            // Update UI for categories
             const allBtns = document.getElementById('genre-container').children;
             Array.from(allBtns).forEach(b => {
                 b.className = `p-2 rounded-lg text-sm border transition-all text-left bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500`;
             });
-            btnElement.className = `p-2 rounded-lg text-sm border transition-all text-left bg-purple-600 border-purple-500 text-white`;
+            // If btnElement is null (programmatic), find it
+            if (!btnElement) {
+                btnElement = Array.from(allBtns).find(b => b.textContent === cat);
+            }
+            if (btnElement) {
+                btnElement.className = `p-2 rounded-lg text-sm border transition-all text-left bg-purple-600 border-purple-500 text-white`;
+            }
 
-            // Render Subgenres
             const subWrapper = document.getElementById('subgenre-wrapper');
             const subContainer = document.getElementById('subgenre-container');
             subContainer.innerHTML = '';
@@ -637,15 +1037,20 @@ Make it catchy!
                 GENRES[cat].forEach(sub => {
                     const sBtn = document.createElement('button');
                     sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-slate-800 border-slate-700 hover:border-slate-500 text-slate-300";
+                    
+                    // Check selection state during render
+                    if (state.subgenres.includes(sub)) {
+                        sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-purple-500/20 border-purple-500 text-purple-200";
+                    }
+
                     sBtn.textContent = sub;
+                    sBtn.dataset.value = sub;
                     sBtn.onclick = () => {
-                        // Toggle logic for multi-select
                         if (state.subgenres.includes(sub)) {
                             state.subgenres = state.subgenres.filter(s => s !== sub);
                             sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-slate-800 border-slate-700 hover:border-slate-500 text-slate-300";
                         } else {
                             state.subgenres.push(sub);
-                            // Highlight this one
                             sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-purple-500/20 border-purple-500 text-purple-200";
                         }
                         updatePrompt();
@@ -668,29 +1073,12 @@ Make it catchy!
             updatePrompt();
         }
 
-        function updateBtnState(btn, isSelected, activeClass) {
-            if (isSelected) {
-                // Remove default classes that conflict with styling
-                btn.classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-300');
-                // Add active classes
-                btn.classList.add(...activeClass.split(' '));
-                // Add specific styling helpers if needed, but the class logic above handles most
-                if (activeClass.includes('purple')) btn.classList.add('text-purple-200');
-            } else {
-                // Remove active classes
-                btn.classList.remove(...activeClass.split(' '), 'text-purple-200', 'text-blue-200', 'text-yellow-200', 'text-emerald-200');
-                // Add default
-                btn.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
-            }
-        }
-
         function updatePrompt() {
             const select = document.getElementById('tempo-select');
             state.tempo = select.value;
 
             const parts = [];
             
-            // Logic: Subgenres are listed first, or Foundation if no subgenre
             if (state.subgenres.length > 0) {
                  parts.push(...state.subgenres);
             } else if (state.genreCat) {
@@ -706,16 +1094,13 @@ Make it catchy!
             const text = parts.join(", ");
             document.getElementById('style-output').value = text;
             
-            // Char Count
             const countDiv = document.getElementById('char-count');
             countDiv.textContent = `${text.length}/120 chars`;
             
-            // Warning
             const warning = document.getElementById('length-warning');
             if (text.length > 120) warning.classList.remove('hidden');
             else warning.classList.add('hidden');
             
-            // Also update JSON if it is visible
             if (document.getElementById('tab-json').classList.contains('active')) {
                 generateJsonOutput();
             }
@@ -741,19 +1126,35 @@ Make it catchy!
             textarea.setSelectionRange(newCursorPos, newCursorPos);
         }
 
+        // --- NEW: GENERATE LYRICS ---
+        function generateLyrics(type) {
+            const theme = document.getElementById('lyric-theme').value;
+            const lines = LYRIC_TEMPLATES[theme][type];
+            
+            const tag = type === 'verse' ? '[Verse]' : '[Chorus]';
+            const textarea = document.getElementById('lyrics-input');
+            const currentVal = textarea.value;
+            
+            const insertion = `\n\n${tag}\n${lines}`;
+            
+            // Append to end
+            textarea.value = currentVal + insertion;
+            // Scroll to bottom
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+
+
         function clearAll() {
             const btn = document.getElementById('btn-clear-all');
             
             if (!deleteConfirm) {
                 deleteConfirm = true;
                 btn.classList.add('confirm-delete');
-                // Optional: Add a text indicator nearby or tooltip, but the red color shift is a good cue
                 setTimeout(() => {
                     deleteConfirm = false;
                     btn.classList.remove('confirm-delete');
-                }, 3000); // 3 second timeout
+                }, 3000); 
             } else {
-                // Execute Clear
                 state = {
                     genreCat: "",
                     subgenres: [],
@@ -764,40 +1165,27 @@ Make it catchy!
                     production: []
                 };
                 
-                // Reset UI
-                // Genres
-                const allBtns = document.getElementById('genre-container').children;
-                Array.from(allBtns).forEach(b => {
+                document.getElementById('tempo-select').value = "";
+                
+                document.querySelectorAll('#instruments-container button, #voices-container button, #moods-container button, #production-container button').forEach(b => {
+                     b.classList.remove('btn-selected-blue', 'btn-selected-yellow', 'btn-selected-emerald', 'bg-purple-500/20', 'border-purple-500', 'text-purple-200');
+                     b.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
+                     b.style.backgroundColor = "";
+                });
+
+                document.querySelectorAll('#genre-container button').forEach(b => {
                     b.className = `p-2 rounded-lg text-sm border transition-all text-left bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-500`;
                 });
                 document.getElementById('subgenre-wrapper').classList.add('hidden');
 
-                // Tempo
-                document.getElementById('tempo-select').value = "";
-
-                // Multiselects (reload list)
-                initMultiSelectUI("instruments-container", INSTRUMENTS, "instruments", "btn-selected-blue", "text-blue-200", "bg-blue-500/20", "border-blue-500");
-                initMultiSelectUI("voices-container", VOICES, "voices", "btn-selected-blue", "text-blue-200", "bg-blue-500/20", "border-blue-500");
-                initMultiSelectUI("moods-container", MOODS, "moods", "btn-selected-yellow", "text-yellow-200", "bg-yellow-500/20", "border-yellow-500");
-                initMultiSelectUI("production-container", PRODUCTION, "production", "btn-selected-emerald", "text-emerald-200", "bg-emerald-500/20", "border-emerald-500");
-
                 updatePrompt();
                 
-                // Reset Button
                 deleteConfirm = false;
                 btn.classList.remove('confirm-delete');
             }
         }
         
         function generateJsonOutput() {
-            // Get raw lyrics (preserving newlines for now)
-            const lyrics = document.getElementById('lyrics-input').value;
-            // For JSON output, we generally want newlines to be \n so it's a single string
-            // However, the requested format might just want the string literal in the JSON
-            
-            // Format genre string: either subgenres joined, or foundation if no subgenre
-            // If both exist, maybe combine them? The user requested "stoner rock, space rock..." 
-            // which implies a list.
             const genreList = [];
             if (state.subgenres.length > 0) {
                 genreList.push(...state.subgenres);
@@ -805,17 +1193,11 @@ Make it catchy!
                 genreList.push(state.genreCat);
             }
             const genreString = genreList.join(", ");
-
-            // Instruments: Combine instruments AND voices as per the user's example which mixes them
             const instrumentsList = [...state.instruments, ...state.voices];
             const instrumentsString = instrumentsList.join(", ");
-
-            // Style Tags: Moods + Tempo
             const styleTagsList = [...state.moods];
             if (state.tempo) styleTagsList.push(state.tempo);
             const styleTagsString = styleTagsList.join(", ");
-
-            // Recording: Production tags
             const recordingString = state.production.join(", ");
 
             const jsonObj = {
@@ -831,38 +1213,243 @@ Make it catchy!
         function copyToClipboard(elementId, btnElement) {
             const copyText = document.getElementById(elementId);
             copyText.select();
-            copyText.setSelectionRange(0, 99999); // Mobile
-            
-            // Use execCommand for broader compatibility in iframes
+            copyText.setSelectionRange(0, 99999); 
             try {
                 document.execCommand('copy');
-                
                 const textSpan = btnElement.querySelector('.btn-text');
                 const originalText = textSpan.textContent;
-                
-                // Toggle icon if in Style tab
-                if(btnElement.querySelector('.group')) {
-                    btnElement.classList.add('copied');
-                }
+                if(btnElement.classList.contains('group')) btnElement.classList.add('copied');
                 
                 textSpan.textContent = "Copied!";
-                
                 setTimeout(() => {
                     textSpan.textContent = originalText;
-                    if(btnElement.querySelector('.group')) {
-                        btnElement.classList.remove('copied');
-                    }
+                    if(btnElement.classList.contains('group')) btnElement.classList.remove('copied');
                 }, 2000);
             } catch (err) {
                 console.error('Fallback copy failed', err);
-                const textSpan = btnElement.querySelector('.btn-text');
-                textSpan.textContent = "Manual Copy Required";
-                setTimeout(() => textSpan.textContent = "Copy Output", 2000);
             }
+        }
+
+        // --- DIALS LOGIC ---
+        
+        function updateDials() {
+            const subGenre = document.getElementById('dial-genre-select').value;
+            
+            const wVal = parseInt(document.getElementById('dial-weirdness').value);
+            const eVal = parseInt(document.getElementById('dial-era').value);
+            const iVal = parseInt(document.getElementById('dial-intensity').value);
+            const tVal = parseInt(document.getElementById('dial-tempo').value);
+            const vVal = parseInt(document.getElementById('dial-vocals').value);
+
+            const pick = (arr, val) => {
+                const step = 100 / arr.length;
+                const index = Math.min(Math.floor(val / step), arr.length - 1);
+                return arr[index];
+            };
+
+            const weirdTags = pick(TAGS_WEIRDNESS, wVal);
+            const eraTags = pick(TAGS_ERA, eVal);
+            const intensityTags = pick(TAGS_INTENSITY, iVal);
+            const tempoTags = pick(TAGS_TEMPO, tVal);
+            const vocalTags = pick(TAGS_VOCALS, vVal);
+
+            document.getElementById('tags-weirdness').textContent = weirdTags.join(", ");
+            document.getElementById('tags-era').textContent = eraTags.join(", ");
+            document.getElementById('tags-intensity').textContent = intensityTags.join(", ");
+            document.getElementById('tags-tempo').textContent = tempoTags.join(", ");
+            document.getElementById('tags-vocals').textContent = vocalTags.join(", ");
+
+            dialState.previewGenre = subGenre;
+            dialState.previewInstruments = [...weirdTags]; 
+            dialState.previewProduction = [...eraTags];
+            dialState.previewMoods = [...intensityTags];
+            dialState.previewTempo = tempoTags[0];
+            dialState.previewVoices = [...vocalTags];
+
+            document.getElementById('preview-genre').textContent = subGenre || "Select a base genre first...";
+            document.getElementById('preview-weirdness').textContent = weirdTags.join(", ");
+            document.getElementById('preview-era').textContent = eraTags.join(", ");
+            document.getElementById('preview-intensity').textContent = intensityTags.join(", ");
+            document.getElementById('preview-tempo').textContent = tempoTags.join(", ");
+            document.getElementById('preview-vocals').textContent = vocalTags.join(", ");
+        }
+
+        function applyDialsToMain() {
+            const baseGenre = document.getElementById('dial-genre-select').value;
+            if (!baseGenre) {
+                alert("Please select a base genre first.");
+                return;
+            }
+
+            state.subgenres = baseGenre ? baseGenre.split(", ").map(s => s.trim()) : [];
+            state.production = [...dialState.previewProduction]; 
+            state.moods = [...dialState.previewMoods]; 
+            state.voices = [...dialState.previewVoices]; 
+            state.tempo = dialState.previewTempo; 
+            state.subgenres.push(...dialState.previewInstruments); 
+
+            const selectedOption = document.querySelector(`#dial-genre-select option[value="${baseGenre.split(",")[0]}"]`);
+            if (selectedOption) {
+                state.genreCat = selectedOption.parentElement.label;
+            }
+
+            updateAllVisuals();
+            switchTab('style');
+        }
+
+        function updateAllVisuals() {
+            if (state.genreCat) {
+                const catBtns = document.getElementById('genre-container').children;
+                Array.from(catBtns).forEach(b => {
+                    if (b.dataset.val === state.genreCat) {
+                        // Pass true to preserve the subgenres we just set!
+                        selectGenreCat(state.genreCat, b, true); 
+                    }
+                });
+            }
+
+            // Sync MultiSelects
+            syncButtonList('instruments-container', state.instruments, "btn-selected-blue");
+            syncButtonList('voices-container', state.voices, "btn-selected-blue");
+            syncButtonList('moods-container', state.moods, "btn-selected-yellow");
+            syncButtonList('production-container', state.production, "btn-selected-emerald");
+
+            document.getElementById('tempo-select').value = state.tempo;
+            updatePrompt();
+        }
+
+        function syncButtonList(containerId, stateList, activeClass) {
+            const container = document.getElementById(containerId);
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if (stateList.some(item => item === btn.textContent)) {
+                    updateBtnVisual(btn, true, activeClass);
+                } else {
+                    updateBtnVisual(btn, false, activeClass);
+                }
+            });
+        }
+
+        // --- INDEXEDDB LOGIC ---
+        const DB_NAME = 'SunoArchitectDB';
+        const DB_VERSION = 1;
+        let db;
+
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onerror = (event) => console.error("DB Error", event);
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                const store = db.createObjectStore("prompts", { keyPath: "id" });
+                store.createIndex("timestamp", "timestamp", { unique: false });
+            };
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                renderLibrary();
+            };
+        }
+
+        function saveCurrentPrompt() {
+            const promptText = document.getElementById('style-output').value;
+            if (!promptText) {
+                alert("Nothing to save!");
+                return;
+            }
+            
+            // Generate a simple name
+            let name = state.subgenres[0] || state.genreCat || "Untitled";
+            name += ` - ${new Date().toLocaleTimeString()}`;
+
+            const note = prompt("Name this prompt:", name);
+            if (note === null) return; // Cancelled
+
+            const transaction = db.transaction(["prompts"], "readwrite");
+            const store = transaction.objectStore("prompts");
+            
+            const item = {
+                id: Date.now(),
+                name: note || name,
+                state: JSON.parse(JSON.stringify(state)), // Deep copy state
+                text: promptText,
+                timestamp: new Date()
+            };
+
+            const request = store.add(item);
+            request.onsuccess = () => {
+                alert("Saved to Library!");
+                renderLibrary();
+            };
+            request.onerror = () => alert("Error saving prompt.");
+        }
+
+        function deletePrompt(id) {
+            if (!confirm("Delete this prompt?")) return;
+            const transaction = db.transaction(["prompts"], "readwrite");
+            const store = transaction.objectStore("prompts");
+            store.delete(id);
+            transaction.oncomplete = () => renderLibrary();
+        }
+
+        function loadPrompt(id) {
+            const transaction = db.transaction(["prompts"], "readonly");
+            const store = transaction.objectStore("prompts");
+            const request = store.get(id);
+            
+            request.onsuccess = () => {
+                const item = request.result;
+                if(item) {
+                    state = item.state;
+                    updateAllVisuals(); // This will refresh the UI
+                    switchTab('style');
+                }
+            };
+        }
+
+        function renderLibrary() {
+            if (!db) return;
+            const transaction = db.transaction(["prompts"], "readonly");
+            const store = transaction.objectStore("prompts");
+            const index = store.index("timestamp");
+            const request = index.openCursor(null, 'prev'); // Newest first
+            
+            const list = document.getElementById('library-list');
+            list.innerHTML = '';
+            let hasItems = false;
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    hasItems = true;
+                    const item = cursor.value;
+                    
+                    const el = document.createElement('div');
+                    el.className = "bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between group hover:border-purple-500 transition-colors";
+                    el.innerHTML = `
+                        <div class="mb-3">
+                            <h3 class="font-bold text-slate-200 text-lg group-hover:text-purple-400 transition-colors">${item.name}</h3>
+                            <p class="text-xs text-slate-500 font-mono mt-1">${new Date(item.timestamp).toLocaleString()}</p>
+                            <div class="mt-2 text-xs text-slate-400 line-clamp-2 bg-slate-950 p-2 rounded border border-slate-800 font-mono">
+                                ${item.text}
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="loadPrompt(${item.id})" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded text-sm font-bold transition-colors">Load</button>
+                            <button onclick="deletePrompt(${item.id})" class="px-3 py-2 bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-400 rounded border border-slate-700 hover:border-red-800 transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(el);
+                    cursor.continue();
+                } else if (!hasItems) {
+                    list.innerHTML = `<div class="text-center py-10 text-slate-500 col-span-2 italic">
+                        No saved prompts yet. Create a style and click the Save icon!
+                    </div>`;
+                }
+                lucide.createIcons();
+            };
         }
 
     </script>
 </body>
 </html>
-
-
