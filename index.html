@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,50 +12,36 @@
             width: 8px;
             height: 8px;
         }
-
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #0f172a; 
         }
-
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #334155; 
             border-radius: 4px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #475569; 
         }
-
+        
         .tab-content {
             display: none;
             animation: fadeIn 0.2s ease-in-out;
         }
-
         .tab-content.active {
             display: block;
         }
-
+        
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .btn-selected {
-            background-color: rgba(147, 51, 234, 0.2);
-            /* purple-500/20 */
-            border-color: rgb(168, 85, 247);
-            /* purple-500 */
-            color: rgb(233, 213, 255);
-            /* purple-200 */
+            background-color: rgba(147, 51, 234, 0.2); /* purple-500/20 */
+            border-color: rgb(168, 85, 247); /* purple-500 */
+            color: rgb(233, 213, 255); /* purple-200 */
         }
-
+        
         .btn-selected-blue {
             background-color: rgba(59, 130, 246, 0.2);
             border-color: rgb(59, 130, 246);
@@ -83,9 +68,7 @@
         }
     </style>
 </head>
-
-<body
-    class="bg-slate-900 text-slate-100 font-sans selection:bg-purple-500 selection:text-white min-h-screen flex flex-col">
+<body class="bg-slate-900 text-slate-100 font-sans selection:bg-purple-500 selection:text-white min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-slate-950 border-b border-slate-800 p-4 sticky top-0 z-20 shadow-xl">
@@ -95,28 +78,23 @@
                     <i data-lucide="music" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
-                    <h1
-                        class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
                         Suno Architect
                     </h1>
                     <p class="text-xs text-slate-400">Professional Prompt & Structure Generator</p>
                 </div>
             </div>
             <div class="flex space-x-1 bg-slate-800 rounded-lg p-1">
-                <button onclick="switchTab('style')" id="tab-btn-style"
-                    class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-slate-700 text-white shadow-sm">
+                <button onclick="switchTab('style')" id="tab-btn-style" class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-slate-700 text-white shadow-sm">
                     Sonic Blueprint
                 </button>
-                <button onclick="switchTab('lyrics')" id="tab-btn-lyrics"
-                    class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
+                <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
                     Lyrics & Structure
                 </button>
-                <button onclick="switchTab('json')" id="tab-btn-json"
-                    class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
+                <button onclick="switchTab('json')" id="tab-btn-json" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
                     JSON Output
                 </button>
-                <button onclick="switchTab('guide')" id="tab-btn-guide"
-                    class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
+                <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white">
                     Guide
                 </button>
             </div>
@@ -124,14 +102,14 @@
     </header>
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
-
+        
         <!-- TAB: SONIC BLUEPRINT -->
         <div id="tab-style" class="tab-content active">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
+                
                 <!-- Left Column: Controls -->
                 <div class="lg:col-span-7 space-y-8 pb-20">
-
+                    
                     <!-- Genre Section -->
                     <section class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
                         <div class="flex items-center space-x-2 mb-4">
@@ -141,10 +119,8 @@
                         <div id="genre-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                             <!-- JS will inject genres here -->
                         </div>
-                        <div id="subgenre-wrapper"
-                            class="hidden bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Subgenres
-                                (Select Multiple)</p>
+                        <div id="subgenre-wrapper" class="hidden bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Subgenres (Select Multiple)</p>
                             <div id="subgenre-container" class="flex flex-wrap gap-2">
                                 <!-- JS will inject subgenres here -->
                             </div>
@@ -157,10 +133,9 @@
                             <i data-lucide="music" class="w-5 h-5 text-blue-400"></i>
                             <h2 class="text-lg font-semibold text-slate-200">2. The Players (Instruments & Voice)</h2>
                         </div>
-
+                        
                         <div class="mb-6">
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">
-                                Instrumentation</p>
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Instrumentation</p>
                             <div id="instruments-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
@@ -176,18 +151,15 @@
                             <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
                             <h2 class="text-lg font-semibold text-slate-200">3. Vibe & Grid (Mood & Tempo)</h2>
                         </div>
-
+                        
                         <div class="mb-6">
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Mood /
-                                Atmosphere</p>
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Mood / Atmosphere</p>
                             <div id="moods-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
                         <div>
-                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Tempo & Feel
-                            </p>
-                            <select id="tempo-select" onchange="updatePrompt()"
-                                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500 text-slate-200">
+                            <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Tempo & Feel</p>
+                            <select id="tempo-select" onchange="updatePrompt()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500 text-slate-200">
                                 <option value="">Select Tempo...</option>
                                 <!-- JS Populated -->
                             </select>
@@ -210,37 +182,29 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-bold text-white">Style Prompt</h3>
                             <div class="flex space-x-2">
-                                <button id="btn-clear-all" onclick="clearAll()"
-                                    class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded"
-                                    title="Clear All">
+                                <button id="btn-clear-all" onclick="clearAll()" class="p-2 text-slate-400 hover:text-red-400 transition-colors rounded" title="Clear All">
                                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
 
                         <div class="relative mb-4">
-                            <textarea id="style-output" readonly
-                                class="w-full h-40 bg-slate-950 border border-slate-600 rounded-lg p-4 text-slate-200 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500"
-                                placeholder="Select options from the left to build your prompt..."></textarea>
-                            <div id="char-count"
-                                class="absolute bottom-3 right-3 text-xs text-slate-500 bg-slate-950/80 px-2 py-1 rounded">
+                            <textarea id="style-output" readonly class="w-full h-40 bg-slate-950 border border-slate-600 rounded-lg p-4 text-slate-200 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500" placeholder="Select options from the left to build your prompt..."></textarea>
+                            <div id="char-count" class="absolute bottom-3 right-3 text-xs text-slate-500 bg-slate-950/80 px-2 py-1 rounded">
                                 0/120 chars
                             </div>
                         </div>
 
                         <div class="flex flex-col gap-3">
-                            <button onclick="copyToClipboard('style-output', this)"
-                                class="w-full py-3 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all bg-purple-600 hover:bg-purple-500 text-white group">
+                            <button onclick="copyToClipboard('style-output', this)" class="w-full py-3 rounded-lg font-bold flex items-center justify-center space-x-2 transition-all bg-purple-600 hover:bg-purple-500 text-white group">
                                 <i data-lucide="copy" class="w-5 h-5 group-hover:hidden"></i>
                                 <i data-lucide="check" class="w-5 h-5 hidden group-[.copied]:block"></i>
                                 <span class="btn-text">Copy Style Prompt</span>
                             </button>
-
-                            <div id="length-warning"
-                                class="hidden flex items-start space-x-2 text-amber-400 bg-amber-900/20 p-3 rounded-lg text-xs">
+                            
+                            <div id="length-warning" class="hidden flex items-start space-x-2 text-amber-400 bg-amber-900/20 p-3 rounded-lg text-xs">
                                 <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-                                <p>Your prompt is long (>120 chars). Suno works best with concise prompts. Consider
-                                    removing less critical tags.</p>
+                                <p>Your prompt is long (>120 chars). Suno works best with concise prompts. Consider removing less critical tags.</p>
                             </div>
                         </div>
 
@@ -249,8 +213,7 @@
                             <p class="text-xs text-slate-400 mb-3">
                                 Switch to the "Lyrics & Structure" tab to write your song content using metatags.
                             </p>
-                            <button onclick="switchTab('lyrics')"
-                                class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg transition-colors flex items-center justify-center space-x-2">
+                            <button onclick="switchTab('lyrics')" class="w-full py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg transition-colors flex items-center justify-center space-x-2">
                                 <span>Go to Lyrics Editor</span>
                                 <i data-lucide="play" class="w-3 h-3"></i>
                             </button>
@@ -264,22 +227,19 @@
         <div id="tab-lyrics" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-140px)] min-h-[600px]">
                 <!-- Main Editor -->
-                <div class="lg:col-span-8 h-full flex flex-col">
-                    <div
-                        class="bg-slate-800 border border-slate-700 rounded-t-xl p-4 flex items-center justify-between">
-                        <h2 class="font-semibold text-slate-200 flex items-center">
-                            <i data-lucide="mic" class="w-4 h-4 mr-2 text-purple-400"></i>
-                            Lyrics & Structure Editor
-                        </h2>
-                        <div class="text-xs text-slate-400 hidden sm:block">
-                            Use metatags to control flow
-                        </div>
-                    </div>
-
-                    <div class="flex-grow relative bg-slate-900 border-x border-slate-700">
-                        <textarea id="lyrics-input"
-                            class="w-full h-full p-6 bg-transparent text-slate-200 font-mono text-sm leading-relaxed focus:outline-none resize-none"
-                            placeholder="[Intro]
+               <div class="lg:col-span-8 h-full flex flex-col">
+                 <div class="bg-slate-800 border border-slate-700 rounded-t-xl p-4 flex items-center justify-between">
+                   <h2 class="font-semibold text-slate-200 flex items-center">
+                     <i data-lucide="mic" class="w-4 h-4 mr-2 text-purple-400"></i>
+                     Lyrics & Structure Editor
+                   </h2>
+                   <div class="text-xs text-slate-400 hidden sm:block">
+                     Use metatags to control flow
+                   </div>
+                 </div>
+                 
+                 <div class="flex-grow relative bg-slate-900 border-x border-slate-700">
+                    <textarea id="lyrics-input" class="w-full h-full p-6 bg-transparent text-slate-200 font-mono text-sm leading-relaxed focus:outline-none resize-none" placeholder="[Intro]
 [Instrumental Hook]
 
 [Verse 1]
@@ -291,71 +251,67 @@ And periods for longer stops.
 Make it catchy!
 
 [Outro]"></textarea>
-                    </div>
-
-                    <div
-                        class="bg-slate-800 border border-slate-700 rounded-b-xl p-4 flex justify-between items-center">
-                        <div class="text-xs text-slate-500 hidden sm:block">
-                            Pro Tip: Use <span
-                                class="font-mono bg-slate-700 px-1 rounded text-slate-300">Da-a-shes</span> for
-                            melismas.
-                        </div>
-                        <button onclick="copyToClipboard('lyrics-input', this)"
-                            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg font-medium transition-colors flex items-center space-x-2">
-                            <span class="btn-text">Copy Lyrics</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Toolbox -->
-                <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10">
-
-                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
-                            <h3 class="font-semibold text-slate-200">Structure Tags</h3>
-                        </div>
-                        <div id="structure-tags-container" class="grid grid-cols-2 gap-2">
-                            <!-- JS Injected -->
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
-                            <h3 class="font-semibold text-slate-200">Performance Cues</h3>
-                        </div>
-                        <div id="performance-tags-container" class="grid grid-cols-2 gap-2">
-                            <!-- JS Injected -->
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-900/20 border border-blue-800/50 rounded-xl p-5">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i data-lucide="type" class="w-5 h-5 text-blue-400"></i>
-                            <h3 class="font-semibold text-blue-200">Phrasing Guide</h3>
-                        </div>
-                        <ul class="space-y-3 text-sm text-slate-300">
-                            <li class="flex gap-2">
-                                <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">,</span>
-                                <span>Short pause (breath/rest).</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">.</span>
-                                <span>Full stop (longer rest).</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">--</span>
-                                <span>Melisma (stretching a wo-o-rd).</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">CAPS</span>
-                                <span>Accent/Strong emphasis.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+                 </div>
+   
+                 <div class="bg-slate-800 border border-slate-700 rounded-b-xl p-4 flex justify-between items-center">
+                   <div class="text-xs text-slate-500 hidden sm:block">
+                     Pro Tip: Use <span class="font-mono bg-slate-700 px-1 rounded text-slate-300">Da-a-shes</span> for melismas.
+                   </div>
+                   <button onclick="copyToClipboard('lyrics-input', this)" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg font-medium transition-colors flex items-center space-x-2">
+                     <span class="btn-text">Copy Lyrics</span>
+                   </button>
+                 </div>
+               </div>
+   
+               <!-- Toolbox -->
+               <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10">
+                 
+                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                   <div class="flex items-center space-x-2 mb-4">
+                     <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
+                     <h3 class="font-semibold text-slate-200">Structure Tags</h3>
+                   </div>
+                   <div id="structure-tags-container" class="grid grid-cols-2 gap-2">
+                       <!-- JS Injected -->
+                   </div>
+                 </div>
+   
+                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                   <div class="flex items-center space-x-2 mb-4">
+                     <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                     <h3 class="font-semibold text-slate-200">Performance Cues</h3>
+                   </div>
+                   <div id="performance-tags-container" class="grid grid-cols-2 gap-2">
+                        <!-- JS Injected -->
+                   </div>
+                 </div>
+   
+                 <div class="bg-blue-900/20 border border-blue-800/50 rounded-xl p-5">
+                   <div class="flex items-center space-x-2 mb-4">
+                     <i data-lucide="type" class="w-5 h-5 text-blue-400"></i>
+                     <h3 class="font-semibold text-blue-200">Phrasing Guide</h3>
+                   </div>
+                   <ul class="space-y-3 text-sm text-slate-300">
+                     <li class="flex gap-2">
+                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">,</span>
+                       <span>Short pause (breath/rest).</span>
+                     </li>
+                     <li class="flex gap-2">
+                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">.</span>
+                       <span>Full stop (longer rest).</span>
+                     </li>
+                     <li class="flex gap-2">
+                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">--</span>
+                       <span>Melisma (stretching a wo-o-rd).</span>
+                     </li>
+                     <li class="flex gap-2">
+                       <span class="font-mono bg-slate-800 px-1.5 rounded text-blue-300">CAPS</span>
+                       <span>Accent/Strong emphasis.</span>
+                     </li>
+                   </ul>
+                 </div>
+               </div>
+             </div>
         </div>
 
         <!-- TAB: JSON OUTPUT -->
@@ -363,24 +319,22 @@ Make it catchy!
             <div class="max-w-4xl mx-auto space-y-8 pb-20">
                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-bold text-white flex items-center">
+                         <h2 class="text-xl font-bold text-white flex items-center">
                             <i data-lucide="code" class="w-6 h-6 mr-2 text-green-400"></i>
                             Prompt JSON
                         </h2>
-                        <button onclick="copyToClipboard('json-output', this)"
-                            class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg font-medium transition-colors flex items-center space-x-2">
+                        <button onclick="copyToClipboard('json-output', this)" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg font-medium transition-colors flex items-center space-x-2">
                             <i data-lucide="copy" class="w-4 h-4"></i>
                             <span class="btn-text">Copy JSON</span>
                         </button>
                     </div>
-
+                   
                     <p class="text-sm text-slate-400 mb-4">
                         This format includes structured metadata for archiving your prompt settings.
                     </p>
 
                     <div class="relative">
-                        <textarea id="json-output" readonly
-                            class="w-full h-96 bg-slate-950 border border-slate-600 rounded-lg p-4 text-emerald-400 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-green-500"></textarea>
+                        <textarea id="json-output" readonly class="w-full h-96 bg-slate-950 border border-slate-600 rounded-lg p-4 text-emerald-400 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-green-500"></textarea>
                     </div>
                 </div>
             </div>
@@ -390,43 +344,40 @@ Make it catchy!
         <div id="tab-guide" class="tab-content">
             <div class="max-w-3xl mx-auto space-y-8 pb-20">
                 <div class="bg-slate-800 border border-slate-700 rounded-xl p-8">
-                    <h2 class="text-2xl font-bold text-white mb-6">The "Vibe-Locked" Musician</h2>
-                    <p class="text-slate-300 leading-relaxed mb-6">
-                        Treat Suno as a session musician who cannot read notes, but follows a strict "Lead Sheet."
-                        Your job is to architect the constraints.
-                    </p>
-
-                    <div class="space-y-6">
-                        <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
-                            <h3 class="text-lg font-semibold text-purple-400 mb-2">1. The Sonic Blueprint</h3>
-                            <p class="text-sm text-slate-400 mb-4">
-                                The <strong>Style Prompt</strong> is a stack of layers. Order matters less than clarity,
-                                but a good habit is:
-                            </p>
-                            <ul class="list-disc list-inside space-y-1 text-slate-300 text-sm">
-                                <li><strong>Foundation:</strong> Genre/Subgenre (e.g., Melodic Techno)</li>
-                                <li><strong>Players:</strong> Instruments (e.g., Moog Bass, 808s)</li>
-                                <li><strong>Grid:</strong> Tempo & Feel (e.g., 120 BPM, Syncopated)</li>
-                                <li><strong>Engineer:</strong> Mix (e.g., Sidechained, Analog warmth)</li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
-                            <h3 class="text-lg font-semibold text-blue-400 mb-2">2. The Comping Workflow</h3>
-                            <p class="text-sm text-slate-400 mb-4">
-                                Never generate a full song at once.
-                            </p>
-                            <ul class="list-disc list-inside space-y-2 text-slate-300 text-sm">
-                                <li><strong>Work in Sections:</strong> Generate 60-90s blocks.</li>
-                                <li><strong>The Overlap Stitch:</strong> When extending, set the continuation point
-                                    0.5-1.0s <em>before</em> the actual end to allow the AI to crossfade.</li>
-                                <li><strong>Surgical Edits:</strong> Use "Replace Section" to re-roll specific verses
-                                    without changing the whole track.</li>
-                            </ul>
-                        </div>
+                  <h2 class="text-2xl font-bold text-white mb-6">The "Vibe-Locked" Musician</h2>
+                  <p class="text-slate-300 leading-relaxed mb-6">
+                    Treat Suno as a session musician who cannot read notes, but follows a strict "Lead Sheet." 
+                    Your job is to architect the constraints.
+                  </p>
+                  
+                  <div class="space-y-6">
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
+                      <h3 class="text-lg font-semibold text-purple-400 mb-2">1. The Sonic Blueprint</h3>
+                      <p class="text-sm text-slate-400 mb-4">
+                        The <strong>Style Prompt</strong> is a stack of layers. Order matters less than clarity, but a good habit is:
+                      </p>
+                      <ul class="list-disc list-inside space-y-1 text-slate-300 text-sm">
+                        <li><strong>Foundation:</strong> Genre/Subgenre (e.g., Melodic Techno)</li>
+                        <li><strong>Players:</strong> Instruments (e.g., Moog Bass, 808s)</li>
+                        <li><strong>Grid:</strong> Tempo & Feel (e.g., 120 BPM, Syncopated)</li>
+                        <li><strong>Engineer:</strong> Mix (e.g., Sidechained, Analog warmth)</li>
+                      </ul>
                     </div>
+    
+                    <div class="bg-slate-900/50 p-6 rounded-lg border border-slate-700/50">
+                      <h3 class="text-lg font-semibold text-blue-400 mb-2">2. The Comping Workflow</h3>
+                      <p class="text-sm text-slate-400 mb-4">
+                        Never generate a full song at once.
+                      </p>
+                      <ul class="list-disc list-inside space-y-2 text-slate-300 text-sm">
+                        <li><strong>Work in Sections:</strong> Generate 60-90s blocks.</li>
+                        <li><strong>The Overlap Stitch:</strong> When extending, set the continuation point 0.5-1.0s <em>before</em> the actual end to allow the AI to crossfade.</li>
+                        <li><strong>Surgical Edits:</strong> Use "Replace Section" to re-roll specific verses without changing the whole track.</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
         </div>
 
     </main>
@@ -435,59 +386,59 @@ Make it catchy!
         // --- DATA CONSTANTS ---
         const GENRES = {
             "Rock": [
-                "Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock",
-                "Industrial Rock", "Math Rock", "Post-Rock", "Progressive Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Shoegaze", "Soft Rock", "Southern Rock",
+                "Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", 
+                "Industrial Rock", "Math Rock", "Post-Rock", "Progressive Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Shoegaze", "Soft Rock", "Southern Rock", 
                 "Stoner Rock", "Surf Rock"
             ],
             "Metal": [
-                "Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal",
-                "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Latin Metal", "Metalcore", "Nu Metal", "Power Metal", "Progressive Metal",
+                "Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal", 
+                "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Latin Metal", "Metalcore", "Nu Metal", "Power Metal", "Progressive Metal", 
                 "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal", "Viking Metal"
             ],
             "Electronic": [
-                "Acid House", "Ambient", "Big Beat", "Breakbeat", "Chiptune", "Deep House", "Drum and Bass", "Dubstep", "Electro", "Eurodance", "Future Bass",
-                "Gabber", "Garage", "Hardstyle", "House", "IDM", "Industrial", "Interstellar Synth", "Jungle", "Lo-Fi", "Minimal", "Synthwave", "Techno",
+                "Acid House", "Ambient", "Big Beat", "Breakbeat", "Chiptune", "Deep House", "Drum and Bass", "Dubstep", "Electro", "Eurodance", "Future Bass", 
+                "Gabber", "Garage", "Hardstyle", "House", "IDM", "Industrial", "Interstellar Synth", "Jungle", "Lo-Fi", "Minimal", "Synthwave", "Techno", 
                 "Trance", "Trap", "Trip-Hop", "UK Garage", "Vaporwave"
             ],
             "Pop": [
-                "Art Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "Chamber Pop", "City Pop", "Dance-Pop", "Dream Pop", "Electropop", "Europop", "Hyperpop",
+                "Art Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "Chamber Pop", "City Pop", "Dance-Pop", "Dream Pop", "Electropop", "Europop", "Hyperpop", 
                 "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Progressive Pop", "Psychedelic Pop", "Somber Pop", "Sophisti-Pop", "Synth-Pop", "Teen Pop"
             ],
             "Hip Hop": [
-                "Alternative Hip Hop", "Boom Bap", "Conscious Hip Hop", "Crunk", "Drill", "Experimental Hip Hop", "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop",
+                "Alternative Hip Hop", "Boom Bap", "Conscious Hip Hop", "Crunk", "Drill", "Experimental Hip Hop", "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", 
                 "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", "Turntablism", "Underground Hip Hop"
             ],
             "R&B/Soul": [
-                "Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Motown", "Neo-Soul", "New Jack Swing",
+                "Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Motown", "Neo-Soul", "New Jack Swing", 
                 "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul", "Southern Soul"
             ],
             "Jazz": [
-                "Acid Jazz", "Afro-Cuban Jazz", "Atmospheric Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz",
+                "Acid Jazz", "Afro-Cuban Jazz", "Atmospheric Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz", 
                 "Fusion", "Gypsy Jazz", "Hard Bop", "Latin Jazz", "Modal Jazz", "Smooth Jazz", "Soul Jazz", "Swing", "Third Stream"
             ],
             "Folk/Country": [
-                "Alt-Country", "Americana", "Appalachian Folk", "Bluegrass", "Contemporary Folk", "Country Pop", "Country Rock", "Dark Folk", "Experimental Folk",
-                "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", "Neofolk", "Outlaw Country", "Psychedelic Folk", "Traditional Country",
+                "Alt-Country", "Americana", "Appalachian Folk", "Bluegrass", "Contemporary Folk", "Country Pop", "Country Rock", "Dark Folk", "Experimental Folk", 
+                "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", "Neofolk", "Outlaw Country", "Psychedelic Folk", "Traditional Country", 
                 "Traditional Folk", "Western Swing"
             ],
             "Classical/Score": [
-                "Ambient", "Avant-Garde", "Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Contemporary Classical", "Drone",
-                "Early Music", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Creative", "Musique Concrète", "Neoclassical",
+                "Ambient", "Avant-Garde", "Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Contemporary Classical", "Drone", 
+                "Early Music", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Creative", "Musique Concrète", "Neoclassical", 
                 "Noise", "Opera", "Orchestral", "Renaissance", "Romantic Period", "Sound Art", "Soundtrack", "String Quartet", "Symphonic"
             ],
             "Latin/World": [
-                "Afrobeat", "Bachata", "Bhangra", "Bolero", "Bossa Nova", "Calypso", "Cumbia", "Dancehall", "Flamenco", "Highlife", "Klezmer", "Latin Groove",
-                "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Merengue", "Polka", "Raggamuffin", "Reggae", "Reggaeton", "Salsa", "Samba", "Ska", "Soca",
+                "Afrobeat", "Bachata", "Bhangra", "Bolero", "Bossa Nova", "Calypso", "Cumbia", "Dancehall", "Flamenco", "Highlife", "Klezmer", "Latin Groove", 
+                "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Merengue", "Polka", "Raggamuffin", "Reggae", "Reggaeton", "Salsa", "Samba", "Ska", "Soca", 
                 "Tango", "Tejano", "Tropicalia", "Zouk"
             ],
-            "Blues/Roots": [
-                "Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Gospel", "Jump Blues", "Piedmont Blues", "Rhythm and Blues",
+             "Blues/Roots": [
+                "Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Gospel", "Jump Blues", "Piedmont Blues", "Rhythm and Blues", 
                 "Roots Rock", "Spirituals", "Swamp Blues", "Texas Blues", "Zydeco"
-            ],
-            "Experimental/Odd": [
-                "Avant-Garde", "Breakcore", "Dark Ambient", "Dungeon Synth", "Glitch", "Hauntology", "Japanoise", "Lowercase", "Musique Concrète", "No Wave",
-                "Noise", "Outsider Music", "Plunderphonics", "Sound Collage", "Vaporwave", "Witch House"
-            ]
+             ],
+             "Experimental/Odd": [
+                 "Avant-Garde", "Breakcore", "Dark Ambient", "Dungeon Synth", "Glitch", "Hauntology", "Japanoise", "Lowercase", "Musique Concrète", "No Wave", 
+                 "Noise", "Outsider Music", "Plunderphonics", "Sound Collage", "Vaporwave", "Witch House"
+             ]
         };
 
         const INSTRUMENTS = [
@@ -495,27 +446,27 @@ Make it catchy!
             "Piano", "Rhodes", "Wurlitzer", "Synthesizer", "Analog Synth", "Pad", "Arpeggiator",
             "Drums", "808 Drums", "909 Kit", "Acoustic Drums", "Breakbeat", "Congas", "Timbales",
             "Strings", "Cello", "Violin", "Brass Section", "Saxophone", "Trumpet", "Flute", "Toy Piano",
-            "Accordion", "Bagpipes", "Banjo", "Clarinet", "Didgeridoo", "Glockenspiel", "Harmonica", "Harp",
-            "Harpsichord", "Kalimba", "Mandolin", "Marimba", "Mellotron", "Oboe", "Organ", "Sitar", "Steel Drums",
+            "Accordion", "Bagpipes", "Banjo", "Clarinet", "Didgeridoo", "Glockenspiel", "Harmonica", "Harp", 
+            "Harpsichord", "Kalimba", "Mandolin", "Marimba", "Mellotron", "Oboe", "Organ", "Sitar", "Steel Drums", 
             "Theremin", "Trombone", "Tuba", "Ukulele", "Vibraphone", "Xylophone", "Zither"
         ];
 
         const VOICES = [
-            "Male Vocals", "Female Vocals", "Androgynous Vocals", "Choir", "Group Backing Vocals",
+            "Male Vocals", "Female Vocals", "Androgynous Vocals", "Choir", "Group Backing Vocals", 
             "Whisper", "Screaming", "Growling", "Spoken Word", "Rap Flow", "Autotune", "Operatic", "Ethereal",
-            "Baritone", "Bass", "Alto", "Soprano", "Falsetto", "Raspy", "Breathy", "Guttural", "Robot", "Vocoder",
+            "Baritone", "Bass", "Alto", "Soprano", "Falsetto", "Raspy", "Breathy", "Guttural", "Robot", "Vocoder", 
             "Chant", "Gang Vocals", "Children's Choir", "Gospel Choir"
         ];
 
         const MOODS = [
-            "Aggressive", "Anxious", "Calm", "Chaotic", "Cinematic", "Dark", "Dreamy", "Driving",
-            "Eerie", "Energetic", "Epic", "Ethereal", "Euphoric", "Gloomy", "Groovy", "Haunting",
-            "Hopeful", "Hypnotic", "Intense", "Melancholy", "Nostalgic", "Passionate", "Playful", "Psychedelic",
+            "Aggressive", "Anxious", "Calm", "Chaotic", "Cinematic", "Dark", "Dreamy", "Driving", 
+            "Eerie", "Energetic", "Epic", "Ethereal", "Euphoric", "Gloomy", "Groovy", "Haunting", 
+            "Hopeful", "Hypnotic", "Intense", "Melancholy", "Nostalgic", "Passionate", "Playful", "Psychedelic", 
             "Romantic", "Sad", "Sentimental", "Spooky", "Swirling", "Tense", "Uplifting", "Whimsical",
-            "Angry", "Bittersweet", "Bouncy", "Chill", "Confident", "Dramatic", "Emotional", "Enigmatic",
-            "Funky", "Happy", "Heavy", "Inspirational", "Joyful", "Laid-back", "Light", "Lush", "Majestic",
-            "Mellow", "Mysterious", "Optimistic", "Peaceful", "Powerful", "Quirky", "Reflective", "Relaxing",
-            "Retro", "Serious", "Sexy", "Silly", "Soothing", "Sophisticated", "Soulful", "Spacey", "Spiritual",
+            "Angry", "Bittersweet", "Bouncy", "Chill", "Confident", "Dramatic", "Emotional", "Enigmatic", 
+            "Funky", "Happy", "Heavy", "Inspirational", "Joyful", "Laid-back", "Light", "Lush", "Majestic", 
+            "Mellow", "Mysterious", "Optimistic", "Peaceful", "Powerful", "Quirky", "Reflective", "Relaxing", 
+            "Retro", "Serious", "Sexy", "Silly", "Soothing", "Sophisticated", "Soulful", "Spacey", "Spiritual", 
             "Suspenseful", "Sweet", "Trippy", "Upbeat", "Warm"
         ];
 
@@ -523,16 +474,16 @@ Make it catchy!
             "Slow (Adagio)", "Walking Pace (Andante)", "Fast (Allegro)", "Very Fast (Presto)",
             "Driving 4/4", "Groove", "Half-time", "Shuffle", "Syncopated", "Swing", "Triplet Feel",
             "Rubato", "Free Tempo", "60 BPM", "88 BPM", "90 BPM", "120 BPM", "125 BPM", "140 BPM", "170 BPM",
-            "Blast Beat", "Breakbeat", "D-Beat", "Double Time", "Down-tempo", "Four-on-the-Floor", "Latin Groove",
+            "Blast Beat", "Breakbeat", "D-Beat", "Double Time", "Down-tempo", "Four-on-the-Floor", "Latin Groove", 
             "Motorik", "Polyrhythmic", "Skank", "Slow Jam", "Straight", "Up-tempo", "Waltz (3/4)"
         ];
 
         const PRODUCTION = [
-            "Analog Warmth", "Clean", "Compressed", "Distorted", "Dry Mix", "Gated Reverb",
-            "Heavy Reverb", "Hi-Fi", "Lo-Fi", "Minimal", "Muddy", "Raw", "Saturated",
+            "Analog Warmth", "Clean", "Compressed", "Distorted", "Dry Mix", "Gated Reverb", 
+            "Heavy Reverb", "Hi-Fi", "Lo-Fi", "Minimal", "Muddy", "Raw", "Saturated", 
             "Sidechained", "Spacious", "Vinyl Crackle", "Wide Stereo", "8-bit", "Wall of Sound",
-            "Bright", "Crisp", "Dark Mix", "Dense", "Echoey", "Flat", "Grainy", "Gritty", "Harsh", "Hollow",
-            "Loud", "Modern", "Muffled", "Noisy", "Old School", "Polished", "Punchy", "Retro", "Rich", "Sharp",
+            "Bright", "Crisp", "Dark Mix", "Dense", "Echoey", "Flat", "Grainy", "Gritty", "Harsh", "Hollow", 
+            "Loud", "Modern", "Muffled", "Noisy", "Old School", "Polished", "Punchy", "Retro", "Rich", "Sharp", 
             "Smooth", "Soft", "Sparse", "Thick", "Thin", "Tight", "Vintage", "Warm"
         ];
 
@@ -658,7 +609,7 @@ Make it catchy!
             const activeBtn = document.getElementById(`tab-btn-${tabName}`);
             activeBtn.classList.remove('text-slate-400', 'hover:text-white');
             activeBtn.classList.add('bg-slate-700', 'text-white', 'shadow-sm');
-
+            
             // If switching to JSON, refresh the JSON content
             if (tabName === 'json') {
                 generateJsonOutput();
@@ -680,7 +631,7 @@ Make it catchy!
             const subWrapper = document.getElementById('subgenre-wrapper');
             const subContainer = document.getElementById('subgenre-container');
             subContainer.innerHTML = '';
-
+            
             if (GENRES[cat]) {
                 subWrapper.classList.remove('hidden');
                 GENRES[cat].forEach(sub => {
@@ -738,12 +689,12 @@ Make it catchy!
             state.tempo = select.value;
 
             const parts = [];
-
+            
             // Logic: Subgenres are listed first, or Foundation if no subgenre
             if (state.subgenres.length > 0) {
-                parts.push(...state.subgenres);
+                 parts.push(...state.subgenres);
             } else if (state.genreCat) {
-                parts.push(state.genreCat);
+                 parts.push(state.genreCat);
             }
 
             if (state.tempo) parts.push(state.tempo);
@@ -754,16 +705,16 @@ Make it catchy!
 
             const text = parts.join(", ");
             document.getElementById('style-output').value = text;
-
+            
             // Char Count
             const countDiv = document.getElementById('char-count');
             countDiv.textContent = `${text.length}/120 chars`;
-
+            
             // Warning
             const warning = document.getElementById('length-warning');
             if (text.length > 120) warning.classList.remove('hidden');
             else warning.classList.add('hidden');
-
+            
             // Also update JSON if it is visible
             if (document.getElementById('tab-json').classList.contains('active')) {
                 generateJsonOutput();
@@ -778,13 +729,13 @@ Make it catchy!
             const before = text.substring(0, start);
             const after = text.substring(end);
 
-            const isStructureTag = tag.startsWith("[") && !tag.includes("Whisper") && !tag.includes("Crescendo");
+            const isStructureTag = tag.startsWith("[") && !tag.includes("Whisper") && !tag.includes("Crescendo"); 
             const prefix = (isStructureTag && before.length > 0 && !before.endsWith("\n")) ? "\n\n" : "";
             const suffix = isStructureTag ? "\n" : "";
 
             const newText = before + prefix + tag + suffix + after;
             textarea.value = newText;
-
+            
             textarea.focus();
             const newCursorPos = start + prefix.length + tag.length + suffix.length;
             textarea.setSelectionRange(newCursorPos, newCursorPos);
@@ -792,7 +743,7 @@ Make it catchy!
 
         function clearAll() {
             const btn = document.getElementById('btn-clear-all');
-
+            
             if (!deleteConfirm) {
                 deleteConfirm = true;
                 btn.classList.add('confirm-delete');
@@ -812,7 +763,7 @@ Make it catchy!
                     tempo: "",
                     production: []
                 };
-
+                
                 // Reset UI
                 // Genres
                 const allBtns = document.getElementById('genre-container').children;
@@ -831,19 +782,19 @@ Make it catchy!
                 initMultiSelectUI("production-container", PRODUCTION, "production", "btn-selected-emerald", "text-emerald-200", "bg-emerald-500/20", "border-emerald-500");
 
                 updatePrompt();
-
+                
                 // Reset Button
                 deleteConfirm = false;
                 btn.classList.remove('confirm-delete');
             }
         }
-
+        
         function generateJsonOutput() {
             // Get raw lyrics (preserving newlines for now)
             const lyrics = document.getElementById('lyrics-input').value;
             // For JSON output, we generally want newlines to be \n so it's a single string
             // However, the requested format might just want the string literal in the JSON
-
+            
             // Format genre string: either subgenres joined, or foundation if no subgenre
             // If both exist, maybe combine them? The user requested "stoner rock, space rock..." 
             // which implies a list.
@@ -873,7 +824,7 @@ Make it catchy!
                 "style_tags": styleTagsString,
                 "recording": recordingString
             };
-
+            
             document.getElementById('json-output').value = JSON.stringify(jsonObj, null, 4);
         }
 
@@ -881,24 +832,24 @@ Make it catchy!
             const copyText = document.getElementById(elementId);
             copyText.select();
             copyText.setSelectionRange(0, 99999); // Mobile
-
+            
             // Use execCommand for broader compatibility in iframes
             try {
                 document.execCommand('copy');
-
+                
                 const textSpan = btnElement.querySelector('.btn-text');
                 const originalText = textSpan.textContent;
-
+                
                 // Toggle icon if in Style tab
-                if (btnElement.querySelector('.group')) {
+                if(btnElement.querySelector('.group')) {
                     btnElement.classList.add('copied');
                 }
-
+                
                 textSpan.textContent = "Copied!";
-
+                
                 setTimeout(() => {
                     textSpan.textContent = originalText;
-                    if (btnElement.querySelector('.group')) {
+                    if(btnElement.querySelector('.group')) {
                         btnElement.classList.remove('copied');
                     }
                 }, 2000);
@@ -912,5 +863,6 @@ Make it catchy!
 
     </script>
 </body>
-
 </html>
+
+
