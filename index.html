@@ -241,6 +241,11 @@
                                 <label class="text-xs text-slate-500 uppercase font-bold block mb-1">Bio / Notes (Optional)</label>
                                 <textarea id="artist-bio" placeholder="Signature sound notes..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-slate-400 text-xs h-20 resize-none focus:outline-none focus:border-pink-500"></textarea>
                             </div>
+                            
+                            <div>
+                                <label class="text-xs text-slate-500 uppercase font-bold block mb-1">Signature Exclusions</label>
+                                <input type="text" id="artist-exclusions" placeholder="What does this band NEVER use? (e.g. Synths, Male Vocals)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-red-400 text-xs focus:outline-none focus:border-pink-500" oninput="updateExclusions(this.value)">
+                            </div>
 
                             <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
                                 <h4 class="text-xs font-bold text-slate-300 uppercase mb-3 flex items-center">
@@ -554,6 +559,15 @@
                         </div>
                         <div id="production-container" class="flex flex-wrap gap-2"></div>
                     </section>
+
+                    <!-- Exclusions (New Section) -->
+                    <section class="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="ban" class="w-5 h-5 text-red-400"></i>
+                            <h2 class="text-lg font-semibold text-slate-200">5. Forbidden Sounds (Exclusions)</h2>
+                        </div>
+                        <input type="text" id="exclusion-input" placeholder="e.g. Drums, Vocals, Acoustic, Piano..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-red-500" oninput="updateExclusions(this.value)">
+                    </section>
                 </div>
 
                 <!-- Right Column: Sticky Output -->
@@ -575,6 +589,17 @@
                             <textarea id="style-output" readonly class="w-full h-40 bg-slate-950 border border-slate-600 rounded-lg p-4 text-slate-200 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500" placeholder="Use the Style Tuner tab or select options here..."></textarea>
                             <div id="char-count" class="absolute bottom-3 right-3 text-xs text-slate-500 bg-slate-950/80 px-2 py-1 rounded">
                                 0/120 chars
+                            </div>
+                        </div>
+
+                        <!-- Exclusions Output -->
+                        <div class="relative mb-4">
+                            <label class="text-xs text-slate-500 uppercase font-bold mb-1 block">Exclusions (Negative Prompt)</label>
+                            <div class="flex gap-2">
+                                <input id="style-exclusions-output" readonly class="w-full bg-slate-950 border border-slate-600 rounded-lg px-3 py-2 text-slate-400 font-mono text-xs focus:outline-none" placeholder="No exclusions set">
+                                <button onclick="copyToClipboard('style-exclusions-output', this)" class="p-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors" title="Copy Exclusions">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
 
@@ -925,7 +950,8 @@ Make it catchy!
             moods: [],
             tempo: "",
             production: [],
-            singerDescription: "" // NEW
+            singerDescription: "",
+            exclusions: "" // Added exclusions to state
         };
         
         let dialState = {
@@ -1272,6 +1298,24 @@ Make it catchy!
             updatePrompt();
         }
 
+        // New function for exclusions
+        function updateExclusions(val) {
+            state.exclusions = val;
+            
+            // Sync all exclusion inputs across tabs
+            const blueprintInput = document.getElementById('exclusion-input');
+            const artistInput = document.getElementById('artist-exclusions');
+            const outputInput = document.getElementById('style-exclusions-output');
+
+            if(blueprintInput && blueprintInput.value !== val) blueprintInput.value = val;
+            if(artistInput && artistInput.value !== val) artistInput.value = val;
+            if(outputInput) outputInput.value = val;
+
+            if (document.getElementById('tab-artist').classList.contains('active')) {
+                updateArtistPreviewStats();
+            }
+        }
+
         function updatePrompt() {
             const select = document.getElementById('tempo-select');
             state.tempo = select.value;
@@ -1462,12 +1506,16 @@ Make it catchy!
                     moods: [],
                     tempo: "",
                     production: [],
-                    singerDescription: ""
+                    singerDescription: "",
+                    exclusions: ""
                 };
                 
                 document.getElementById('tempo-select').value = "";
                 document.getElementById('singer-desc').value = ""; // Clear input
-                
+                document.getElementById('exclusion-input').value = ""; // Clear exclusions
+                document.getElementById('style-exclusions-output').value = ""; 
+                if(document.getElementById('artist-exclusions')) document.getElementById('artist-exclusions').value = "";
+
                 document.querySelectorAll('#instruments-container button, #voices-container button, #moods-container button, #production-container button').forEach(b => {
                      b.classList.remove('btn-selected-blue', 'btn-selected-yellow', 'btn-selected-emerald', 'bg-purple-500/20', 'border-purple-500', 'text-purple-200');
                      b.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
@@ -1513,7 +1561,8 @@ Make it catchy!
                 "instruments": instrumentsString,
                 "persona": personaString,
                 "style_tags": styleTagsString,
-                "recording": recordingString
+                "recording": recordingString,
+                "exclusions": state.exclusions // Added exclusions
             };
             
             document.getElementById('json-output').value = JSON.stringify(jsonObj, null, 4);
@@ -1525,15 +1574,23 @@ Make it catchy!
             copyText.setSelectionRange(0, 99999); 
             try {
                 document.execCommand('copy');
-                const textSpan = btnElement.querySelector('.btn-text');
-                const originalText = textSpan.textContent;
-                if(btnElement.classList.contains('group')) btnElement.classList.add('copied');
-                
-                textSpan.textContent = "Copied!";
-                setTimeout(() => {
-                    textSpan.textContent = originalText;
-                    if(btnElement.classList.contains('group')) btnElement.classList.remove('copied');
-                }, 2000);
+                // Only act as a button if it is one (might be icon only)
+                if(btnElement.querySelector('.btn-text')) {
+                    const textSpan = btnElement.querySelector('.btn-text');
+                    const originalText = textSpan.textContent;
+                    if(btnElement.classList.contains('group')) btnElement.classList.add('copied');
+                    
+                    textSpan.textContent = "Copied!";
+                    setTimeout(() => {
+                        textSpan.textContent = originalText;
+                        if(btnElement.classList.contains('group')) btnElement.classList.remove('copied');
+                    }, 2000);
+                } else {
+                    // Simple tooltip feedback for icon buttons
+                    const originalTitle = btnElement.title;
+                    btnElement.title = "Copied!";
+                    setTimeout(() => btnElement.title = originalTitle, 2000);
+                }
             } catch (err) {
                 console.error('Fallback copy failed', err);
             }
@@ -1625,7 +1682,16 @@ Make it catchy!
             syncButtonList('production-container', state.production, "btn-selected-emerald");
 
             document.getElementById('tempo-select').value = state.tempo;
-            document.getElementById('singer-desc').value = state.singerDescription || ""; // Restore singer desc
+            document.getElementById('singer-desc').value = state.singerDescription || ""; 
+            
+            // Sync Exclusions
+            const exIn = document.getElementById('exclusion-input');
+            if(exIn) exIn.value = state.exclusions || "";
+            const exOut = document.getElementById('style-exclusions-output');
+            if(exOut) exOut.value = state.exclusions || "";
+            const artEx = document.getElementById('artist-exclusions');
+            if(artEx) artEx.value = state.exclusions || "";
+
             updatePrompt();
         }
 
@@ -1857,9 +1923,14 @@ Make it catchy!
                     <span class="text-slate-500">Instruments</span>
                     <span class="text-blue-300 text-right truncate pl-4">${state.instruments.length ? state.instruments.slice(0,3).join(", ") + (state.instruments.length > 3 ? '...' : '') : '-'}</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between border-b border-slate-800 pb-1 mb-1">
                     <span class="text-slate-500">Production</span>
                     <span class="text-emerald-400 text-right truncate pl-4">${state.production.length ? state.production.join(", ") : '-'}</span>
+                </div>
+                <!-- Exclusions -->
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Exclusions</span>
+                    <span class="text-red-400 text-right truncate pl-4 font-mono text-[10px]" title="${state.exclusions}">${state.exclusions || '-'}</span>
                 </div>
             `;
             stats.innerHTML = html;
@@ -1889,7 +1960,8 @@ Make it catchy!
                     instruments: [...state.instruments],
                     voices: [...state.voices],
                     production: [...state.production],
-                    singerDescription: state.singerDescription // Capture description
+                    singerDescription: state.singerDescription, // Capture description
+                    exclusions: state.exclusions // Capture Exclusions
                     // Note: We deliberately exclude Moods/Tempo so those can vary per song
                 }
             };
@@ -1925,7 +1997,8 @@ Make it catchy!
                     state.instruments = [...artist.profile.instruments];
                     state.voices = [...artist.profile.voices];
                     state.production = [...artist.profile.production];
-                    state.singerDescription = artist.profile.singerDescription || ""; // Load description
+                    state.singerDescription = artist.profile.singerDescription || ""; 
+                    state.exclusions = artist.profile.exclusions || ""; // Load exclusions
                     
                     // Reset variable fields so user can define them for the specific song
                     // Or keep them if we want a "Default Mood"? 
@@ -1989,8 +2062,8 @@ Make it catchy!
                         
                         <div class="flex flex-wrap gap-1 mb-3">
                             <span class="bg-slate-950 text-slate-400 px-2 py-1 rounded text-[10px] border border-slate-800">${p.genreCat}</span>
-                            ${p.singerDescription ? `<span class="bg-pink-900/20 text-pink-400 px-2 py-1 rounded text-[10px] border border-pink-900/30 truncate max-w-[150px] block">${p.singerDescription}</span>` : ''}
-                            ${p.voices[0] ? `<span class="bg-blue-900/20 text-blue-400 px-2 py-1 rounded text-[10px] border border-blue-900/30">${p.voices[0]}</span>` : ''}
+                            ${p.singerDescription ? `<span class="bg-pink-900/20 text-pink-400 px-2 py-1 rounded text-[10px] border border-pink-900/30 truncate max-w-[150px] block" title="${p.singerDescription}">${p.singerDescription}</span>` : ''}
+                            ${p.exclusions ? `<span class="bg-red-900/20 text-red-400 px-2 py-1 rounded text-[10px] border border-red-900/30 truncate max-w-[100px] block" title="Excludes: ${p.exclusions}">No ${p.exclusions}</span>` : ''}
                         </div>
 
                         <div class="mt-auto pt-2 border-t border-slate-800 flex justify-end">
