@@ -144,6 +144,30 @@
         .pad-btn.active-pad:active {
             box-shadow: 0 0 15px #a855f7, inset 0 0 10px rgba(168, 85, 247, 0.5);
         }
+        
+        /* Filter Chips */
+        .filter-chip {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #334155;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-chip:hover {
+            background: #475569;
+            color: #e2e8f0;
+        }
+        .filter-chip.active-filter {
+            background: #7e22ce; /* purple-700 */
+            color: white;
+            border-color: #a855f7;
+            box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+        }
 
     </style>
 </head>
@@ -206,9 +230,18 @@
                              <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Master Control</h2>
                         </div>
                         
-                        <div class="space-y-2">
-                            <label class="text-xs text-slate-500 uppercase font-bold">Genre Foundation</label>
-                            <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-950 border border-slate-700 rounded text-slate-300 text-sm px-3 py-3 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 font-mono">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs text-slate-500 uppercase font-bold">Category Filter</label>
+                                <span class="text-[10px] text-slate-600">Select a tag to filter genres</span>
+                            </div>
+                            
+                            <!-- Genre Filter Chips -->
+                            <div id="dial-category-filters" class="flex flex-wrap gap-2 max-h-28 overflow-y-auto custom-scrollbar p-1">
+                                <!-- JS Injected -->
+                            </div>
+
+                            <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-950 border border-slate-700 rounded text-slate-300 text-sm px-3 py-3 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 font-mono mt-2 shadow-inner">
                                 <option value="">[ SELECT BASE GENRE ]</option>
                                 <!-- JS Populated -->
                             </select>
@@ -517,8 +550,15 @@
                      <i data-lucide="mic" class="w-4 h-4 mr-2 text-purple-400"></i>
                      Lyrics & Structure Editor
                    </h2>
-                   <div class="text-xs text-slate-400 hidden sm:block">
-                     Use metatags to control flow
+                   
+                   <!-- SAVE BUTTON ADDED HERE -->
+                   <div class="flex items-center gap-2">
+                        <button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-400 transition-colors rounded hover:bg-slate-700" title="Save to Library">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                        </button>
+                        <div class="text-xs text-slate-400 hidden sm:block border-l border-slate-700 pl-2">
+                            Use metatags to control flow
+                        </div>
                    </div>
                  </div>
                  
@@ -557,13 +597,18 @@ Make it catchy!
                         <h3 class="font-semibold text-indigo-200">AI Lyric Generator</h3>
                     </div>
                     <div class="space-y-3">
-                         <input type="password" id="api-key" placeholder="Paste Gemini API Key here..." class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-2 focus:outline-none focus:border-indigo-500">
+                         <!-- Input Group -->
+                         <div class="flex space-x-2">
+                             <input type="password" id="api-key" placeholder="API Key" class="flex-grow bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+                             <button onclick="validateAndLoadModels()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors" title="Link Key & Load Valid Models">
+                                 <i data-lucide="link" class="w-4 h-4"></i>
+                             </button>
+                         </div>
                          
                          <!-- Model Selector -->
                          <select id="ai-model" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-2 focus:outline-none focus:border-indigo-500">
-                             <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fast)</option>
-                             <option value="gemini-1.5-pro">Gemini 1.5 Pro (Smart)</option>
-                             <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (Newest)</option>
+                             <option value="gemini-1.5-flash">Gemini 1.5 Flash (Default)</option>
+                             <option value="gemini-pro">Gemini 1.0 Pro</option>
                          </select>
 
                          <input type="text" id="lyric-topic" placeholder="What is the song about? (e.g. Space Travel)" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-2 focus:outline-none focus:border-indigo-500">
@@ -574,7 +619,7 @@ Make it catchy!
                              </button>
                          </div>
                          <p class="text-[10px] text-indigo-300/60 mt-2 italic text-center">
-                            Generates structure, lyrics, and style-based performance queues. Key is local only.
+                            Click 🔗 to load models valid for your key.
                          </p>
                     </div>
                  </div>
@@ -914,19 +959,90 @@ Make it catchy!
         }
 
         function initDialsGenreUI() {
-            const select = document.getElementById('dial-genre-select');
+            const container = document.getElementById('dial-category-filters');
+            container.innerHTML = '';
+
+            // Add "ALL" button
+            const allBtn = document.createElement('button');
+            allBtn.className = "filter-chip active-filter";
+            allBtn.textContent = "ALL";
+            allBtn.onclick = () => filterDialsGenre('ALL', allBtn);
+            container.appendChild(allBtn);
+
+            // Add Category buttons
             Object.keys(GENRES).forEach(cat => {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = cat;
-                GENRES[cat].forEach(sub => {
-                    const option = document.createElement('option');
-                    option.value = sub;
-                    option.textContent = sub;
-                    option.dataset.category = cat; 
-                    optGroup.appendChild(option);
-                });
-                select.appendChild(optGroup);
+                const btn = document.createElement('button');
+                btn.className = "filter-chip";
+                btn.textContent = cat;
+                btn.onclick = () => filterDialsGenre(cat, btn);
+                container.appendChild(btn);
             });
+
+            // Populate initial Select with ALL
+            populateDialSelect(null);
+        }
+
+        function filterDialsGenre(category, btnElement) {
+            // Update Active State
+            const container = document.getElementById('dial-category-filters');
+            Array.from(container.children).forEach(b => b.classList.remove('active-filter'));
+            btnElement.classList.add('active-filter');
+
+            // Populate Select
+            populateDialSelect(category === 'ALL' ? null : category);
+        }
+
+        function populateDialSelect(filterCategory) {
+            const select = document.getElementById('dial-genre-select');
+            const currentValue = select.value; // Attempt to preserve selection if possible
+            select.innerHTML = ''; // Clear
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = filterCategory ? `[ SELECT ${filterCategory.toUpperCase()} GENRE ]` : "[ SELECT BASE GENRE ]";
+            select.appendChild(defaultOpt);
+
+            const categories = filterCategory ? [filterCategory] : Object.keys(GENRES);
+
+            categories.forEach(cat => {
+                if (filterCategory) {
+                    // Flat list for single category
+                    GENRES[cat].forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub;
+                        option.textContent = sub;
+                        option.dataset.category = cat;
+                        select.appendChild(option);
+                    });
+                } else {
+                    // Optgroups for ALL
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = cat;
+                    GENRES[cat].forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub;
+                        option.textContent = sub;
+                        option.dataset.category = cat; 
+                        optGroup.appendChild(option);
+                    });
+                    select.appendChild(optGroup);
+                }
+            });
+
+            // Restore value if it exists in new list
+            // If not, it defaults to empty/first option
+            // This is actually okay behavior for a filter action
+             if (currentValue) {
+                // Check if value exists in new options
+                let exists = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === currentValue) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (exists) select.value = currentValue;
+            }
         }
 
         function initMultiSelectUI(containerId, dataList, stateKey, activeClass, activeText, activeBg, activeBorder) {
@@ -1137,19 +1253,83 @@ Make it catchy!
             textarea.setSelectionRange(newCursorPos, newCursorPos);
         }
 
+        // --- VALIDATE AND LOAD MODELS (The Fix) ---
+        async function validateAndLoadModels() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            const btn = document.querySelector('button[title="Link Key & Load Valid Models"]');
+            
+            if (!apiKey) {
+                alert("Please enter your API Key first.");
+                return;
+            }
+
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="animate-spin w-4 h-4" data-lucide="loader-2"></i>';
+            lucide.createIcons();
+
+            try {
+                // Call ListModels endpoint
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    let msg = `Error ${response.status}: ${response.statusText}`;
+                    if (errorData.error) msg += `\n${errorData.error.message}`;
+                    throw new Error(msg);
+                }
+
+                const data = await response.json();
+                
+                if (!data.models) {
+                    throw new Error("No models found for this key.");
+                }
+
+                // Filter for generateContent supported models
+                const validModels = data.models.filter(m => 
+                    m.supportedGenerationMethods && 
+                    m.supportedGenerationMethods.includes("generateContent")
+                );
+
+                const select = document.getElementById('ai-model');
+                select.innerHTML = ''; // Clear existing
+
+                if (validModels.length === 0) {
+                    alert("Key is valid, but no text generation models are available to it.");
+                    return;
+                }
+
+                validModels.forEach(m => {
+                    const option = document.createElement('option');
+                    // Remove 'models/' prefix for the value if present, but keep it clean
+                    const value = m.name.replace('models/', '');
+                    option.value = value;
+                    option.textContent = `${m.displayName} (${value})`;
+                    select.appendChild(option);
+                });
+
+                // Prioritize Flash if available
+                const flash = validModels.find(m => m.name.includes('flash'));
+                if (flash) select.value = flash.name.replace('models/', '');
+
+                alert(`Success! Loaded ${validModels.length} valid models for your key.`);
+
+            } catch (e) {
+                alert(`Validation Failed:\n${e.message}\n\nCheck if the 'Generative Language API' is enabled in Google Cloud Console if using a Cloud Project key.`);
+            } finally {
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+            }
+        }
+
         // --- NEW: GENERATE LYRICS WITH GEMINI ---
         async function generateLyrics(type, event) {
             const apiKey = document.getElementById('api-key').value.trim();
-            const selectedModel = document.getElementById('ai-model').value; // Get selected model
+            let selectedModel = document.getElementById('ai-model').value; 
             
             if (!apiKey) {
                 alert("Please enter a valid Google Gemini API Key first.");
                 return;
             }
-
-            const topic = document.getElementById('lyric-topic').value.trim() || "anything";
-            const genre = state.genreCat + (state.subgenres.length ? " (" + state.subgenres.join(", ") + ")" : "");
-            const mood = state.moods.length > 0 ? state.moods.join(", ") : "general";
             
             // UI Loading state
             const btn = event.target; 
@@ -1157,6 +1337,10 @@ Make it catchy!
             btn.textContent = "Generating...";
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const topic = document.getElementById('lyric-topic').value.trim() || "anything";
+            const genre = state.genreCat + (state.subgenres.length ? " (" + state.subgenres.join(", ") + ")" : "");
+            const mood = state.moods.length > 0 ? state.moods.join(", ") : "general";
 
             const promptText = `
             Act as a professional songwriter and music producer.
@@ -1173,33 +1357,55 @@ Make it catchy!
             4. Output ONLY the lyrics and tags. Do not add conversational text.
             `;
 
-            try {
-                // Using selected model from dropdown
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+            // Helper function to make the call
+            const callApi = async (model) => {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: promptText }] }]
                     })
                 });
-
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    return { ok: false, status: response.status, data: errorData };
+                }
                 const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                
-                if (!data.candidates || !data.candidates[0].content) {
-                     throw new Error("No content generated. Check API key or quotas.");
+                return { ok: true, data: data };
+            };
+
+            try {
+                // Attempt 1: Selected Model
+                let result = await callApi(selectedModel);
+
+                // Auto-fallback logic for 404 (Not Found) or 429 (Quota)
+                if (!result.ok && (result.status === 404 || result.status === 429)) {
+                    console.warn(`Model ${selectedModel} failed (${result.status}). Retrying with gemini-1.5-flash...`);
+                    btn.textContent = "Retrying with Flash...";
+                    result = await callApi("gemini-1.5-flash");
                 }
 
-                const lyrics = data.candidates[0].content.parts[0].text.trim();
+                if (!result.ok) {
+                    let errorMsg = `API Error (${result.status})`;
+                    if (result.data && result.data.error) {
+                        errorMsg += `\nMessage: ${result.data.error.message}`;
+                        if(result.data.error.status === 'PERMISSION_DENIED') {
+                            errorMsg += "\n\nTIP: Ensure 'Generative Language API' is enabled in Google Cloud Console.";
+                        }
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                if (!result.data.candidates || !result.data.candidates[0].content) {
+                     throw new Error("No content generated. Check API key quotas or safety filters.");
+                }
+
+                const lyrics = result.data.candidates[0].content.parts[0].text.trim();
                 
                 // Insert into Textarea
                 const textarea = document.getElementById('lyrics-input');
                 
-                // If textarea is empty or just has prefix, replace it (keeping prefix)
-                // Otherwise append
                 if (textarea.value === LYRICS_PREFIX || textarea.value === "") {
                     textarea.value = LYRICS_PREFIX + lyrics;
                 } else {
@@ -1209,7 +1415,11 @@ Make it catchy!
                 textarea.scrollTop = textarea.scrollHeight;
 
             } catch (e) {
-                alert("Error generating lyrics: " + e.message);
+                if (e.message.includes("Failed to fetch")) {
+                     alert("Network Error: Could not reach Google API. Check ad blockers or connection.");
+                } else {
+                     alert(e.message);
+                }
                 console.error(e);
             } finally {
                 btn.innerHTML = originalText;
@@ -1366,9 +1576,11 @@ Make it catchy!
             state.tempo = dialState.previewTempo; 
             state.subgenres.push(...dialState.previewInstruments); 
 
+            // Update foundation category if possible
             const selectedOption = document.querySelector(`#dial-genre-select option[value="${baseGenre.split(",")[0]}"]`);
             if (selectedOption) {
-                state.genreCat = selectedOption.parentElement.label;
+                const cat = selectedOption.dataset.category || selectedOption.parentElement.label;
+                if(cat) state.genreCat = cat;
             }
 
             updateAllVisuals();
@@ -1380,7 +1592,6 @@ Make it catchy!
                 const catBtns = document.getElementById('genre-container').children;
                 Array.from(catBtns).forEach(b => {
                     if (b.dataset.val === state.genreCat) {
-                        // Pass true to preserve the subgenres we just set!
                         selectGenreCat(state.genreCat, b, true); 
                     }
                 });
@@ -1488,6 +1699,23 @@ Make it catchy!
                     if (item.lyrics) {
                         document.getElementById('lyrics-input').value = item.lyrics;
                     }
+                    
+                    // --- Smart Loading Logic for Filters ---
+                    // Detect category of loaded state to set Dials filter
+                    if (state.genreCat) {
+                        // Switch filter to match loaded genre category
+                        const container = document.getElementById('dial-category-filters');
+                        // Find button matching loaded category
+                        const catBtn = Array.from(container.children).find(b => b.textContent === state.genreCat);
+                        if (catBtn) {
+                            filterDialsGenre(state.genreCat, catBtn);
+                        } else {
+                            // Reset to ALL if category not found or weird state
+                            const allBtn = container.firstElementChild; 
+                            filterDialsGenre('ALL', allBtn);
+                        }
+                    }
+
                     updateAllVisuals(); 
                     switchTab('style');
                 }
