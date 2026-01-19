@@ -512,6 +512,7 @@
                         
                         <div class="mb-6">
                             <p class="text-xs text-slate-400 mb-2 uppercase tracking-wider font-semibold">Vocals</p>
+                            <input type="text" id="singer-desc" placeholder="Specific Singer Definition (e.g. 'Raspy Male Baritone with Southern Accent')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 mb-2 focus:outline-none focus:border-blue-500" oninput="updatePrompt()">
                             <div id="voices-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
@@ -923,7 +924,8 @@ Make it catchy!
             voices: [],
             moods: [],
             tempo: "",
-            production: []
+            production: [],
+            singerDescription: "" // NEW
         };
         
         let dialState = {
@@ -1273,6 +1275,8 @@ Make it catchy!
         function updatePrompt() {
             const select = document.getElementById('tempo-select');
             state.tempo = select.value;
+            // Update state with text input
+            state.singerDescription = document.getElementById('singer-desc').value;
 
             const parts = [];
             
@@ -1285,7 +1289,11 @@ Make it catchy!
             if (state.tempo) parts.push(state.tempo);
             if (state.moods.length > 0) parts.push(state.moods.join(", "));
             if (state.instruments.length > 0) parts.push(state.instruments.join(", "));
+            
+            // Add Singer Description to Prompt
+            if (state.singerDescription) parts.push(state.singerDescription);
             if (state.voices.length > 0) parts.push(state.voices.join(", "));
+            
             if (state.production.length > 0) parts.push(state.production.join(", "));
 
             const text = PROMPT_PREFIX + parts.join(", ");
@@ -1453,10 +1461,12 @@ Make it catchy!
                     voices: [],
                     moods: [],
                     tempo: "",
-                    production: []
+                    production: [],
+                    singerDescription: ""
                 };
                 
                 document.getElementById('tempo-select').value = "";
+                document.getElementById('singer-desc').value = ""; // Clear input
                 
                 document.querySelectorAll('#instruments-container button, #voices-container button, #moods-container button, #production-container button').forEach(b => {
                      b.classList.remove('btn-selected-blue', 'btn-selected-yellow', 'btn-selected-emerald', 'bg-purple-500/20', 'border-purple-500', 'text-purple-200');
@@ -1486,7 +1496,12 @@ Make it catchy!
             const genreString = genreList.join(", ");
             
             const instrumentsString = state.instruments.join(", ");
-            const personaString = state.voices.join(", ");
+            
+            // Combine Singer Desc and Voices for Persona
+            const personaList = [];
+            if (state.singerDescription) personaList.push(state.singerDescription);
+            if (state.voices.length > 0) personaList.push(...state.voices);
+            const personaString = personaList.join(", ");
 
             const styleTagsList = [...state.moods];
             if (state.tempo) styleTagsList.push(state.tempo);
@@ -1610,6 +1625,7 @@ Make it catchy!
             syncButtonList('production-container', state.production, "btn-selected-emerald");
 
             document.getElementById('tempo-select').value = state.tempo;
+            document.getElementById('singer-desc').value = state.singerDescription || ""; // Restore singer desc
             updatePrompt();
         }
 
@@ -1828,8 +1844,13 @@ Make it catchy!
                     <span class="text-slate-500">Subgenres</span>
                     <span class="text-slate-300 text-right truncate pl-4">${state.subgenres.length ? state.subgenres.join(", ") : '-'}</span>
                 </div>
+                <!-- New Singer Def Row -->
                 <div class="flex justify-between border-b border-slate-800 pb-1 mb-1">
-                    <span class="text-slate-500">Vocals</span>
+                    <span class="text-slate-500">Singer Def</span>
+                    <span class="text-blue-400 text-right truncate pl-4 font-mono text-[10px]" title="${state.singerDescription}">${state.singerDescription || '-'}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-1 mb-1">
+                    <span class="text-slate-500">Vocals (Tags)</span>
                     <span class="text-blue-400 text-right truncate pl-4">${state.voices.length ? state.voices.join(", ") : '-'}</span>
                 </div>
                 <div class="flex justify-between border-b border-slate-800 pb-1 mb-1">
@@ -1867,7 +1888,8 @@ Make it catchy!
                     subgenres: [...state.subgenres],
                     instruments: [...state.instruments],
                     voices: [...state.voices],
-                    production: [...state.production]
+                    production: [...state.production],
+                    singerDescription: state.singerDescription // Capture description
                     // Note: We deliberately exclude Moods/Tempo so those can vary per song
                 }
             };
@@ -1903,6 +1925,7 @@ Make it catchy!
                     state.instruments = [...artist.profile.instruments];
                     state.voices = [...artist.profile.voices];
                     state.production = [...artist.profile.production];
+                    state.singerDescription = artist.profile.singerDescription || ""; // Load description
                     
                     // Reset variable fields so user can define them for the specific song
                     // Or keep them if we want a "Default Mood"? 
@@ -1966,8 +1989,8 @@ Make it catchy!
                         
                         <div class="flex flex-wrap gap-1 mb-3">
                             <span class="bg-slate-950 text-slate-400 px-2 py-1 rounded text-[10px] border border-slate-800">${p.genreCat}</span>
+                            ${p.singerDescription ? `<span class="bg-pink-900/20 text-pink-400 px-2 py-1 rounded text-[10px] border border-pink-900/30 truncate max-w-[150px] block">${p.singerDescription}</span>` : ''}
                             ${p.voices[0] ? `<span class="bg-blue-900/20 text-blue-400 px-2 py-1 rounded text-[10px] border border-blue-900/30">${p.voices[0]}</span>` : ''}
-                            ${p.production[0] ? `<span class="bg-emerald-900/20 text-emerald-400 px-2 py-1 rounded text-[10px] border border-emerald-900/30">${p.production[0]}</span>` : ''}
                         </div>
 
                         <div class="mt-auto pt-2 border-t border-slate-800 flex justify-end">
