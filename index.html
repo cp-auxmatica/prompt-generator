@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,262 +7,279 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Modern Glass Theme */
-        :root {
-            --glass-bg: rgba(15, 23, 42, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-highlight: rgba(255, 255, 255, 0.03);
-            --neon-purple: #a855f7;
-            --neon-blue: #3b82f6;
-            --neon-pink: #ec4899;
-        }
-
-        body {
-            background-color: #020617;
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(168, 85, 247, 0.08), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: #e2e8f0;
-            overscroll-behavior: none;
-        }
-
-        /* Custom Scrollbar */
+        /* Modern Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: transparent; 
         }
-
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #cbd5e1; 
             border-radius: 3px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #94a3b8; 
+        }
+        
+        body {
+            overscroll-behavior: none;
+            background-color: #f8fafc; /* Slate-50 */
+            color: #0f172a; /* Slate-900 */
         }
 
-        /* Glass Panel Utility */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-radius: 1rem;
-        }
-
-        .glass-header {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        /* Tabs Animation */
         .tab-content {
             display: none;
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeIn 0.2s ease-out;
         }
-
         .tab-content.active {
             display: block;
         }
-
+        
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Modern Range Slider */
-        /* Modern Range Slider */
+        /* --- MODERN SELECTION STATES (High Contrast Pills) --- */
+        
+        .btn-selected-purple {
+            background-color: #f3e8ff !important; /* purple-100 */
+            border: 1px solid #a855f7 !important; /* purple-500 */
+            color: #6b21a8 !important; /* purple-800 */
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .btn-selected-blue {
+            background-color: #dbeafe !important; /* blue-100 */
+            border: 1px solid #3b82f6 !important; /* blue-500 */
+            color: #1e40af !important; /* blue-800 */
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-selected-yellow {
+            background-color: #fef9c3 !important; /* yellow-100 */
+            border: 1px solid #eab308 !important; /* yellow-500 */
+            color: #854d0e !important; /* yellow-800 */
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-selected-emerald {
+            background-color: #d1fae5 !important; /* emerald-100 */
+            border: 1px solid #10b981 !important; /* emerald-500 */
+            color: #065f46 !important; /* emerald-800 */
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Standard Button Default State (Overriding inline styles from JS if needed) */
+        .btn-default {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+        }
+        .btn-default:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+
+        .confirm-delete {
+            background-color: #fef2f2 !important;
+            color: #dc2626 !important;
+            border: 1px solid #ef4444 !important;
+        }
+
+        /* --- MODERN SLIDER STYLING --- */
         input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            height: 24px;
-            cursor: pointer;
+            -webkit-appearance: none; 
+            background: transparent; 
+            touch-action: none;
         }
-
+        
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
-            height: 4px;
-            background: #1e293b;
-            border-radius: 2px;
+            height: 6px;
+            cursor: pointer;
+            background: #e2e8f0; /* slate-200 */
+            border-radius: 9999px;
         }
-
+        
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            height: 16px;
-            width: 16px;
+            height: 20px;
+            width: 20px;
             border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #4f46e5; /* indigo-600 */
+            cursor: grab;
+            margin-top: -7px; /* Center on track */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        input[type=range]:active::-webkit-slider-thumb {
+            transform: scale(1.1);
+            cursor: grabbing;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+        }
+
+        /* --- TAB NAV STYLING --- */
+        .nav-btn {
+            color: #64748b;
+            background: transparent;
+            border-radius: 0.5rem;
+        }
+        .nav-btn:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+        .nav-btn.active {
+            background: #ffffff;
+            color: #4f46e5; /* indigo-600 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        /* Filter Chips */
+        .filter-chip {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            background: #ffffff;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-chip:hover {
+            border-color: #cbd5e1;
+            color: #334155;
             background: #f8fafc;
-            border: 2px solid var(--neon-purple);
-            margin-top: -6px;
-            box-shadow: 0 0 10px var(--neon-purple);
-            transition: transform 0.1s;
         }
-
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        /* Selection States */
-        /* Replaced .btn-selected-* with utility classes in JS, but keeping helper classes if needed for specificity overrides */
-        .selected-ring-purple {
-            box-shadow: 0 0 0 2px var(--neon-purple);
-            background: rgba(168, 85, 247, 0.2);
+        .filter-chip.active-filter {
+            background: #4f46e5;
             color: white;
+            border-color: #4f46e5;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
         }
 
-        .selected-ring-blue {
-            box-shadow: 0 0 0 2px var(--neon-blue);
-            background: rgba(59, 130, 246, 0.2);
-            color: white;
-        }
-
-        .selected-ring-pink {
-            box-shadow: 0 0 0 2px var(--neon-pink);
-            background: rgba(236, 72, 153, 0.2);
-            color: white;
-        }
     </style>
 </head>
-
-<body class="min-h-screen flex flex-col selection:bg-purple-500/30 selection:text-white">
+<body class="min-h-screen flex flex-col font-sans">
 
     <!-- Header -->
-    <header class="glass-header sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div
-                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                    <i data-lucide="music" class="w-5 h-5 text-white"></i>
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg shadow-sm">
+                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 leading-tight">
+                            Suno Architect
+                        </h1>
+                        <p class="text-xs text-slate-500 font-medium">Professional Prompt Studio</p>
+                    </div>
                 </div>
-                <div>
-                    <h1
-                        class="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-                        Suno Architect</h1>
-                </div>
-            </div>
-
-            <!-- Scrollable Nav -->
-            <nav class="flex-1 overflow-x-auto no-scrollbar mask-gradient-x">
-                <div class="flex space-x-1 p-1">
-                    <button onclick="switchTab('artist')" id="tab-btn-artist"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                
+                <!-- Navigation -->
+                <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
+                    <button onclick="switchTab('artist')" id="tab-btn-artist" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         Artist
                     </button>
-                    <button onclick="switchTab('dials')" id="tab-btn-dials"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <button onclick="switchTab('dials')" id="tab-btn-dials" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         Tuner
                     </button>
-                    <button onclick="switchTab('style')" id="tab-btn-style"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <button onclick="switchTab('style')" id="tab-btn-style" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         Blueprint
                     </button>
-                    <button onclick="switchTab('lyrics')" id="tab-btn-lyrics"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         Lyrics
                     </button>
-                    <button onclick="switchTab('library')" id="tab-btn-library"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <button onclick="switchTab('library')" id="tab-btn-library" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         Library
                     </button>
-                    <button onclick="switchTab('json')" id="tab-btn-json"
-                        class="px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap">
+                    <button onclick="switchTab('json')" id="tab-btn-json" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">
                         JSON
                     </button>
                 </div>
-            </nav>
+            </div>
         </div>
     </header>
 
-    <main class="flex-grow w-full max-w-7xl mx-auto p-4 md:p-6 space-y-8">
-        <!-- TAB: ARTIST -->
-        <div id="tab-artist" class="tab-content active">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Artist Creator -->
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="glass-panel p-6 space-y-6">
-                        <div class="flex items-center gap-3 pb-4 border-b border-white/5">
-                            <div
-                                class="w-8 h-8 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400">
-                                <i data-lucide="mic-2" class="w-4 h-4"></i>
-                            </div>
-                            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Artist Builder</h2>
+    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
+        
+        <!-- TAB: ARTIST BUILDER -->
+        <div id="tab-artist" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Artist Creator Panel -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                             <div class="p-2 bg-pink-50 rounded-lg">
+                                 <i data-lucide="mic-2" class="w-5 h-5 text-pink-500"></i>
+                             </div>
+                             <div>
+                                <h2 class="text-base font-bold text-slate-900">Artist Builder</h2>
+                                <p class="text-xs text-slate-500">Define a consistent identity for your generations</p>
+                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</label>
-                                <input type="text" id="artist-name" placeholder="E.g. Neon Horizon"
-                                    class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Band / Artist Name</label>
+                                <input type="text" id="artist-name" placeholder="e.g., Neon Horizon" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all font-medium">
+                            </div>
+                            
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Bio / Notes</label>
+                                <textarea id="artist-bio" placeholder="Internal notes about the artist's sound signature..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-600 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all"></textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Signature Exclusions</label>
+                                <input type="text" id="artist-exclusions" placeholder="What does this band NEVER use? (e.g. Synths, Male Vocals)" class="w-full bg-slate-50 border border-red-100 rounded-lg px-4 py-2.5 text-red-600 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-red-300" oninput="updateExclusions(this.value)">
                             </div>
 
-                            <div class="space-y-1.5">
-                                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bio /
-                                    Notes</label>
-                                <textarea id="artist-bio" placeholder="Signature sound characteristic..."
-                                    class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all h-24 resize-none"></textarea>
-                            </div>
-
-                            <div class="space-y-1.5">
-                                <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Signature
-                                    Exclusions</label>
-                                <input type="text" id="artist-exclusions" placeholder="Never uses... (e.g. Male Vocals)"
-                                    class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-red-300 placeholder:text-slate-600 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all"
-                                    oninput="updateExclusions(this.value)">
-                            </div>
-
-                            <div class="bg-black/20 rounded-xl p-4 border border-white/5">
-                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 flex items-center gap-2">
-                                    <i data-lucide="activity" class="w-3 h-3"></i> Current Sound Profile
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 flex items-center">
+                                    <i data-lucide="music-2" class="w-3 h-3 mr-2"></i> Current Sound Profile
                                 </h4>
-                                <div id="artist-preview-stats" class="space-y-2 text-xs font-mono text-slate-400">
-                                    <!-- JS Populated -->
-                                    <p class="italic text-slate-600">Configure settings in Tuner or Blueprint first...
-                                    </p>
+                                <div class="space-y-2 text-xs font-mono text-slate-600" id="artist-preview-stats">
+                                    <!-- JS populated -->
+                                    <p class="italic text-slate-400">Configure settings in "Tuner" or "Blueprint" first...</p>
                                 </div>
                             </div>
 
-                            <button onclick="saveArtist()"
-                                class="w-full py-4 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold shadow-lg shadow-pink-900/40 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                                Capture Artist Profile
+                            <button onclick="saveArtist()" class="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                Capture Current Sound
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Artist Roster -->
-                <div class="lg:col-span-7">
-                    <div class="glass-panel p-6 h-full min-h-[500px] flex flex-col">
-                        <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
-                            <h3 class="font-bold text-slate-200 flex items-center gap-2">
-                                <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
-                                Artist Roster
-                            </h3>
-                            <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Saved
-                                Profiles</span>
-                        </div>
-
-                        <div id="artist-list" class="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
+                <div class="lg:col-span-6">
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 h-full flex flex-col">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center">
+                            <i data-lucide="users" class="w-5 h-5 mr-2 text-slate-400"></i>
+                            Roster
+                        </h3>
+                        <div id="artist-list" class="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-grow">
                             <!-- JS Populated -->
-                            <div class="flex flex-col items-center justify-center h-40 text-slate-600 italic">
-                                <i data-lucide="ghost" class="w-8 h-8 mb-2 opacity-20"></i>
-                                <span>No artists signed yet</span>
+                            <div class="flex flex-col items-center justify-center h-40 text-slate-400 text-sm italic">
+                                <i data-lucide="ghost" class="w-8 h-8 mb-2 opacity-50"></i>
+                                No artists yet.
                             </div>
                         </div>
                     </div>
@@ -271,207 +287,194 @@
             </div>
         </div>
 
-        <!-- TAB: TUNER (Dials) -->
-        <div id="tab-dials" class="tab-content">
+        <!-- TAB: STYLE TUNER (DIALS) -->
+        <div id="tab-dials" class="tab-content active">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <!-- Controls -->
-                <div class="lg:col-span-7 space-y-6">
-
-                    <!-- Genre Select -->
-                    <div class="glass-panel p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Base
-                                Foundation</label>
-                            <span class="text-[10px] text-slate-500">Select Primary Genre</span>
+                <div class="lg:col-span-7 space-y-6 pb-10">
+                    
+                    <!-- Base Foundation Panel -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4 pb-2 border-b border-slate-100">
+                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">1. Foundation</h2>
                         </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Filter Chips -->
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-2 block">Category Filter</label>
+                                <div id="dial-category-filters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar">
+                                    <!-- JS Injected -->
+                                </div>
+                            </div>
 
-                        <!-- Filter Chips -->
-                        <div id="dial-category-filters" class="flex flex-wrap gap-2 mb-4">
-                            <!-- JS Injected -->
-                        </div>
-
-                        <div class="relative group">
-                            <select id="dial-genre-select" onchange="updateDials()"
-                                class="w-full appearance-none bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-purple-500/50 transition-all font-medium">
-                                <option value="">Select Base Genre...</option>
-                                <!-- JS Populated -->
-                            </select>
-                            <div
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-hover:text-purple-400 transition-colors">
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            <div>
+                                <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-sm">
+                                    <option value="">Select Base Genre...</option>
+                                    <!-- JS Populated -->
+                                </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Faders -->
-                    <div class="glass-panel p-8 space-y-8">
-                        <!-- Weirdness -->
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-end">
-                                <label
-                                    class="flex items-center gap-2 text-sm font-bold text-purple-400 uppercase tracking-wider">
-                                    <i data-lucide="sparkles" class="w-4 h-4"></i> Innovation
-                                </label>
-                                <span id="tags-weirdness"
-                                    class="text-xs font-mono text-purple-300 bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">Standard</span>
-                            </div>
-                            <input type="range" id="dial-weirdness" min="0" max="100" value="0" oninput="updateDials()"
-                                class="w-full">
-                            <div
-                                class="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-widest">
-                                <span>Safe</span>
-                                <span>Experimental</span>
-                            </div>
+                    <!-- Faders Panel -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-6 pb-2 border-b border-slate-100">
+                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">2. Style Shaping</h2>
                         </div>
 
-                        <!-- Era -->
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-end">
-                                <label
-                                    class="flex items-center gap-2 text-sm font-bold text-emerald-400 uppercase tracking-wider">
-                                    <i data-lucide="history" class="w-4 h-4"></i> Texture
-                                </label>
-                                <span id="tags-era"
-                                    class="text-xs font-mono text-emerald-300 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">Clean</span>
+                        <div class="grid gap-8">
+                            <!-- Weirdness Fader -->
+                            <div class="relative">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                        <div class="p-1 bg-purple-100 rounded text-purple-600"><i data-lucide="sparkles" class="w-3 h-3"></i></div>
+                                        Innovation
+                                    </label>
+                                    <span id="tags-weirdness" class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-full border border-purple-100">Standard</span>
+                                </div>
+                                <input type="range" id="dial-weirdness" min="0" max="100" value="0" oninput="updateDials()" class="accent-purple-600">
                             </div>
-                            <input type="range" id="dial-era" min="0" max="100" value="50" oninput="updateDials()"
-                                class="w-full">
-                            <div
-                                class="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-widest">
-                                <span>Vintage</span>
-                                <span>Future</span>
-                            </div>
-                        </div>
 
-                        <!-- Intensity -->
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-end">
-                                <label
-                                    class="flex items-center gap-2 text-sm font-bold text-yellow-400 uppercase tracking-wider">
-                                    <i data-lucide="zap" class="w-4 h-4"></i> Energy
-                                </label>
-                                <span id="tags-intensity"
-                                    class="text-xs font-mono text-yellow-300 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">Balanced</span>
+                            <!-- Era Fader -->
+                            <div class="relative">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                        <div class="p-1 bg-emerald-100 rounded text-emerald-600"><i data-lucide="history" class="w-3 h-3"></i></div>
+                                        Texture
+                                    </label>
+                                    <span id="tags-era" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">Clean</span>
+                                </div>
+                                <input type="range" id="dial-era" min="0" max="100" value="50" oninput="updateDials()" class="accent-emerald-600">
                             </div>
-                            <input type="range" id="dial-intensity" min="0" max="100" value="50" oninput="updateDials()"
-                                class="w-full">
-                            <div
-                                class="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-widest">
-                                <span>Chill</span>
-                                <span>Hype</span>
-                            </div>
-                        </div>
 
-                        <!-- Tempo -->
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-end">
-                                <label
-                                    class="flex items-center gap-2 text-sm font-bold text-red-400 uppercase tracking-wider">
-                                    <i data-lucide="gauge" class="w-4 h-4"></i> Speed
-                                </label>
-                                <span id="tags-tempo"
-                                    class="text-xs font-mono text-red-300 bg-red-500/10 px-2 py-1 rounded border border-red-500/20">Mid</span>
+                            <!-- Intensity Fader -->
+                            <div class="relative">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                        <div class="p-1 bg-yellow-100 rounded text-yellow-600"><i data-lucide="zap" class="w-3 h-3"></i></div>
+                                        Energy
+                                    </label>
+                                    <span id="tags-intensity" class="text-[10px] font-bold text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-100">Balanced</span>
+                                </div>
+                                <input type="range" id="dial-intensity" min="0" max="100" value="50" oninput="updateDials()" class="accent-yellow-500">
                             </div>
-                            <input type="range" id="dial-tempo" min="0" max="100" value="50" oninput="updateDials()"
-                                class="w-full">
-                            <div
-                                class="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-widest">
-                                <span>Slow</span>
-                                <span>Fast</span>
-                            </div>
-                        </div>
 
-                        <!-- Vocals -->
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-end">
-                                <label
-                                    class="flex items-center gap-2 text-sm font-bold text-blue-400 uppercase tracking-wider">
-                                    <i data-lucide="mic" class="w-4 h-4"></i> Vocals
-                                </label>
-                                <span id="tags-vocals"
-                                    class="text-xs font-mono text-blue-300 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">Standard</span>
+                            <!-- Tempo Fader -->
+                            <div class="relative">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                        <div class="p-1 bg-red-100 rounded text-red-600"><i data-lucide="gauge" class="w-3 h-3"></i></div>
+                                        Speed
+                                    </label>
+                                    <span id="tags-tempo" class="text-[10px] font-bold text-red-700 bg-red-50 px-2 py-1 rounded-full border border-red-100">Mid</span>
+                                </div>
+                                <input type="range" id="dial-tempo" min="0" max="100" value="50" oninput="updateDials()" class="accent-red-500">
                             </div>
-                            <input type="range" id="dial-vocals" min="0" max="100" value="75" oninput="updateDials()"
-                                class="w-full">
-                            <div
-                                class="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-widest">
-                                <span>Instrumental</span>
-                                <span>Lyrical</span>
+                            
+                            <!-- Vocals Fader -->
+                            <div class="relative">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                        <div class="p-1 bg-blue-100 rounded text-blue-600"><i data-lucide="mic" class="w-3 h-3"></i></div>
+                                        Voice
+                                    </label>
+                                    <span id="tags-vocals" class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-full border border-blue-100">Vocals</span>
+                                </div>
+                                <input type="range" id="dial-vocals" min="0" max="100" value="75" oninput="updateDials()" class="accent-blue-500">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Preview -->
+                <!-- Live Preview (Sidebar) -->
                 <div class="lg:col-span-5">
-                    <div class="glass-panel p-6 sticky top-24 border-t-4 border-t-purple-500">
+                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
                         <div class="flex items-center justify-between mb-6">
-                            <h3
-                                class="text-sm font-bold uppercase tracking-widest text-slate-300 flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_red]"></div>
-                                Live Profile
+                            <h3 class="text-sm font-bold uppercase tracking-wide text-slate-500 flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                                Live Output
                             </h3>
                         </div>
+                        
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
+                            <!-- Items -->
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-slate-400 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-slate-400 font-bold">Base</div>
+                                    <div id="preview-genre" class="text-sm font-medium text-slate-800">Select Genre...</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-purple-500 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-purple-500 font-bold">Innovation</div>
+                                    <div id="preview-weirdness" class="text-sm font-medium text-slate-700">...</div>
+                                </div>
+                            </div>
 
-                        <div class="space-y-4 font-mono text-xs">
-                            <!-- Preview Rows (Cleaned up) -->
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-slate-500 uppercase">Base</span>
-                                <span id="preview-genre" class="text-slate-200">...</span>
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-emerald-500 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-emerald-500 font-bold">Texture</div>
+                                    <div id="preview-era" class="text-sm font-medium text-slate-700">...</div>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-purple-500 uppercase">Innovation</span>
-                                <span id="preview-weirdness" class="text-purple-300 text-right">...</span>
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-yellow-500 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-yellow-500 font-bold">Energy</div>
+                                    <div id="preview-intensity" class="text-sm font-medium text-slate-700">...</div>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-emerald-500 uppercase">Texture</span>
-                                <span id="preview-era" class="text-emerald-300 text-right">...</span>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-red-500 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-red-500 font-bold">Speed</div>
+                                    <div id="preview-tempo" class="text-sm font-medium text-slate-700">...</div>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-yellow-500 uppercase">Energy</span>
-                                <span id="preview-intensity" class="text-yellow-300 text-right">...</span>
-                            </div>
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-red-500 uppercase">Speed</span>
-                                <span id="preview-tempo" class="text-red-300 text-right">...</span>
-                            </div>
-                            <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                                <span class="text-blue-500 uppercase">Vocals</span>
-                                <span id="preview-vocals" class="text-blue-300 text-right">...</span>
+
+                             <div class="flex items-start gap-3">
+                                <div class="w-1 self-stretch bg-blue-500 rounded-full"></div>
+                                <div class="flex-1">
+                                    <div class="text-[10px] uppercase text-blue-500 font-bold">Vocals</div>
+                                    <div id="preview-vocals" class="text-sm font-medium text-slate-700">...</div>
+                                </div>
                             </div>
                         </div>
 
-                        <button onclick="applyDialsToMain()"
-                            class="mt-8 w-full py-4 rounded-xl relative overflow-hidden group bg-slate-800 border border-slate-700 hover:border-purple-500 transition-all">
-                            <div
-                                class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                            </div>
-                            <span
-                                class="relative z-10 font-bold text-slate-300 group-hover:text-white uppercase tracking-wider text-xs flex items-center justify-center gap-2">
-                                Send to Blueprint <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </span>
+                        <button onclick="applyDialsToMain()" class="mt-6 w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2">
+                            Send to Blueprint
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TAB: BLUEPRINT -->
+        <!-- TAB: SONIC BLUEPRINT -->
         <div id="tab-style" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
                 <!-- Left Column: Controls -->
-                <div class="lg:col-span-7 space-y-6 pb-20">
+                <div class="lg:col-span-7 space-y-8 pb-20">
+                    
                     <!-- Genre Section -->
-                    <section class="glass-panel p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="list-music" class="w-5 h-5 text-purple-400"></i>
-                            <h2 class="text-lg font-semibold text-slate-200">1. Foundation</h2>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="list-music" class="w-5 h-5 text-purple-600"></i>
+                            <h2 class="text-lg font-bold text-slate-900">1. The Foundation (Genre)</h2>
                         </div>
                         <div id="genre-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                             <!-- JS will inject genres here -->
                         </div>
-                        <div id="subgenre-wrapper" class="hidden bg-slate-950/30 p-4 rounded-xl border border-white/5">
-                            <p class="text-xs text-slate-500 mb-3 uppercase tracking-wider font-semibold">Subgenres</p>
+                        <div id="subgenre-wrapper" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <p class="text-xs font-semibold text-slate-500 uppercase mb-3">Subgenres (Select Multiple)</p>
                             <div id="subgenre-container" class="flex flex-wrap gap-2">
                                 <!-- JS will inject subgenres here -->
                             </div>
@@ -479,155 +482,121 @@
                     </section>
 
                     <!-- Instruments & Voice -->
-                    <section class="glass-panel p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="mic-vocal" class="w-5 h-5 text-blue-400"></i>
-                            <h2 class="text-lg font-semibold text-slate-200">2. The Players</h2>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="mic-vocal" class="w-5 h-5 text-blue-600"></i>
+                            <h2 class="text-lg font-bold text-slate-900">2. The Players</h2>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-xs font-semibold text-slate-500 uppercase mb-2">Vocals & Singer</p>
+                            <input type="text" id="singer-desc" placeholder="Singer Definition (e.g. 'Raspy Male Baritone, British Accent')" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-800 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" oninput="updatePrompt()">
+                            <div id="voices-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
-                        <div class="space-y-6">
-                            <div>
-                                <p class="text-xs text-slate-500 mb-2 uppercase tracking-wider font-semibold">Vocals</p>
-                                <input type="text" id="singer-desc" placeholder="E.g. 'Raspy Male Baritone'"
-                                    class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 mb-3 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
-                                    oninput="updatePrompt()">
-                                <div id="voices-container" class="flex flex-wrap gap-2"></div>
-                            </div>
-
-                            <div>
-                                <p class="text-xs text-slate-500 mb-2 uppercase tracking-wider font-semibold">
-                                    Instrumentation</p>
-                                <div class="relative mb-3">
-                                    <input type="text" id="instrument-search" placeholder="Search instruments..."
-                                        class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all pl-10">
-                                    <i data-lucide="search"
-                                        class="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                </div>
-                                <div id="instruments-container"
-                                    class="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase mb-2">Instrumentation</p>
+                            <div class="relative">
+                                <input type="text" id="instrument-search" placeholder="Search instruments..." class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-800 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 pl-10">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                                <div id="instruments-container" class="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
                             </div>
                         </div>
                     </section>
 
                     <!-- Mood & Tempo -->
-                    <section class="glass-panel p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
-                            <h2 class="text-lg font-semibold text-slate-200">3. Vibe & Grid</h2>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i>
+                            <h2 class="text-lg font-bold text-slate-900">3. Vibe & Grid</h2>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-xs font-semibold text-slate-500 uppercase mb-2">Mood / Atmosphere</p>
+                            <div id="moods-container" class="flex flex-wrap gap-2"></div>
                         </div>
 
-                        <div class="space-y-6">
-                            <div>
-                                <p class="text-xs text-slate-500 mb-2 uppercase tracking-wider font-semibold">Atmosphere
-                                </p>
-                                <div id="moods-container" class="flex flex-wrap gap-2"></div>
-                            </div>
-
-                            <div>
-                                <p class="text-xs text-slate-500 mb-2 uppercase tracking-wider font-semibold">Tempo</p>
-                                <div class="relative">
-                                    <select id="tempo-select" onchange="updatePrompt()"
-                                        class="w-full appearance-none bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all">
-                                        <option value="">Select Tempo...</option>
-                                        <!-- JS Populated -->
-                                    </select>
-                                    <div
-                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
-                                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase mb-2">Tempo</p>
+                            <select id="tempo-select" onchange="updatePrompt()" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500">
+                                <option value="">Select Tempo...</option>
+                                <!-- JS Populated -->
+                            </select>
                         </div>
                     </section>
 
                     <!-- Production -->
-                    <section class="glass-panel p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-400"></i>
-                            <h2 class="text-lg font-semibold text-slate-200">4. The Mix</h2>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-600"></i>
+                            <h2 class="text-lg font-bold text-slate-900">4. The Engineer</h2>
                         </div>
                         <div id="production-container" class="flex flex-wrap gap-2"></div>
                     </section>
 
                     <!-- Exclusions -->
-                    <section class="glass-panel p-6 border-red-500/20 shadow-red-900/10">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="ban" class="w-5 h-5 text-red-400"></i>
-                            <h2 class="text-lg font-semibold text-slate-200">5. Forbidden Sounds</h2>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="ban" class="w-5 h-5 text-red-500"></i>
+                            <h2 class="text-lg font-bold text-slate-900">5. Forbidden Sounds</h2>
                         </div>
-                        <input type="text" id="exclusion-input" placeholder="e.g. Drums, Vocals, Acoustic..."
-                            class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all placeholder:text-red-900/50"
-                            oninput="updateExclusions(this.value)">
+                        <input type="text" id="exclusion-input" placeholder="e.g. Drums, Vocals, Acoustic, Piano..." class="w-full bg-white border border-red-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 placeholder:text-red-300" oninput="updateExclusions(this.value)">
                     </section>
                 </div>
 
                 <!-- Right Column: Sticky Output -->
                 <div class="lg:col-span-5">
-                    <div
-                        class="glass-panel p-6 sticky top-24 border-t-4 border-t-purple-500 shadow-2xl shadow-purple-900/20">
+                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-white">Style Prompt</h3>
-                            <div class="flex space-x-1">
-                                <button onclick="saveCurrentPrompt()"
-                                    class="p-2 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-colors"
-                                    title="Save to Library">
-                                    <i data-lucide="save" class="w-4 h-4"></i>
+                            <h3 class="text-lg font-bold text-slate-900">Style Prompt</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Save to Library">
+                                    <i data-lucide="save" class="w-5 h-5"></i>
                                 </button>
-                                <button id="btn-clear-all" onclick="clearAll()"
-                                    class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                                    title="Reset All">
-                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                <button id="btn-clear-all" onclick="clearAll()" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Clear All">
+                                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="relative mb-4 group">
-                            <textarea id="style-output" readonly
-                                class="w-full h-48 bg-slate-950/80 border border-slate-700/50 rounded-xl p-4 text-purple-100 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-purple-500/50 transition-all custom-scrollbar"
-                                placeholder="Constructing prompt..."></textarea>
-                            <div id="char-count"
-                                class="absolute bottom-3 right-3 text-[10px] text-slate-500 bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/5">
-                                0/120
+                        <div class="relative mb-4">
+                            <textarea id="style-output" readonly class="w-full h-40 bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Your prompt builds here..."></textarea>
+                            <div id="char-count" class="absolute bottom-3 right-3 text-xs text-slate-400 bg-white border border-slate-100 px-2 py-1 rounded shadow-sm">
+                                0/120 chars
                             </div>
                         </div>
 
                         <!-- Exclusions Output -->
-                        <div class="mb-4">
-                            <label
-                                class="text-[10px] text-slate-500 uppercase font-bold mb-1.5 block flex justify-between">
-                                <span>Negative Prompt</span>
-                                <i data-lucide="ban" class="w-3 h-3 text-red-500/50"></i>
-                            </label>
+                        <div class="relative mb-6">
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-1.5 block">Negative Prompt (Exclusions)</label>
                             <div class="flex gap-2">
-                                <input id="style-exclusions-output" readonly
-                                    class="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-slate-400 font-mono text-xs focus:outline-none"
-                                    placeholder="No exclusions">
-                                <button onclick="copyToClipboard('style-exclusions-output', this)"
-                                    class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-colors border border-slate-700">
+                                <input id="style-exclusions-output" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-red-500 font-mono text-xs focus:outline-none" placeholder="No exclusions set">
+                                <button onclick="copyToClipboard('style-exclusions-output', this)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Copy Exclusions">
                                     <i data-lucide="copy" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <button onclick="copyToClipboard('style-output', this)"
-                                class="w-full py-3.5 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 group active:scale-[0.98]">
-                                <i data-lucide="copy" class="w-5 h-5 group-hover:hidden"></i>
-                                <i data-lucide="check" class="w-5 h-5 hidden group-[.copied]:block"></i>
-                                <span class="btn-text">Copy Prompt</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="copyToClipboard('style-output', this)" class="w-full py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-600/20 group flex items-center justify-center gap-2">
+                                <i data-lucide="copy" class="w-4 h-4 group-hover:hidden"></i>
+                                <i data-lucide="check" class="w-4 h-4 hidden group-[.copied]:block"></i>
+                                <span class="btn-text">Copy Style Prompt</span>
                             </button>
-
-                            <div id="length-warning"
-                                class="hidden flex items-start space-x-2 text-amber-400 bg-amber-900/20 border border-amber-500/20 p-3 rounded-xl text-xs">
-                                <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
-                                <p>Prompt exceeds recommended length (>120 chars). Suno may ignore the end.</p>
+                            
+                            <div id="length-warning" class="hidden flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-lg text-xs">
+                                <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-500"></i>
+                                <p>Prompt is long (>120 chars). Suno may ignore end tags.</p>
                             </div>
                         </div>
 
-                        <div class="mt-6 pt-6 border-t border-white/10">
-                            <button onclick="switchTab('lyrics')"
-                                class="w-full py-2.5 bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white text-sm rounded-xl transition-colors flex items-center justify-center space-x-2 border border-white/5 hover:border-white/10">
-                                <span>Go to Lyrics Editor</span>
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <h4 class="text-sm font-semibold text-slate-900 mb-2">Next Step</h4>
+                            <p class="text-xs text-slate-500 mb-4">
+                                Write lyrics or structure your song in the Lyrics tab.
+                            </p>
+                            <button onclick="switchTab('lyrics')" class="w-full py-2.5 bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 rounded-xl transition-all flex items-center justify-center gap-2 text-sm font-medium">
+                                Go to Lyrics Editor
                                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -640,272 +609,325 @@
         <div id="tab-lyrics" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-140px)] min-h-[600px]">
                 <!-- Main Editor -->
-                <div class="lg:col-span-8 h-full flex flex-col glass-panel overflow-hidden">
-                    <div
-                        class="border-b border-white/5 p-4 flex items-center justify-between bg-white/5 backdrop-blur-md">
-                        <h2 class="font-semibold text-slate-200 flex items-center gap-2">
-                            <i data-lucide="mic" class="w-4 h-4 text-purple-400"></i>
-                            Lyrics & Structure
-                        </h2>
-
-                        <div class="flex items-center gap-3">
-                            <span
-                                class="text-[10px] text-slate-500 hidden sm:block font-mono bg-black/20 px-2 py-1 rounded">
-                                Use metatags [Chorus] to control flow
-                            </span>
-                            <button onclick="saveCurrentPrompt()"
-                                class="p-2 text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-colors"
-                                title="Save to Library">
-                                <i data-lucide="save" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow relative bg-slate-950/30">
-                        <textarea id="lyrics-input"
-                            class="w-full h-full p-6 bg-transparent text-slate-200 font-mono text-sm leading-relaxed focus:outline-none resize-none custom-scrollbar"
-                            placeholder="[Intro]&#10;..."></textarea>
-                    </div>
-
-                    <div
-                        class="border-t border-white/5 p-4 bg-white/5 backdrop-blur-md flex justify-between items-center">
-                        <div class="text-xs text-slate-500 hidden sm:block">
-                            Pro Tip: Use <span
-                                class="font-mono bg-slate-700/50 px-1 py-0.5 rounded text-slate-300">Da-a-shes</span>
-                            for melismas.
-                        </div>
-                        <button onclick="copyToClipboard('lyrics-input', this)"
-                            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-purple-900/20">
-                            <i data-lucide="copy" class="w-3 h-3"></i>
-                            <span class="btn-text">Copy Lyrics</span>
+               <div class="lg:col-span-8 h-full flex flex-col">
+                 <div class="bg-white border border-slate-200 rounded-t-2xl p-4 flex items-center justify-between border-b-0 shadow-sm z-10">
+                   <h2 class="font-bold text-slate-900 flex items-center text-sm">
+                     <i data-lucide="mic" class="w-4 h-4 mr-2 text-indigo-600"></i>
+                     Lyrics & Structure Editor
+                   </h2>
+                   
+                   <div class="flex items-center gap-2">
+                        <button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors rounded-lg" title="Save to Library">
+                            <i data-lucide="save" class="w-4 h-4"></i>
                         </button>
+                        <div class="text-xs text-slate-400 hidden sm:block border-l border-slate-200 pl-3 ml-1">
+                            Use metatags to control flow
+                        </div>
+                   </div>
+                 </div>
+                 
+                 <div class="flex-grow relative border-x border-slate-200 bg-white">
+                    <textarea id="lyrics-input" class="w-full h-full p-6 bg-slate-50 text-slate-800 font-mono text-sm leading-relaxed focus:outline-none resize-none" placeholder="[Intro]
+[Instrumental Hook]
+
+[Verse 1]
+Write your lyrics here...
+Use commas for short pauses,
+And periods for longer stops.
+
+[Chorus]
+Make it catchy!
+
+[Outro]"></textarea>
+                 </div>
+   
+                 <div class="bg-white border border-slate-200 rounded-b-2xl p-4 flex justify-between items-center shadow-sm z-10">
+                   <div class="text-xs text-slate-500 hidden sm:block">
+                     Pro Tip: Use <span class="font-mono bg-slate-100 border border-slate-200 px-1 rounded text-slate-700">Da-a-shes</span> for melismas.
+                   </div>
+                   <button onclick="copyToClipboard('lyrics-input', this)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                     <i data-lucide="copy" class="w-4 h-4"></i>
+                     <span class="btn-text">Copy Lyrics</span>
+                   </button>
+                 </div>
+               </div>
+   
+               <!-- Toolbox -->
+               <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10">
+                 
+                 <!-- Magic Lyrics Generator -->
+                 <div class="bg-white border border-indigo-100 rounded-2xl p-6 shadow-sm ring-1 ring-indigo-50">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="p-1.5 bg-indigo-100 rounded text-indigo-600">
+                             <i data-lucide="wand-2" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-sm">AI Lyric Generator</h3>
                     </div>
-                </div>
+                    <div class="space-y-3">
+                         <div class="flex space-x-2">
+                             <input type="password" id="api-key" placeholder="API Key" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                             <button onclick="validateAndLoadModels()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg text-slate-600 transition-colors" title="Link Key">
+                                 <i data-lucide="link" class="w-4 h-4"></i>
+                             </button>
+                         </div>
+                         
+                         <select id="ai-model" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                             <option value="gemini-1.5-flash">Gemini 1.5 Flash (Default)</option>
+                             <option value="gemini-pro">Gemini 1.0 Pro</option>
+                         </select>
 
-                <!-- Toolbox -->
-                <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10 custom-scrollbar pr-2">
-
-                    <!-- AI Generator -->
-                    <div
-                        class="glass-panel p-5 border-indigo-500/20 shadow-indigo-900/10 bg-gradient-to-br from-indigo-900/10 to-purple-900/10">
-                        <div class="flex items-center gap-2 mb-4">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
-                            <h3 class="font-semibold text-indigo-200 text-sm">AI Lyricist</h3>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div class="flex gap-2">
-                                <input type="password" id="api-key" placeholder="Gemini API Key"
-                                    class="flex-grow bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50 transition-all">
-                                <button onclick="validateAndLoadModels()"
-                                    class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors border border-slate-700/50"
-                                    title="Connect">
-                                    <i data-lucide="link" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-
-                            <select id="ai-model"
-                                class="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50">
-                                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                                <option value="gemini-pro">Gemini 1.0 Pro</option>
-                            </select>
-
-                            <input type="text" id="lyric-topic" placeholder="Song topic..."
-                                class="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500/50">
-
-                            <button onclick="generateLyrics('structure', event)"
-                                class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-bold text-white transition-all shadow-lg shadow-indigo-900/20 flex items-center justify-center gap-2">
-                                <i data-lucide="wand-2" class="w-3 h-3"></i> Generate
-                            </button>
-                        </div>
+                         <input type="text" id="lyric-topic" placeholder="Song Topic (e.g. Cyberpunk chase)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                         
+                         <button onclick="generateLyrics('structure', event)" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm">
+                             <i data-lucide="sparkles" class="w-3 h-3"></i> Generate Lyrics
+                         </button>
+                         
+                         <p class="text-[10px] text-slate-400 mt-2 text-center">
+                            Generates structure, lyrics, and cues.
+                         </p>
                     </div>
+                 </div>
 
-                    <!-- Structure Tags -->
-                    <div class="glass-panel p-5">
-                        <div class="flex items-center gap-2 mb-4">
-                            <i data-lucide="layers" class="w-4 h-4 text-purple-400"></i>
-                            <h3 class="font-semibold text-slate-200 text-sm">Structure</h3>
-                        </div>
-                        <div id="structure-tags-container" class="grid grid-cols-2 gap-2">
-                            <!-- JS Injected -->
-                        </div>
-                    </div>
-
-                    <!-- Performance Cues -->
-                    <div class="glass-panel p-5">
-                        <div class="flex items-center gap-2 mb-4">
-                            <i data-lucide="mic-2" class="w-4 h-4 text-yellow-400"></i>
-                            <h3 class="font-semibold text-slate-200 text-sm">Performance</h3>
-                        </div>
-                        <div id="performance-tags-container" class="grid grid-cols-2 gap-2">
-                            <!-- JS Injected -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+                 <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                   <div class="flex items-center space-x-2 mb-4">
+                     <i data-lucide="layers" class="w-4 h-4 text-purple-500"></i>
+                     <h3 class="font-bold text-slate-900 text-sm">Structure Tags</h3>
+                   </div>
+                   <div id="structure-tags-container" class="grid grid-cols-2 gap-2">
+                       <!-- JS Injected -->
+                   </div>
+                 </div>
+   
+                 <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                   <div class="flex items-center space-x-2 mb-4">
+                     <i data-lucide="zap" class="w-4 h-4 text-yellow-500"></i>
+                     <h3 class="font-bold text-slate-900 text-sm">Performance Cues</h3>
+                   </div>
+                   <div id="performance-tags-container" class="grid grid-cols-2 gap-2">
+                        <!-- JS Injected -->
+                   </div>
+                 </div>
+               </div>
+             </div>
         </div>
-
+        
         <!-- TAB: LIBRARY -->
         <div id="tab-library" class="tab-content">
-            <div class="max-w-4xl mx-auto space-y-6 pb-20">
-                <div class="glass-panel p-8">
-                    <div class="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                        <i data-lucide="library" class="w-6 h-6 text-blue-400"></i>
-                        <div>
-                            <h2 class="text-xl font-bold text-white">Saved Prompts</h2>
-                            <p class="text-sm text-slate-500">Local browser storage</p>
-                        </div>
-                    </div>
-
-                    <div id="library-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div class="max-w-4xl mx-auto space-y-6 pb-20">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center">
+                        <i data-lucide="library" class="w-6 h-6 mr-3 text-indigo-600"></i>
+                        Saved Prompts
+                    </h2>
+                    <p class="text-sm text-slate-500 mb-8 ml-9">
+                        Your saved configurations are stored locally in your browser.
+                    </p>
+                    
+                    <div id="library-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- JS populated -->
-                        <div class="text-center py-10 text-slate-500 col-span-2 italic flex flex-col items-center">
-                            <i data-lucide="archive" class="w-8 h-8 opacity-20 mb-2"></i>
-                            Empty library
+                        <div class="text-center py-12 text-slate-400 col-span-2 flex flex-col items-center">
+                            <div class="bg-slate-50 p-4 rounded-full mb-3">
+                                <i data-lucide="save" class="w-6 h-6 text-slate-300"></i>
+                            </div>
+                            <p>No saved prompts yet.</p>
+                            <p class="text-xs mt-1">Create a style and click the Save icon.</p>
                         </div>
                     </div>
                 </div>
-            </div>
+             </div>
         </div>
 
-        <!-- TAB: JSON -->
+        <!-- TAB: JSON OUTPUT -->
         <div id="tab-json" class="tab-content">
             <div class="max-w-4xl mx-auto space-y-8 pb-20">
-                <div class="glass-panel p-8">
-                    <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
-                        <h2 class="text-xl font-bold text-white flex items-center gap-3">
-                            <i data-lucide="code" class="w-6 h-6 text-green-400"></i>
-                            JSON Export
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                         <h2 class="text-lg font-bold text-slate-900 flex items-center">
+                            <i data-lucide="code" class="w-5 h-5 mr-2 text-green-600"></i>
+                            Prompt JSON
                         </h2>
-                        <button onclick="copyToClipboard('json-output', this)"
-                            class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg font-medium transition-colors flex items-center space-x-2 shadow-lg shadow-green-900/20">
+                        <button onclick="copyToClipboard('json-output', this)" class="px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 text-sm rounded-lg font-medium transition-colors flex items-center space-x-2">
                             <i data-lucide="copy" class="w-4 h-4"></i>
                             <span class="btn-text">Copy JSON</span>
                         </button>
                     </div>
-
-                    <p class="text-sm text-slate-400 mb-4">
-                        Raw metadata format for archiving or advanced usage.
+                   
+                    <p class="text-sm text-slate-500 mb-4">
+                        Structured metadata for archiving your prompt settings.
                     </p>
 
                     <div class="relative">
-                        <textarea id="json-output" readonly
-                            class="w-full h-96 bg-slate-950/50 border border-slate-700/50 rounded-xl p-6 text-emerald-400 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:border-green-500/50 custom-scrollbar"></textarea>
+                        <textarea id="json-output" readonly class="w-full h-96 bg-slate-50 border border-slate-200 rounded-xl p-6 text-emerald-700 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"></textarea>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 
     <script>
-        // --- DATA SECTION ---
-        const PROMPT_PREFIX = "A song in the style of ";
-        const LYRICS_PREFIX = "";
+        // --- DATA CONSTANTS ---
+        const PROMPT_PREFIX = "[Is_MAX_MODE: MAX](MAX)\n[QUALITY: MAX](MAX)\n[REALISM: MAX](MAX)\n[REAL_INSTRUMENTS: MAX](MAX)\n";
+        const LYRICS_PREFIX = "///*****///\n\n";
 
         const GENRES = {
-            "Electronic": ["Future Bass", "Synthwave", "Techno", "House", "Trance", "Dubstep", "Ambient", "IDM", "Drum and Bass", "Hardstyle", "Lo-Fi", "UK Garage"],
-            "Rock": ["Alternative Rock", "Indie Rock", "Hard Rock", "Metalcore", "Heavy Metal", "Punk", "Psychedelic Rock", "Grunge", "Shoegaze", "Post-Rock", "Math Rock", "Pop Punk"],
-            "Pop": ["Synth Pop", "Indie Pop", "K-Pop", "Electropop", "Dream Pop", "Art Pop", "Hyperpop", "City Pop", "Disco", "Funk"],
-            "Hip Hop": ["Trap", "Boom Bap", "Grime", "Drill", "Lo-Fi Hip Hop", "Jazz Rap", "Cloud Rap", "Experimental Hip Hop", "Old School"],
-            "Jazz & Soul": ["Neo Soul", "Nu Jazz", "R&B", "Future Soul", "Acid Jazz", "Bossa Nova", "Funk", "Gospel", "Smooth Jazz"],
-            "Classical & Score": ["Cinematic", "Epic Orchestral", "Piano Solo", "Chamber Pop", "Neoclassical", "Film Score", "Video Game Music"],
-            "World": ["Afrobeat", "Reggaeton", "Latin", "Celtic", "Middle Eastern", "Flamenco", "Bhangra", "Klezmer"]
+            "Rock": [
+                "Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", 
+                "Industrial Rock", "Math Rock", "Post-Rock", "Progressive Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Shoegaze", "Soft Rock", "Southern Rock", 
+                "Stoner Rock", "Surf Rock", "Yacht Rock", "Arena Rock", "Krautrock", "Noise Rock", "Slowcore", "Space Rock", "J-Rock", "Visual Kei"
+            ],
+            "Metal": [
+                "Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal", 
+                "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Latin Metal", "Metalcore", "Nu Metal", "Power Metal", "Progressive Metal", 
+                "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal", "Viking Metal", "Kawaii Metal", "Post-Metal", "Stoner Metal"
+            ],
+            "Electronic": [
+                "Acid House", "Acid Techno", "Ambient", "Big Beat", "Breakbeat", "Chillstep", "Chillwave", "Chiptune", "Deep House", "Downtempo", "Drum and Bass", 
+                "Dubstep", "Electro", "Electro-Swing", "Eurodance", "Folktronica", "Future Bass", "Gabber", "Garage", "Glitch", "Glitch Hop", "Hardcore", "Hardstyle", "House", 
+                "IDM", "Industrial", "Interstellar Synth", "Jungle", "Lo-Fi", "Melodic Techno", "Minimal", "Phonk", "Progressive House", "Psytrance", "Synth-Pop", 
+                "Synthwave", "Tech House", "Techno", "Trance", "Trap", "Trip-Hop", "UK Garage", "Vaporwave", "Witch House"
+            ],
+            "Pop": [
+                "Art Pop", "Baroque Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "Chamber Pop", "City Pop", "Country-Pop", "Dance-Pop", "Dream Pop", "Electropop", 
+                "Europop", "Hyperpop", "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Progressive Pop", "Psychedelic Pop", "Somber Pop", "Sophisti-Pop", 
+                "Sunshine Pop", "Synth-Pop", "Teen Pop", "Wonky Pop"
+            ],
+            "Hip Hop": [
+                "Abstract Hip Hop", "Alternative Hip Hop", "Boom Bap", "Cloud Rap", "Conscious Hip Hop", "Crunk", "Drill", "East Coast Hip Hop", "Experimental Hip Hop", 
+                "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", "Horrorcore", "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", 
+                "Trip Hop", "Turntablism", "UK Drill", "Underground Hip Hop", "West Coast Hip Hop"
+            ],
+            "R&B/Soul": [
+                "Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Modern Soul", "Motown", "Neo-Soul", "New Jack Swing", 
+                "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul", "Southern Soul", "P-Funk"
+            ],
+            "Jazz": [
+                "Acid Jazz", "Afro-Cuban Jazz", "Atmospheric Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz", 
+                "Fusion", "Gypsy Jazz", "Hard Bop", "Jazz-Funk", "Latin Jazz", "Modal Jazz", "Orchestral Jazz", "Smooth Jazz", "Soul Jazz", "Swing", "Third Stream"
+            ],
+            "Folk/Country": [
+                "Alt-Country", "Americana", "Anti-Folk", "Appalachian Folk", "Bakersfield Sound", "Bluegrass", "Celtic Folk", "Contemporary Folk", "Country & Western", 
+                "Country Pop", "Country Rock", "Countrypolitan", "Dark Folk", "Experimental Folk", "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", 
+                "Neofolk", "Outlaw Country", "Progressive Country", "Progressive Folk", "Psychedelic Folk", "Traditional Country", "Traditional Folk", "Western Swing", "Indie Folk"
+            ],
+            "Classical/Score": [
+                "Ambient", "Avant-Garde", "Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Contemporary Classical", "Drone", 
+                "Early Music", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Classical", "Modern Creative", "Musique Concrète", 
+                "Neoclassical", "Noise", "Opera", "Orchestral", "Renaissance", "Romantic Period", "Score", "Sound Art", "Soundtrack", "String Quartet", "Symphonic"
+            ],
+            "Latin/World": [
+                "Afrobeat", "Afro-Cuban", "Bachata", "Baile Funk", "Bhangra", "Bollywood", "Bolero", "Bossa Nova", "Calypso", "Celtic", "Cumbia", "Dancehall", "Dub", 
+                "Fado", "Flamenco", "Highlife", "Jùjú", "Kizomba", "Klezmer", "Latin Groove", "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Mbalax", 
+                "Merengue", "Polka", "Raggamuffin", "Reggae", "Reggaeton", "Roots Reggae", "Rumba", "Salsa", "Samba", "Ska", "Soca", "Tango", "Tejano", "Tropicalia", "Zouk"
+            ],
+             "Blues/Roots": [
+                "Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Gospel", "Jump Blues", "Piedmont Blues", "Rhythm and Blues", 
+                "Roots Rock", "Spirituals", "Swamp Blues", "Texas Blues", "Zydeco"
+             ],
+             "Experimental/Odd": [
+                 "Avant-Garde", "Breakcore", "Dark Ambient", "Dungeon Synth", "Glitch", "Hauntology", "Japanoise", "Lowercase", "Musique Concrète", "No Wave", 
+                 "Noise", "Outsider Music", "Plunderphonics", "Sound Collage", "Vaporwave", "Witch House", "Extratone", "Flashcore", "Danger Music", "Black MIDI"
+             ],
+             "Time Period": [
+                 "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"
+             ],
+             "Suno/Meta": [
+                 "Ritmiczna", "Melodyjna", "Dynamiczna", "Szybka", "Wolna", "Staccato", "Legato", "Syncopated", "Anthemic", "Broadcasting", "Trailer", "Anime Opening", "Eurovision", "Billboard 100", "Commercial", "Jingle"
+             ],
+             "Other": [
+                 "Acapella", "Barbershop Quartet", "Cabaret", "Children's Music", "Comedy Rock", "Dungeon Synth", "Exotica", "Lounge", "Marching Band", "New Age", 
+                 "Sea Shanty", "Spoken Word", "Vaudeville"
+             ]
         };
 
         const INSTRUMENTS = [
-            "Synthesizer", "Electric Guitar", "Bass Guitar", "Acoustic Guitar", "Piano", "Drums", "808s",
-            "Violin", "Cello", "Strings", "Brass Section", "Saxophone", "Trumpet",
-            "Flute", "Harp", "Koto", "Sitar", "Kalimba", "Marimba", "Steel Drums",
-            "Analog Synths", "Wobble Bass", "Distorted 808", "Orchestra"
+            "808 Drums", "808 Sub Bass", "909 Kit", "303 Acid Bassline", "Accordion", "Acoustic Drums", "Acoustic Guitar", "Alto Saxophone", "Analog Synth", 
+            "Bagpipes", "Banjo", "Baritone Saxophone", "Bass Drum", "Bass Guitar", "Bassoon", "Bongos", "Brass Section", "Breakbeat", "Brown Noise", "Celesta", 
+            "Cello", "Chimes", "Clarinet", "Clavinet", "Congas", "Contrabass", "Cowbell", "Didgeridoo", "Distorted Bass", "Distorted Guitar", "Double Bass", 
+            "Drone", "Drum Machine", "Duduk", "Electric Guitar", "Electric Piano", "Erhu", "Fiddle", "Fingerstyle Acoustic Guitar", "Flute", "French Horn", "Fretless Bass", "Gamelan", 
+            "Gated Reverb Drums", "Glass Harmonica", "Glitch Drums", "Glockenspiel", "Gong", "Granular Synthesis", "Guiro", "Hammond Organ", "Handclaps", 
+            "Handpan", "Harmonica", "Harp", "Harpsichord", "Hybrid Drums", "Hurdy-Gurdy", "Kalimba", "Koto", "Lute", "Lyre", "Mandolin", "Marimba", "Mellotron", "Minimal Synth", 
+            "Modular Synthesizer", "Moog Bass", "Nyckelharpa", "Oboe", "Ondes Martenot", "Organ", "Oud", "Pan Flute", "Piano", "Pink Noise", "Pipa", "Portamento Synth", 
+            "Prepared Piano", "Processed Saxophone", "Recorder", "Rhodes Piano", "Sampler", "Sarangi", "Saxophone", "Shaker", "Shamisen", "Shehnai", "Sitar", "Slide Guitar", "Snare Drum", 
+            "Steel Drums", "String Quartet", "Strings", "Sub Bass", "Synth Arpeggio", "Synth Bass", "Synth Lead", "Synth Pad", "Tabla", "Taiko Drums", "Tambourine", 
+            "Tape Loops", "Tenor Saxophone", "Theremin", "Timbales", "Timpani", "Toy Piano", "Triangle", "Trombone", "Trumpet", "Tuba", "Turntables", "Ukulele", 
+            "Upright Bass", "Vibraphone", "Viola", "Violin", "Vocoder", "Wah-Wah Guitar", "Waterphone", "White Noise", "Wind Chimes", "Wurlitzer Piano", 
+            "Xylophone", "Zither", "WA-47", "Neumann U87", "Sony C800G", "Shure SM7B"
         ];
 
         const VOICES = [
-            "Female Vocals", "Male Vocals", "Androgynous Vocals", "Choir",
-            "Ethereal", "Aggressive", "Soft", "Whispery", "Powerful", "Auto-Tuned",
-            "Raspy", "Operatic", "Deep", "High-Pitched", "Spoken Word", "Rapping",
-            "Duet", "Vocal Chops", "Reverb-Heavy Vocals"
+            "Male Vocals", "Female Vocals", "Androgynous Vocals", "Choir", "Group Backing Vocals", "Children's Choir", "Gospel Choir", "Gang Vocals",
+            "Whisper", "Screaming", "Growling", "Spoken Word", "Rap Flow", "Autotune", "Operatic", "Ethereal",
+            "Baritone", "Bass", "Alto", "Soprano", "Falsetto", "Raspy", "Breathy", "Guttural", "Robot", "Vocoder", 
+            "Chant", "Crooner", "Scat Singing", "Yodeling", "Throat Singing", "Beatboxing", "Heavy Auto-Tune", "Multi-layered Harmonies", "Male Falsetto", "Introspective"
         ];
 
         const MOODS = [
-            "Uplifting", "Melancholic", "Dark", "Euphoric", "Chill", "Energetic",
-            "Aggressive", "Romantic", "Nostalgic", "Dreamy", "Mysterious", "Hopeful",
-            "Sad", "Happy", "Angry", "Relaxing", "Intense", "Epic", "Cinematic",
-            "Trippy", "Groovy", "Funky", "Edgy", "Sentimental"
+            "Aggressive", "Angular", "Ambient", "Anxious", "Avant-Garde", "Bittersweet", "Bouncy", "Brooding", "Calm", "Chaotic", "Chill", "Cinematic", "Cold", "Comforting", "Confident", 
+            "Cosmic", "Dark", "Detached", "Dissociative", "Dramatic", "Dreamy", "Driving", "Eerie", "Elegant", "Emotional", "Energetic", "Enigmatic", "Epic", 
+            "Ethereal", "Euphoric", "Festive", "Floating", "Funky", "Glitchy", "Gloomy", "Groovy", "Happy", "Haunting", "Heartbreaking", "Heavy", "Hopeful", "Hypnotic", 
+            "Industrial", "Inspirational", "Intense", "Intimate", "Introspective", "Isolated", "Joyful", "Joyous", "Jubilant", "Laid-back", "Lazy", "Light", "Lonely", "Lush", 
+            "Majestic", "Melancholy", "Melancholic", "Mellow", "Mournful", "Mysterious", "Nostalgic", "Ominous", "Optimistic", "Passionate", "Peaceful", "Playful", "Powerful", 
+            "Psychedelic", "Pulsing", "Quirky", "Reflective", "Relaxing", "Retro", "Romantic", "Sad", "Sentimental", "Serene", "Serious", "Sexy", "Silly", 
+            "Somber", "Soothing", "Sophisticated", "Sorrowful", "Soulful", "Spacey", "Spiritual", "Spooky", "Suspenseful", "Sweet", "Swirling", "Tense", 
+            "Tranquil", "Trippy", "Upbeat", "Uplifting", "Warm", "Whimsical", "Winter Atmosphere", "Witty", "Yearning"
         ];
 
-        const TEMPO_FEEL = ["Slow", "Medium", "Fast", "Upbeat", "Driving", "Laid Back", "Frenetic", "Half-Time", "Double-Time", "Varying Tempo"];
+        const TEMPO_FEEL = [
+            "Slow (Adagio)", "Walking Pace (Andante)", "Fast (Allegro)", "Very Fast (Presto)",
+            "Driving 4/4", "Groove", "Half-time", "Shuffle", "Syncopated", "Swing", "Triplet Feel",
+            "Rubato", "Free Tempo", "60 BPM", "70 BPM", "80 BPM", "88 BPM", "90 BPM", "100 BPM", "110 BPM", "120 BPM", "125 BPM", "128 BPM", "130 BPM", "140 BPM", "150 BPM", "160 BPM", "170 BPM", "180 BPM",
+            "Blast Beat", "Breakbeat", "D-Beat", "Double Time", "Down-tempo", "Four-on-the-Floor", "Latin Groove", 
+            "Motorik", "Off-beat", "Polyrhythmic", "Pulsing", "Skank", "Slow Burn", "Slow Jam", "Staccato", "Steady Beat", "Straight", "Up-tempo", "Waltz (3/4)"
+        ];
 
         const PRODUCTION = [
-            "High Fidelity", "Lo-Fi", "Vintage", "Clean", "Distorted",
-            "Reverb", "Delay", "Wide Stereo", "Compressed", "Raw",
-            "Studio Quality", "Live Recording", "Sampled", "Granular",
-            "Minimalist", "Maximalist", "Wall of Sound"
-        ];
-
-        // --- DIAL MAPPINGS ---
-        // 0-4 scale mappings to tags (Weirdness, Era, Intensity, Tempo, Vocals)
-        const TAGS_WEIRDNESS = [
-            ["Pop Structure", "Conventional", "Radio Friendly"],
-            ["Standard", "Classic Structure"],
-            ["Slightly Experimental", "Unique Structure"],
-            ["Avant-Garde", "Experimental", "Unconventional"],
-            ["Abstract", "Chaos", "Non-Linear", "Glitch"]
-        ];
-
-        const TAGS_ERA = [
-            ["1950s", "Vintage", "Retro", "Old School"],
-            ["1980s", "Synthwave", "Retro-Futurism"],
-            ["1990s", "Golden Age", "Classic"],
-            ["2000s", "Modern Classic"],
-            ["Modern", "Contemporary", "Futuristic", "2020s"]
-        ];
-
-        const TAGS_INTENSITY = [
-            ["Minimal", "Ambient", "Soft", "Quiet"],
-            ["Mellow", "Relaxed", "Chill"],
-            ["Balanced", "Mid-Tempo"],
-            ["High Energy", "Driving", "Powerful"],
-            ["Explosive", "Aggressive", "Hard", "Intense"]
-        ];
-
-        const TAGS_TEMPO = [
-            ["Downtempo", "Slow", "70 BPM"],
-            ["Mid-Tempo", "Groovy", "90 BPM"],
-            ["Upbeat", "110 BPM", "Standard"],
-            ["Fast", "Driving", "130 BPM"],
-            ["Very Fast", "Frenetic", "160+ BPM"]
-        ];
-
-        const TAGS_VOCALS = [
-            ["Instrumental", "No Vocals"],
-            ["Minimal Vocals", "Vocal Chops"],
-            ["Standard Vocals", "Verse-Chorus"],
-            ["Vocal Heavy", "Lyrical"],
-            ["Acapella", "Vocals Only"]
+            "8-bit", "Analog Warmth", "Atmospheric", "Binaural", "Breathy", "Bright", "Brittle", "Cinematic Production", "Clean", "Close Mic", "Compressed", 
+            "Crisp", "Crunchy", "Dark Mix", "Dense", "Digital", "Distorted", "Dry Mix", "Dull", "Echoey", "Flat", "Fuzzy", "Gated Reverb", "Glassy", 
+            "Glitched", "Glossy", "Grainy", "Granular Textures", "Gritty", "Harsh", "Heavy Bass", "Heavy Reverb", "Hi-Fi", "Hollow", "Immersive Soundstage", "Instrument-forward Balance", 
+            "Live Room", "Lo-Fi", "Lo-Fi Tape Saturation", "Loud Master", "Massive Reverb", "Minimal", "Modern Production", "Monophonic", "Muddy", "Muffled", "Noisy", "Old School", "Organic", "Polished", 
+            "Polyphonic", "Punchy", "Raw", "Retro", "Rich", "Room Reverb", "Room Tone", "Saturated", "Sharp", "Sidechained", "Sloppy", "Smooth", "Soft", 
+            "Sparse", "Stereo", "Swirling Textures", "Synthetic", "Tape Saturation", "Thick", "Thin", "Tight", "Twangy", "Underwater", "Vintage", 
+            "Vinyl Crackle", "Wall of Sound", "Warm", "Wet Mix", "Wide Stereo", "Wide Stereo Field", "Neve", "SSL", "Tube Preamp"
         ];
 
         const METATAGS = [
-            { label: "[Intro]", tag: "[Intro]" },
-            { label: "[Verse]", tag: "[Verse]" },
-            { label: "[Chorus]", tag: "[Chorus]" },
-            { label: "[Bridge]", tag: "[Bridge]" },
-            { label: "[Outro]", tag: "[Outro]" },
-            { label: "[Instrumental Break]", tag: "[Instrumental Break]" },
-            { label: "[Drop]", tag: "[Drop]" },
-            { label: "[Hook]", tag: "[Hook]" }
+            { label: "Intro", tag: "[Intro]" },
+            { label: "Verse", tag: "[Verse]" },
+            { label: "Chorus", tag: "[Chorus]" },
+            { label: "Pre-Chorus", tag: "[Pre-Chorus]" },
+            { label: "Bridge", tag: "[Bridge]" },
+            { label: "Hook", tag: "[Hook]" },
+            { label: "Break", tag: "[Instrumental Break]" },
+            { label: "Solo", tag: "[Guitar Solo]" },
+            { label: "Outro", tag: "[Outro]" },
+            { label: "End", tag: "[End]" },
+            { label: "Drop", tag: "[Drop]" },
+            { label: "Instrumental", tag: "[Instrumental]" },
+            { label: "Interlude", tag: "[Interlude]" },
+            { label: "Big Finish", tag: "[Big Finish]" },
+            { label: "Silence", tag: "[Silence]" }
         ];
 
         const PERFORMANCE_TAGS = [
-            { label: "Whisper", tag: "(Whispered)" },
-            { label: "Shout", tag: "(Shouted)" },
-            { label: "Spoken", tag: "(Spoken)" },
-            { label: "Ad-Lib", tag: "(Ad-Lib)" }
+            { label: "Whisper", tag: "[Whisper]" },
+            { label: "Shout", tag: "[Shout]" },
+            { label: "Spoken", tag: "[Spoken Word]" },
+            { label: "Crescendo", tag: "[Crescendo]" },
+            { label: "Decrescendo", tag: "[Decrescendo]" },
+            { label: "Stop", tag: "[Sudden Stop]" },
+            { label: "Fade", tag: "[Fade Out]" },
+            { label: "Pause", tag: "[Pause]" },
+            { label: "Giggle", tag: "[Giggle]" },
+            { label: "Sigh", tag: "[Sigh]" },
+            { label: "Applause", tag: "[Applause]" },
+            { label: "Cheer", tag: "[Cheer]" }
         ];
 
         // --- STATE ---
         let state = {
             genreCat: "",
-            subgenres: [],
+            subgenres: [], 
             instruments: [],
             voices: [],
             moods: [],
@@ -914,7 +936,7 @@
             singerDescription: "",
             exclusions: ""
         };
-
+        
         let dialState = {
             previewGenre: "",
             previewInstruments: [],
@@ -926,34 +948,74 @@
 
         let deleteConfirm = false;
 
+        // Dial Tag Mappings - DIRECT VISIBLE TAGS
+        const TAGS_WEIRDNESS = [
+            ["Conventional", "Standard Structure"],
+            ["Experimental", "Unconventional"],
+            ["Avant-Garde", "Abstract"],
+            ["Chaotic", "Non-linear"]
+        ];
+        
+        const TAGS_ERA = [
+            ["Vintage", "Lo-Fi", "Analog Warmth"],
+            ["Retro", "Old School"],
+            ["Modern", "Clean Mix"],
+            ["Futuristic", "Hi-Fi", "Digital"]
+        ];
+
+        const TAGS_INTENSITY = [
+            ["Ambient", "Serene"],
+            ["Chill", "Mellow"],
+            ["Balanced", "Groovy"],
+            ["Energetic", "Driving"],
+            ["Aggressive", "Intense"]
+        ];
+
+        const TAGS_TEMPO = [
+            ["Downtempo", "Slow"],
+            ["Mid-Tempo", "Groove"],
+            ["Up-Tempo", "Fast"],
+            ["Speed", "Rapid"]
+        ];
+        
+        const TAGS_VOCALS = [
+            ["Instrumental"],
+            ["Minimal Vocals", "Backing Vocals"],
+            ["Male Vocals", "Female Vocals"],
+            ["Lyrical", "Rap Flow"]
+        ];
+
+
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             initGenreUI();
-            initDialsGenreUI();
-            initMultiSelectUI("instruments-container", INSTRUMENTS, "instruments", "selected-ring-blue");
-            initMultiSelectUI("voices-container", VOICES, "voices", "selected-ring-blue");
-            initMultiSelectUI("moods-container", MOODS, "moods", "selected-ring-purple"); // Changed to purple/pink
-            initMultiSelectUI("production-container", PRODUCTION, "production", "selected-ring-purple"); // Changed to purple/pink which is my new green equivalent visually
-
+            initDialsGenreUI(); 
+            initMultiSelectUI("instruments-container", INSTRUMENTS, "instruments", "btn-selected-blue", "text-blue-600");
+            initMultiSelectUI("voices-container", VOICES, "voices", "btn-selected-blue", "text-blue-600");
+            initMultiSelectUI("moods-container", MOODS, "moods", "btn-selected-yellow", "text-yellow-700");
+            initMultiSelectUI("production-container", PRODUCTION, "production", "btn-selected-emerald", "text-emerald-700");
             initTempoUI();
             initLyricsTags();
             initDB();
-
+            
             // Search Listener
             document.getElementById('instrument-search').addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
                 const container = document.getElementById('instruments-container');
                 Array.from(container.children).forEach(btn => {
                     const txt = btn.textContent.toLowerCase();
-                    if (txt.includes(term)) btn.style.display = 'block';
+                    if(txt.includes(term)) btn.style.display = 'block';
                     else btn.style.display = 'none';
                 });
             });
 
-            // Restore defaults
+            // Initialize default visuals for dials
             updateDials();
             updatePrompt();
+            updateArtistPreviewStats(); 
+            
+            // Set default text for Lyrics input
             document.getElementById('lyrics-input').value = LYRICS_PREFIX;
         });
 
@@ -964,7 +1026,7 @@
             container.innerHTML = '';
             Object.keys(GENRES).forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `p-3 rounded-xl text-sm border transition-all text-left bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200`;
+                btn.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`;
                 btn.textContent = cat;
                 btn.onclick = () => selectGenreCat(cat, btn);
                 btn.dataset.val = cat;
@@ -978,7 +1040,7 @@
 
             // Add "ALL" button
             const allBtn = document.createElement('button');
-            allBtn.className = "px-3 py-1 rounded-full text-[10px] border transition-colors cursor-pointer bg-purple-500 text-white border-purple-500 font-bold";
+            allBtn.className = "filter-chip active-filter";
             allBtn.textContent = "ALL";
             allBtn.onclick = () => filterDialsGenre('ALL', allBtn);
             container.appendChild(allBtn);
@@ -986,38 +1048,41 @@
             // Add Category buttons
             Object.keys(GENRES).forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = "px-3 py-1 rounded-full text-[10px] border transition-colors cursor-pointer bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500";
+                btn.className = "filter-chip";
                 btn.textContent = cat;
                 btn.onclick = () => filterDialsGenre(cat, btn);
                 container.appendChild(btn);
             });
 
+            // Populate initial Select with ALL
             populateDialSelect(null);
         }
 
         function filterDialsGenre(category, btnElement) {
+            // Update Active State
             const container = document.getElementById('dial-category-filters');
-            Array.from(container.children).forEach(b => {
-                b.className = "px-3 py-1 rounded-full text-[10px] border transition-colors cursor-pointer bg-slate-900 border-slate-700 text-slate-400 hover:border-slate-500";
-            });
-            btnElement.className = "px-3 py-1 rounded-full text-[10px] border transition-colors cursor-pointer bg-purple-500 text-white border-purple-500 font-bold shadow-lg shadow-purple-500/20";
+            Array.from(container.children).forEach(b => b.classList.remove('active-filter'));
+            btnElement.classList.add('active-filter');
+
+            // Populate Select
             populateDialSelect(category === 'ALL' ? null : category);
         }
 
         function populateDialSelect(filterCategory) {
             const select = document.getElementById('dial-genre-select');
-            const currentValue = select.value;
-            select.innerHTML = '';
+            const currentValue = select.value; // Attempt to preserve selection if possible
+            select.innerHTML = ''; // Clear
 
             const defaultOpt = document.createElement('option');
             defaultOpt.value = "";
-            defaultOpt.textContent = filterCategory ? `[ SELECT ${filterCategory.toUpperCase()} GENRE ]` : "Select Base Genre...";
+            defaultOpt.textContent = filterCategory ? `[ SELECT ${filterCategory.toUpperCase()} GENRE ]` : "[ SELECT BASE GENRE ]";
             select.appendChild(defaultOpt);
 
             const categories = filterCategory ? [filterCategory] : Object.keys(GENRES);
 
             categories.forEach(cat => {
                 if (filterCategory) {
+                    // Flat list for single category
                     GENRES[cat].forEach(sub => {
                         const option = document.createElement('option');
                         option.value = sub;
@@ -1026,20 +1091,22 @@
                         select.appendChild(option);
                     });
                 } else {
+                    // Optgroups for ALL
                     const optGroup = document.createElement('optgroup');
                     optGroup.label = cat;
                     GENRES[cat].forEach(sub => {
                         const option = document.createElement('option');
                         option.value = sub;
                         option.textContent = sub;
-                        option.dataset.category = cat;
+                        option.dataset.category = cat; 
                         optGroup.appendChild(option);
                     });
                     select.appendChild(optGroup);
                 }
             });
 
-            if (currentValue) {
+            // Restore value if it exists in new list
+             if (currentValue) {
                 let exists = false;
                 for (let i = 0; i < select.options.length; i++) {
                     if (select.options[i].value === currentValue) {
@@ -1051,45 +1118,42 @@
             }
         }
 
-        function initMultiSelectUI(containerId, dataList, stateKey, activeClass) {
+        function initMultiSelectUI(containerId, dataList, stateKey, activeClass, activeText) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
-
+            
             dataList.forEach(item => {
                 const btn = document.createElement('button');
-                // Base classes
-                btn.className = "px-3 py-1.5 rounded-full text-xs transition-all border font-medium cursor-pointer select-none bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600";
-
-                if (state[stateKey].includes(item)) {
-                    // Active state handled by updateVisuals usually but for init:
-                    // We let the loop handle it
+                // Default pill style
+                btn.className = "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
+                
+                if(state[stateKey].includes(item)) {
+                    // It will get active classes later via updateBtnVisual
+                    // But for initial render we set base
                 }
 
                 btn.textContent = item;
                 btn.dataset.value = item;
-
+                
                 btn.onclick = () => {
                     toggleSelection(item, stateKey);
                     updateBtnVisual(btn, state[stateKey].includes(item), activeClass);
                 };
                 container.appendChild(btn);
             });
-            // Initial visual sync
-            setTimeout(() => { // minimal delay to ensure DOM
-                state[stateKey].forEach(item => {
-                    // find btn
-                    const btn = Array.from(container.children).find(b => b.textContent === item);
-                    if (btn) updateBtnVisual(btn, true, activeClass);
-                });
-            }, 0);
         }
 
         function updateBtnVisual(btn, isSelected, activeClass) {
-            if (isSelected) {
-                btn.className = `px-3 py-1.5 rounded-full text-xs transition-all border font-medium cursor-pointer select-none ${activeClass} shadow-md`;
-            } else {
-                btn.className = "px-3 py-1.5 rounded-full text-xs transition-all border font-medium cursor-pointer select-none bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600";
-            }
+             if (isSelected) {
+                // Remove default look
+                btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600', 'hover:border-slate-300');
+                // Add specific active pill look
+                btn.classList.add(activeClass);
+             } else {
+                // Reset to default
+                btn.classList.remove(activeClass);
+                btn.classList.add('bg-white', 'border-slate-200', 'text-slate-600', 'hover:border-slate-300');
+             }
         }
 
         function initTempoUI() {
@@ -1106,7 +1170,7 @@
             const structureContainer = document.getElementById('structure-tags-container');
             METATAGS.forEach(t => {
                 const btn = document.createElement('button');
-                btn.className = "px-3 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-xs font-mono text-left text-purple-300 transition-colors hover:text-purple-200";
+                btn.className = "px-3 py-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 rounded-lg text-xs font-mono text-left transition-colors";
                 btn.textContent = t.label;
                 btn.onclick = () => insertTag(t.tag);
                 structureContainer.appendChild(btn);
@@ -1115,7 +1179,7 @@
             const perfContainer = document.getElementById('performance-tags-container');
             PERFORMANCE_TAGS.forEach(t => {
                 const btn = document.createElement('button');
-                btn.className = "px-3 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-xs font-mono text-left text-yellow-300 transition-colors hover:text-yellow-200";
+                btn.className = "px-3 py-2 bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 text-yellow-700 rounded-lg text-xs font-mono text-left transition-colors";
                 btn.textContent = t.label;
                 btn.onclick = () => insertTag(t.tag);
                 perfContainer.appendChild(btn);
@@ -1126,19 +1190,20 @@
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Reset Nav Buttons
-            document.querySelectorAll('nav button').forEach(btn => {
-                btn.className = "px-4 py-2 rounded-full text-sm font-medium transition-all text-slate-400 hover:text-white whitespace-nowrap";
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
 
             document.getElementById(`tab-${tabName}`).classList.add('active');
-
-            // Active Nav Button
             const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-            activeBtn.className = "px-4 py-2 rounded-full text-sm font-bold transition-all bg-white text-slate-900 shadow-lg shadow-white/10 whitespace-nowrap";
-
-            if (tabName === 'json') generateJsonOutput();
-            if (tabName === 'library') renderLibrary();
+            activeBtn.classList.add('active');
+            
+            if (tabName === 'json') {
+                generateJsonOutput();
+            }
+            if (tabName === 'library') {
+                renderLibrary();
+            }
             if (tabName === 'artist') {
                 updateArtistPreviewStats();
                 renderArtistList();
@@ -1147,41 +1212,47 @@
 
         function selectGenreCat(cat, btnElement, preserveSelection = false) {
             state.genreCat = cat;
-            if (!preserveSelection) state.subgenres = [];
+            if (!preserveSelection) {
+                state.subgenres = []; 
+            }
 
             const allBtns = document.getElementById('genre-container').children;
             Array.from(allBtns).forEach(b => {
-                b.className = `p-3 rounded-xl text-sm border transition-all text-left bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600`;
+                b.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`;
             });
-            if (!btnElement) btnElement = Array.from(allBtns).find(b => b.textContent === cat);
-
+            
+            if (!btnElement) {
+                btnElement = Array.from(allBtns).find(b => b.textContent === cat);
+            }
             if (btnElement) {
-                btnElement.className = `p-3 rounded-xl text-sm border transition-all text-left bg-gradient-to-br from-purple-600 to-indigo-600 border-purple-500 text-white font-bold shadow-lg shadow-purple-900/40`;
+                // Active State for Category
+                btnElement.className = `p-3 rounded-xl border transition-all text-left bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-200 font-bold text-sm`;
             }
 
             const subWrapper = document.getElementById('subgenre-wrapper');
             const subContainer = document.getElementById('subgenre-container');
             subContainer.innerHTML = '';
-
+            
             if (GENRES[cat]) {
                 subWrapper.classList.remove('hidden');
                 GENRES[cat].forEach(sub => {
                     const sBtn = document.createElement('button');
-                    // Default Subgenre
-                    sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600";
-
+                    // Base style for subgenre pills
+                    sBtn.className = "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
+                    
                     if (state.subgenres.includes(sub)) {
-                        sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-purple-500/20 border-purple-500 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.2)]";
+                        sBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-purple-100 border border-purple-500 text-purple-700 shadow-sm";
                     }
 
                     sBtn.textContent = sub;
+                    sBtn.dataset.value = sub;
                     sBtn.onclick = () => {
                         if (state.subgenres.includes(sub)) {
                             state.subgenres = state.subgenres.filter(s => s !== sub);
-                            sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600";
+                            sBtn.className = "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
                         } else {
                             state.subgenres.push(sub);
-                            sBtn.className = "px-3 py-1.5 rounded-full text-xs transition-colors border bg-purple-500/20 border-purple-500 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.2)]";
+                            sBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-purple-100 border border-purple-500 text-purple-700 shadow-sm";
                         }
                         updatePrompt();
                     };
@@ -1205,15 +1276,18 @@
 
         function updateExclusions(val) {
             state.exclusions = val;
-            const exIn = document.getElementById('exclusion-input');
-            const artEx = document.getElementById('artist-exclusions');
-            const exOut = document.getElementById('style-exclusions-output');
+            
+            const blueprintInput = document.getElementById('exclusion-input');
+            const artistInput = document.getElementById('artist-exclusions');
+            const outputInput = document.getElementById('style-exclusions-output');
 
-            if (exIn && exIn.value !== val) exIn.value = val;
-            if (artEx && artEx.value !== val) artEx.value = val;
-            if (exOut) exOut.value = val;
+            if(blueprintInput && blueprintInput.value !== val) blueprintInput.value = val;
+            if(artistInput && artistInput.value !== val) artistInput.value = val;
+            if(outputInput) outputInput.value = val;
 
-            if (document.getElementById('tab-artist').classList.contains('active')) updateArtistPreviewStats();
+            if (document.getElementById('tab-artist').classList.contains('active')) {
+                updateArtistPreviewStats();
+            }
         }
 
         function updatePrompt() {
@@ -1222,26 +1296,38 @@
             state.singerDescription = document.getElementById('singer-desc').value;
 
             const parts = [];
-            if (state.subgenres.length > 0) parts.push(...state.subgenres);
-            else if (state.genreCat) parts.push(state.genreCat);
+            
+            if (state.subgenres.length > 0) {
+                 parts.push(...state.subgenres);
+            } else if (state.genreCat) {
+                 parts.push(state.genreCat);
+            }
 
             if (state.tempo) parts.push(state.tempo);
             if (state.moods.length > 0) parts.push(state.moods.join(", "));
             if (state.instruments.length > 0) parts.push(state.instruments.join(", "));
+            
             if (state.singerDescription) parts.push(state.singerDescription);
             if (state.voices.length > 0) parts.push(state.voices.join(", "));
+            
             if (state.production.length > 0) parts.push(state.production.join(", "));
 
             const text = PROMPT_PREFIX + parts.join(", ");
             document.getElementById('style-output').value = text;
-            document.getElementById('char-count').textContent = `${text.length}/120`;
-
+            
+            const countDiv = document.getElementById('char-count');
+            countDiv.textContent = `${text.length}/120 chars`;
+            
             const warning = document.getElementById('length-warning');
             if (text.length > 120) warning.classList.remove('hidden');
             else warning.classList.add('hidden');
-
-            if (document.getElementById('tab-json').classList.contains('active')) generateJsonOutput();
-            if (document.getElementById('tab-artist').classList.contains('active')) updateArtistPreviewStats();
+            
+            if (document.getElementById('tab-json').classList.contains('active')) {
+                generateJsonOutput();
+            }
+            if(document.getElementById('tab-artist').classList.contains('active')){
+                updateArtistPreviewStats();
+            }
         }
 
         function insertTag(tag) {
@@ -1252,366 +1338,705 @@
             const before = text.substring(0, start);
             const after = text.substring(end);
 
-            const isStructureTag = tag.startsWith("[") && !tag.includes("Whisper");
-            const prefix = (isStructureTag && before.length > 0 && !before.endsWith("\n")) ? "\n\n" : "";
-            const suffix = isStructureTag ? "\n" : "";
+            const prefix = (tag.startsWith("[") && before.length > 0 && !before.endsWith("\n")) ? "\n\n" : "";
+            const suffix = tag.startsWith("[") ? "\n" : "";
 
-            textarea.value = before + prefix + tag + suffix + after;
+            const newText = before + prefix + tag + suffix + after;
+            textarea.value = newText;
+            
             textarea.focus();
-            const newPos = start + prefix.length + tag.length + suffix.length;
-            textarea.setSelectionRange(newPos, newPos);
+            const newCursorPos = start + prefix.length + tag.length + suffix.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
         }
 
-        // --- GEMINI LYRICS ---
+        // --- NEW: GENERATE LYRICS WITH GEMINI ---
         async function generateLyrics(type, event) {
             const apiKey = document.getElementById('api-key').value.trim();
-            const selectedModel = document.getElementById('ai-model').value;
-            // Validations omitted for brevity in thought but kept in code
-            if (!apiKey) { alert("Please enter API Key"); return; }
-
-            const btn = event.target;
+            let selectedModel = document.getElementById('ai-model').value; 
+            
+            if (!apiKey) {
+                alert("Please enter a valid Google Gemini API Key first.");
+                return;
+            }
+            
+            const btn = event.target; 
             const originalText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Generating...`;
+            btn.textContent = "Generating...";
             btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
 
             const topic = document.getElementById('lyric-topic').value.trim() || "anything";
             const genre = state.genreCat + (state.subgenres.length ? " (" + state.subgenres.join(", ") + ")" : "");
-            const mood = state.moods.join(", ") || "general";
+            const mood = state.moods.length > 0 ? state.moods.join(", ") : "general";
 
             const promptText = `
-            Act as a professional songwriter. Write complete lyrics + structure.
-            Genre: ${genre}, Mood: ${mood}, Topic: ${topic}.
-            Include [Verse], [Chorus] tags and performance cues like [Whisper].
-            Output ONLY lyrics/tags.
+            Act as a professional songwriter and music producer.
+            Write a complete song structure including lyrics for a track with these characteristics:
+            Genre Style: ${genre}
+            Mood/Vibe: ${mood}
+            Topic/Theme: ${topic}
+            
+            CRITICAL INSTRUCTIONS:
+            1. You MUST include song structure tags like [Verse], [Chorus], [Bridge], [Outro].
+            2. You MUST include performance cues and dynamic instructions within brackets based on the genre style. 
+               Examples: [Soft Piano Intro], [Build up intensity], [Heavy Bass Drop], [Whisper vocals], [Scream], [Instrumental Break].
+            3. Ensure the cues are stylistically appropriate (e.g. use [Breakdown] for Metal, [Drop] for EDM, [Solo] for Rock).
+            4. Output ONLY the lyrics and tags. Do not add conversational text.
             `;
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+            const callApi = async (model) => {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }]
+                    })
                 });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    return { ok: false, status: response.status, data: errorData };
+                }
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error?.message || "API Error");
+                return { ok: true, data: data };
+            };
 
-                const lyrics = data.candidates[0].content.parts[0].text.trim();
+            try {
+                let result = await callApi(selectedModel);
+
+                if (!result.ok && (result.status === 404 || result.status === 429)) {
+                    console.warn(`Model ${selectedModel} failed (${result.status}). Retrying with gemini-1.5-flash...`);
+                    btn.textContent = "Retrying with Flash...";
+                    result = await callApi("gemini-1.5-flash");
+                }
+
+                if (!result.ok) {
+                    let errorMsg = `API Error (${result.status})`;
+                    if (result.data && result.data.error) {
+                        errorMsg += `\nMessage: ${result.data.error.message}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                if (!result.data.candidates || !result.data.candidates[0].content) {
+                     throw new Error("No content generated.");
+                }
+
+                const lyrics = result.data.candidates[0].content.parts[0].text.trim();
+                
                 const textarea = document.getElementById('lyrics-input');
-                if (textarea.value === LYRICS_PREFIX || textarea.value === "") textarea.value = LYRICS_PREFIX + lyrics;
-                else textarea.value += "\n\n" + lyrics;
+                if (textarea.value === LYRICS_PREFIX || textarea.value === "") {
+                    textarea.value = LYRICS_PREFIX + lyrics;
+                } else {
+                    textarea.value = textarea.value + "\n\n" + lyrics;
+                }
                 textarea.scrollTop = textarea.scrollHeight;
+
             } catch (e) {
-                alert("Error: " + e.message);
+                alert(e.message);
+                console.error(e);
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        // --- UTILS ---
+        async function validateAndLoadModels() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            const btn = document.querySelector('button[title="Link Key"]');
+            
+            if (!apiKey) {
+                alert("Please enter your API Key first.");
+                return;
+            }
+
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="animate-spin w-4 h-4" data-lucide="loader-2"></i>';
+            lucide.createIcons();
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                if (!response.ok) throw new Error("API Key validation failed.");
+
+                const data = await response.json();
+                if (!data.models) throw new Error("No models found.");
+
+                const validModels = data.models.filter(m => 
+                    m.supportedGenerationMethods && 
+                    m.supportedGenerationMethods.includes("generateContent")
+                );
+
+                const select = document.getElementById('ai-model');
+                select.innerHTML = ''; 
+
+                validModels.forEach(m => {
+                    const option = document.createElement('option');
+                    const value = m.name.replace('models/', '');
+                    option.value = value;
+                    option.textContent = `${m.displayName} (${value})`;
+                    select.appendChild(option);
+                });
+                
+                const flash = validModels.find(m => m.name.includes('flash'));
+                if (flash) select.value = flash.name.replace('models/', '');
+
+                alert("Valid API Key! Models loaded.");
+
+            } catch (e) {
+                alert(e.message);
+            } finally {
+                btn.innerHTML = originalContent;
+                lucide.createIcons();
+            }
+        }
+
         function clearAll() {
-            if (!confirm("Reset everything?")) return;
-            state = { genreCat: "", subgenres: [], instruments: [], voices: [], moods: [], tempo: "", production: [], singerDescription: "", exclusions: "" };
+            const btn = document.getElementById('btn-clear-all');
+            
+            if (!deleteConfirm) {
+                deleteConfirm = true;
+                btn.classList.add('confirm-delete');
+                setTimeout(() => {
+                    deleteConfirm = false;
+                    btn.classList.remove('confirm-delete');
+                }, 3000); 
+            } else {
+                state = {
+                    genreCat: "",
+                    subgenres: [],
+                    instruments: [],
+                    voices: [],
+                    moods: [],
+                    tempo: "",
+                    production: [],
+                    singerDescription: "",
+                    exclusions: ""
+                };
+                
+                document.getElementById('tempo-select').value = "";
+                document.getElementById('singer-desc').value = ""; 
+                document.getElementById('exclusion-input').value = ""; 
+                document.getElementById('style-exclusions-output').value = ""; 
+                if(document.getElementById('artist-exclusions')) document.getElementById('artist-exclusions').value = "";
 
-            // Reset UI
-            document.getElementById('tempo-select').value = "";
-            document.getElementById('singer-desc').value = "";
-            document.getElementById('exclusion-input').value = "";
-            updatePrompt();
+                document.querySelectorAll('#instruments-container button, #voices-container button, #moods-container button, #production-container button').forEach(b => {
+                     b.classList.remove('btn-selected-blue', 'btn-selected-yellow', 'btn-selected-emerald', 'btn-selected-purple');
+                     b.style.backgroundColor = ""; 
+                     b.style.color = "";
+                     b.style.borderColor = "";
+                     b.style.boxShadow = "";
+                     b.style.fontWeight = "";
+                     b.classList.add('bg-white', 'border-slate-200', 'text-slate-600', 'hover:border-slate-300');
+                });
 
-            // Re-render
+                document.querySelectorAll('#genre-container button').forEach(b => {
+                    b.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`;
+                });
+                document.getElementById('subgenre-wrapper').classList.add('hidden');
+
+                updatePrompt();
+                deleteConfirm = false;
+                btn.classList.remove('confirm-delete');
+            }
+        }
+        
+        function generateJsonOutput() {
+            const genreList = [];
+            if (state.subgenres.length > 0) {
+                genreList.push(...state.subgenres);
+            } else if (state.genreCat) {
+                genreList.push(state.genreCat);
+            }
+            const genreString = genreList.join(", ");
+            const instrumentsString = state.instruments.join(", ");
+            const personaList = [];
+            if (state.singerDescription) personaList.push(state.singerDescription);
+            if (state.voices.length > 0) personaList.push(...state.voices);
+            const personaString = personaList.join(", ");
+            const styleTagsList = [...state.moods];
+            if (state.tempo) styleTagsList.push(state.tempo);
+            const styleTagsString = styleTagsList.join(", ");
+            const recordingString = state.production.join(", ");
+
+            const jsonObj = {
+                "genre": genreString,
+                "instruments": instrumentsString,
+                "persona": personaString,
+                "style_tags": styleTagsString,
+                "recording": recordingString,
+                "exclusions": state.exclusions 
+            };
+            
+            document.getElementById('json-output').value = JSON.stringify(jsonObj, null, 4);
+        }
+
+        function copyToClipboard(elementId, btnElement) {
+            const copyText = document.getElementById(elementId);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); 
+            try {
+                document.execCommand('copy');
+                if(btnElement.querySelector('.btn-text')) {
+                    const textSpan = btnElement.querySelector('.btn-text');
+                    const originalText = textSpan.textContent;
+                    if(btnElement.classList.contains('group')) btnElement.classList.add('copied');
+                    textSpan.textContent = "Copied!";
+                    setTimeout(() => {
+                        textSpan.textContent = originalText;
+                        if(btnElement.classList.contains('group')) btnElement.classList.remove('copied');
+                    }, 2000);
+                } else {
+                    const originalTitle = btnElement.title;
+                    btnElement.title = "Copied!";
+                    setTimeout(() => btnElement.title = originalTitle, 2000);
+                }
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+        }
+
+        // --- DIALS LOGIC ---
+        function updateDials() {
+            const subGenre = document.getElementById('dial-genre-select').value;
+            const wVal = parseInt(document.getElementById('dial-weirdness').value);
+            const eVal = parseInt(document.getElementById('dial-era').value);
+            const iVal = parseInt(document.getElementById('dial-intensity').value);
+            const tVal = parseInt(document.getElementById('dial-tempo').value);
+            const vVal = parseInt(document.getElementById('dial-vocals').value);
+
+            const pick = (arr, val) => {
+                const step = 100 / arr.length;
+                const index = Math.min(Math.floor(val / step), arr.length - 1);
+                return arr[index];
+            };
+
+            const weirdTags = pick(TAGS_WEIRDNESS, wVal);
+            const eraTags = pick(TAGS_ERA, eVal);
+            const intensityTags = pick(TAGS_INTENSITY, iVal);
+            const tempoTags = pick(TAGS_TEMPO, tVal);
+            const vocalTags = pick(TAGS_VOCALS, vVal);
+
+            document.getElementById('tags-weirdness').textContent = weirdTags.join(", ");
+            document.getElementById('tags-era').textContent = eraTags.join(", ");
+            document.getElementById('tags-intensity').textContent = intensityTags.join(", ");
+            document.getElementById('tags-tempo').textContent = tempoTags.join(", ");
+            document.getElementById('tags-vocals').textContent = vocalTags.join(", ");
+
+            dialState.previewGenre = subGenre;
+            dialState.previewInstruments = [...weirdTags]; 
+            dialState.previewProduction = [...eraTags];
+            dialState.previewMoods = [...intensityTags];
+            dialState.previewTempo = tempoTags[0];
+            dialState.previewVoices = [...vocalTags];
+
+            document.getElementById('preview-genre').textContent = subGenre || "Select a base genre first...";
+            document.getElementById('preview-weirdness').textContent = weirdTags.join(", ");
+            document.getElementById('preview-era').textContent = eraTags.join(", ");
+            document.getElementById('preview-intensity').textContent = intensityTags.join(", ");
+            document.getElementById('preview-tempo').textContent = tempoTags.join(", ");
+            document.getElementById('preview-vocals').textContent = vocalTags.join(", ");
+        }
+
+        function applyDialsToMain() {
+            const baseGenre = document.getElementById('dial-genre-select').value;
+            if (!baseGenre) {
+                alert("Please select a base genre first.");
+                return;
+            }
+            state.subgenres = baseGenre ? baseGenre.split(", ").map(s => s.trim()) : [];
+            state.production = [...dialState.previewProduction]; 
+            state.moods = [...dialState.previewMoods]; 
+            state.voices = [...dialState.previewVoices]; 
+            state.tempo = dialState.previewTempo; 
+            state.subgenres.push(...dialState.previewInstruments); 
+            const selectedOption = document.querySelector(`#dial-genre-select option[value="${baseGenre.split(",")[0]}"]`);
+            if (selectedOption) {
+                const cat = selectedOption.dataset.category || selectedOption.parentElement.label;
+                if(cat) state.genreCat = cat;
+            }
             updateAllVisuals();
+            switchTab('style');
         }
 
         function updateAllVisuals() {
             if (state.genreCat) {
                 const catBtns = document.getElementById('genre-container').children;
-                // find btn
-                const btn = Array.from(catBtns).find(b => b.textContent === state.genreCat);
-                if (btn) selectGenreCat(state.genreCat, btn, true);
-            } else {
-                // Clear genre selection visually
-                const catBtns = document.getElementById('genre-container').children;
                 Array.from(catBtns).forEach(b => {
-                    b.className = `p-3 rounded-xl text-sm border transition-all text-left bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-600`;
+                    if (b.dataset.val === state.genreCat) {
+                        selectGenreCat(state.genreCat, b, true); 
+                    }
                 });
-                document.getElementById('subgenre-wrapper').classList.add('hidden');
             }
-
-            syncButtonList('instruments-container', state.instruments, "selected-ring-blue");
-            syncButtonList('voices-container', state.voices, "selected-ring-blue");
-            syncButtonList('moods-container', state.moods, "selected-ring-purple");
-            syncButtonList('production-container', state.production, "selected-ring-purple");
+            // Sync MultiSelects
+            syncButtonList('instruments-container', state.instruments, "btn-selected-blue");
+            syncButtonList('voices-container', state.voices, "btn-selected-blue");
+            syncButtonList('moods-container', state.moods, "btn-selected-yellow");
+            syncButtonList('production-container', state.production, "btn-selected-emerald");
 
             document.getElementById('tempo-select').value = state.tempo;
+            document.getElementById('singer-desc').value = state.singerDescription || ""; 
+            
+            const exIn = document.getElementById('exclusion-input');
+            if(exIn) exIn.value = state.exclusions || "";
+            const exOut = document.getElementById('style-exclusions-output');
+            if(exOut) exOut.value = state.exclusions || "";
+            const artEx = document.getElementById('artist-exclusions');
+            if(artEx) artEx.value = state.exclusions || "";
+
+            updatePrompt();
         }
 
         function syncButtonList(containerId, stateList, activeClass) {
             const container = document.getElementById(containerId);
             const buttons = container.querySelectorAll('button');
             buttons.forEach(btn => {
-                const isSel = stateList.includes(btn.textContent);
-                updateBtnVisual(btn, isSel, activeClass);
+                if (stateList.some(item => item === btn.textContent)) {
+                    updateBtnVisual(btn, true, activeClass);
+                } else {
+                    updateBtnVisual(btn, false, activeClass);
+                }
             });
         }
 
-        function copyToClipboard(id, btn) {
-            const el = document.getElementById(id);
-            el.select();
-            document.execCommand('copy');
-
-            // Visual feedback
-            const originalHTML = btn.innerHTML;
-            const isGroup = btn.classList.contains('group');
-            if (isGroup) btn.classList.add('copied');
-
-            // If it has text span
-            const span = btn.querySelector('.btn-text');
-            if (span) span.textContent = "Copied!";
-
-            setTimeout(() => {
-                if (span) span.textContent = "Copy";
-                if (isGroup) btn.classList.remove('copied');
-                btn.innerHTML = originalHTML; // Restore icon
-            }, 2000);
-        }
-
-        // --- DIALS LOGIC (Simplified for Modern UI) ---
-        // Need to update sliders to standard standard vars but keeping mapping logic
-        function updateDials() {
-            const subGenre = document.getElementById('dial-genre-select').value;
-            const w = parseInt(document.getElementById('dial-weirdness').value);
-            const e = parseInt(document.getElementById('dial-era').value);
-            const i = parseInt(document.getElementById('dial-intensity').value);
-            const t = parseInt(document.getElementById('dial-tempo').value);
-            const v = parseInt(document.getElementById('dial-vocals').value);
-
-            const pick = (arr, val) => arr[Math.min(Math.floor(val / (100 / arr.length)), arr.length - 1)];
-
-            // Mappings from CONSTANTS
-            const wTags = pick(TAGS_WEIRDNESS, w);
-            const eTags = pick(TAGS_ERA, e);
-            const iTags = pick(TAGS_INTENSITY, i);
-            const tTags = pick(TAGS_TEMPO, t);
-            const vTags = pick(TAGS_VOCALS, v);
-
-            // Update badges
-            document.getElementById('tags-weirdness').textContent = wTags.join(", ");
-            document.getElementById('tags-era').textContent = eTags.join(", ");
-            document.getElementById('tags-intensity').textContent = iTags.join(", ");
-            document.getElementById('tags-tempo').textContent = tTags.join(", ");
-            document.getElementById('tags-vocals').textContent = vTags.join(", ");
-
-            // Update Preview
-            document.getElementById('preview-genre').textContent = subGenre || "Select Genre...";
-            document.getElementById('preview-weirdness').textContent = wTags.join(", ");
-            document.getElementById('preview-era').textContent = eTags.join(", ");
-            document.getElementById('preview-intensity').textContent = iTags.join(", ");
-            document.getElementById('preview-tempo').textContent = tTags.join(", ");
-            document.getElementById('preview-vocals').textContent = vTags.join(", ");
-
-            // Store in dialState
-            dialState = {
-                previewGenre: subGenre,
-                previewInstruments: wTags, // weird -> instruments/style
-                previewProduction: eTags, // era -> production
-                previewMoods: iTags, // intensity -> moods
-                previewTempo: tTags[0],
-                previewVoices: vTags
-            };
-        }
-
-        function applyDialsToMain() {
-            if (!dialState.previewGenre) { alert("Select a genre first!"); return; }
-
-            // Map Dials to Main State
-            state.subgenres = dialState.previewGenre ? dialState.previewGenre.split(", ") : [];
-            // Merge tags
-            // Note: This logic is loose, just appending dial tags to respective categories
-            state.subgenres.push(...dialState.previewInstruments);
-            state.production = [...dialState.previewProduction];
-            state.moods = [...dialState.previewMoods];
-            state.tempo = dialState.previewTempo;
-            state.voices = [...dialState.previewVoices];
-
-            // Try to match genre cat
-            const sel = document.querySelector(`#dial-genre-select option[value="${dialState.previewGenre.split(",")[0]}"]`);
-            if (sel && sel.parentElement.tagName === 'OPTGROUP') {
-                state.genreCat = sel.parentElement.label;
-            }
-
-            updateAllVisuals();
-            switchTab('style');
-        }
-
-        function generateJsonOutput() {
-            const data = {
-                genre: [state.genreCat, ...state.subgenres].filter(Boolean).join(", "),
-                instruments: state.instruments.join(", "),
-                persona: [state.singerDescription, ...state.voices].filter(Boolean).join(", "),
-                style_tags: [state.tempo, ...state.moods].filter(Boolean).join(", "),
-                recording: state.production.join(", "),
-                exclusions: state.exclusions
-            };
-            document.getElementById('json-output').value = JSON.stringify(data, null, 4);
-        }
-
-        // --- DB & ARTIST ---
+        // --- INDEXEDDB LOGIC ---
         const DB_NAME = 'SunoArchitectDB';
-        const DB_VERSION = 2;
+        const DB_VERSION = 2; // Incremented for Artists
         let db;
 
         function initDB() {
-            const r = indexedDB.open(DB_NAME, DB_VERSION);
-            r.onupgradeneeded = (e) => {
-                db = e.target.result;
-                if (!db.objectStoreNames.contains("prompts")) db.createObjectStore("prompts", { keyPath: "id" }).createIndex("timestamp", "timestamp");
-                if (!db.objectStoreNames.contains("artists")) db.createObjectStore("artists", { keyPath: "id" });
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onerror = (event) => console.error("DB Error", event);
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains("prompts")) {
+                    const store = db.createObjectStore("prompts", { keyPath: "id" });
+                    store.createIndex("timestamp", "timestamp", { unique: false });
+                }
+                if (!db.objectStoreNames.contains("artists")) {
+                    const artistStore = db.createObjectStore("artists", { keyPath: "id" });
+                    artistStore.createIndex("name", "name", { unique: false });
+                }
             };
-            r.onsuccess = (e) => {
-                db = e.target.result;
+            request.onsuccess = (event) => {
+                db = event.target.result;
                 renderLibrary();
-                if (document.getElementById('tab-artist').classList.contains('active')) renderArtistList();
+                if(document.getElementById('tab-artist').classList.contains('active')) {
+                    renderArtistList();
+                }
             };
         }
 
         function saveCurrentPrompt() {
-            const txt = document.getElementById('style-output').value;
-            if (!txt) { alert("Empty prompt!"); return; }
-            const name = prompt("Name this save:", state.subgenres[0] || "Untitled");
-            if (!name) return;
+            const promptText = document.getElementById('style-output').value;
+            const lyricsText = document.getElementById('lyrics-input').value; 
 
-            const tx = db.transaction(["prompts"], "readwrite");
-            tx.objectStore("prompts").add({
+            if (!promptText) {
+                alert("Nothing to save!");
+                return;
+            }
+            
+            let name = state.subgenres[0] || state.genreCat || "Untitled";
+            name += ` - ${new Date().toLocaleTimeString()}`;
+
+            const note = prompt("Name this prompt:", name);
+            if (note === null) return; 
+
+            const link = prompt("Optional: Paste the Suno Song Link here:", "");
+
+            const transaction = db.transaction(["prompts"], "readwrite");
+            const store = transaction.objectStore("prompts");
+            
+            const item = {
                 id: Date.now(),
-                name,
-                state: JSON.parse(JSON.stringify(state)),
-                text: txt,
-                lyrics: document.getElementById('lyrics-input').value,
+                name: note || name,
+                state: JSON.parse(JSON.stringify(state)), 
+                text: promptText,
+                lyrics: lyricsText,
+                songLink: link,
                 timestamp: new Date()
-            });
-            tx.oncomplete = () => { alert("Saved!"); renderLibrary(); };
+            };
+
+            const request = store.add(item);
+            request.onsuccess = () => {
+                alert("Saved to Library!");
+                renderLibrary();
+            };
+            request.onerror = () => alert("Error saving prompt.");
+        }
+
+        function deletePrompt(id) {
+            if (!confirm("Delete this prompt?")) return;
+            const transaction = db.transaction(["prompts"], "readwrite");
+            const store = transaction.objectStore("prompts");
+            store.delete(id);
+            transaction.oncomplete = () => renderLibrary();
         }
 
         function loadPrompt(id) {
-            db.transaction(["prompts"]).objectStore("prompts").get(id).onsuccess = (e) => {
-                const d = e.target.result;
-                if (d) {
-                    state = d.state;
-                    if (d.lyrics) document.getElementById('lyrics-input').value = d.lyrics;
-                    updateAllVisuals();
+            const transaction = db.transaction(["prompts"], "readonly");
+            const store = transaction.objectStore("prompts");
+            const request = store.get(id);
+            
+            request.onsuccess = () => {
+                const item = request.result;
+                if(item) {
+                    state = item.state;
+                    if (item.lyrics) {
+                        document.getElementById('lyrics-input').value = item.lyrics;
+                    }
+                    if (state.genreCat) {
+                        const container = document.getElementById('dial-category-filters');
+                        const catBtn = Array.from(container.children).find(b => b.textContent === state.genreCat);
+                        if (catBtn) {
+                            filterDialsGenre(state.genreCat, catBtn);
+                        } else {
+                            const allBtn = container.firstElementChild; 
+                            filterDialsGenre('ALL', allBtn);
+                        }
+                    }
+                    updateAllVisuals(); 
                     switchTab('style');
                 }
             };
         }
 
-        function deletePrompt(id) {
-            if (!confirm("Delete?")) return;
-            db.transaction(["prompts"], "readwrite").objectStore("prompts").delete(id).oncomplete = renderLibrary;
-        }
-
         function renderLibrary() {
             if (!db) return;
+            if(!db.objectStoreNames.contains("prompts")) return;
+            const transaction = db.transaction(["prompts"], "readonly");
+            const store = transaction.objectStore("prompts");
+            const index = store.index("timestamp");
+            const request = index.openCursor(null, 'prev'); 
+            
             const list = document.getElementById('library-list');
             list.innerHTML = '';
-            let count = 0;
-            db.transaction("prompts").objectStore("prompts").index("timestamp").openCursor(null, 'prev').onsuccess = (e) => {
-                const cursor = e.target.result;
+            let hasItems = false;
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
                 if (cursor) {
-                    count++;
+                    hasItems = true;
                     const item = cursor.value;
+                    let linkHtml = '';
+                    if (item.songLink && item.songLink.trim() !== "") {
+                        linkHtml = `
+                        <a href="${item.songLink}" target="_blank" onclick="event.stopPropagation()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs rounded-full flex items-center transition-colors">
+                            <i data-lucide="external-link" class="w-3 h-3 mr-1"></i> Listen
+                        </a>`;
+                    }
                     const el = document.createElement('div');
-                    el.className = "bg-slate-900/50 border border-slate-700/50 rounded-xl p-4 flex flex-col gap-3 group hover:border-purple-500/50 transition-colors";
+                    el.className = "bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between group hover:border-indigo-300 hover:shadow-md transition-all";
                     el.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-slate-200">${item.name}</h3>
-                            <button onclick="deletePrompt(${item.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <div class="mb-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-slate-800 text-lg transition-colors truncate pr-2">${item.name}</h3>
+                                ${linkHtml}
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium mb-3">${new Date(item.timestamp).toLocaleString()}</p>
+                            <div class="mt-2 text-xs text-slate-600 line-clamp-2 bg-slate-50 p-3 rounded-lg border border-slate-100 font-mono">
+                                <span class="text-purple-600 font-bold">Style:</span> ${item.text}
+                            </div>
+                            <div class="mt-2 text-xs text-slate-600 line-clamp-2 bg-slate-50 p-3 rounded-lg border border-slate-100 font-mono">
+                                <span class="text-blue-600 font-bold">Lyrics:</span> ${item.lyrics ? item.lyrics.substring(0, 100).replace(/\n/g, ' ') + '...' : 'No lyrics saved'}
+                            </div>
                         </div>
-                        <div class="text-xs text-slate-500 bg-black/20 p-2 rounded line-clamp-2 font-mono">${item.text}</div>
-                        <button onclick="loadPrompt(${item.id})" class="mt-auto w-full py-2 bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white rounded-lg text-xs font-bold transition-all">Load</button>
-                     `;
+                        <div class="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+                            <button onclick="loadPrompt(${item.id})" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">Load</button>
+                            <button onclick="deletePrompt(${item.id})" class="px-3 py-2 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg border border-slate-200 hover:border-red-200 transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
                     list.appendChild(el);
                     cursor.continue();
-                }
-                if (count === 0 && !cursor) {
-                    list.innerHTML = `<div class="text-center py-10 text-slate-500 col-span-2 italic">Nothing saved yet.</div>`;
+                } else if (!hasItems) {
+                    list.innerHTML = `<div class="text-center py-12 text-slate-400 col-span-2 flex flex-col items-center">
+                            <div class="bg-slate-50 p-4 rounded-full mb-3">
+                                <i data-lucide="save" class="w-6 h-6 text-slate-300"></i>
+                            </div>
+                            <p>No saved prompts yet.</p>
+                            <p class="text-xs mt-1">Create a style and click the Save icon.</p>
+                        </div>`;
                 }
                 lucide.createIcons();
             };
         }
 
-        // Artist Logic
-        function saveArtist() {
-            const name = document.getElementById('artist-name').value;
-            // Assume validation handled
-            const profile = { genreCat: state.genreCat, subgenres: [...state.subgenres], instruments: [...state.instruments], voices: [...state.voices], production: [...state.production], singerDescription: state.singerDescription, exclusions: state.exclusions };
+        // --- ARTIST BUILDER LOGIC ---
+        function updateArtistPreviewStats() {
+            const stats = document.getElementById('artist-preview-stats');
+            if (!stats) return;
 
-            db.transaction(["artists"], "readwrite").objectStore("artists").add({
+            const hasData = state.genreCat || state.subgenres.length > 0;
+            
+            if (!hasData) {
+                stats.innerHTML = `<p class="italic text-slate-400">Configure settings in "Tuner" or "Blueprint" first to define your artist's sound...</p>`;
+                return;
+            }
+
+            const html = `
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                    <span class="text-slate-400 font-medium">Foundation</span>
+                    <span class="text-purple-600 font-bold">${state.genreCat || '-'}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                    <span class="text-slate-400 font-medium">Subgenres</span>
+                    <span class="text-slate-600 text-right truncate pl-4">${state.subgenres.length ? state.subgenres.join(", ") : '-'}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                    <span class="text-slate-400 font-medium">Singer Def</span>
+                    <span class="text-blue-500 text-right truncate pl-4 font-mono text-[10px]" title="${state.singerDescription}">${state.singerDescription || '-'}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                    <span class="text-slate-400 font-medium">Instruments</span>
+                    <span class="text-blue-400 text-right truncate pl-4">${state.instruments.length ? state.instruments.slice(0,3).join(", ") + (state.instruments.length > 3 ? '...' : '') : '-'}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5">
+                    <span class="text-slate-400 font-medium">Production</span>
+                    <span class="text-emerald-500 text-right truncate pl-4">${state.production.length ? state.production.join(", ") : '-'}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400 font-medium">Exclusions</span>
+                    <span class="text-red-500 text-right truncate pl-4 font-mono text-[10px]" title="${state.exclusions}">${state.exclusions || '-'}</span>
+                </div>
+            `;
+            stats.innerHTML = html;
+        }
+
+        function saveArtist() {
+            const name = document.getElementById('artist-name').value.trim();
+            const bio = document.getElementById('artist-bio').value.trim();
+
+            if (!name) {
+                alert("Please give your Artist a name!");
+                return;
+            }
+            if (!state.genreCat && state.subgenres.length === 0) {
+                alert("This artist has no sound profile yet! Go to the 'Tuner' or 'Blueprint' tab to select Genres, Instruments, etc. first.");
+                return;
+            }
+
+            const artistData = {
                 id: Date.now(),
-                name,
-                bio: document.getElementById('artist-bio').value,
-                profile
-            }).oncomplete = () => { alert("Artist Saved!"); renderArtistList(); };
+                name: name,
+                bio: bio,
+                profile: {
+                    genreCat: state.genreCat,
+                    subgenres: [...state.subgenres],
+                    instruments: [...state.instruments],
+                    voices: [...state.voices],
+                    production: [...state.production],
+                    singerDescription: state.singerDescription, 
+                    exclusions: state.exclusions 
+                }
+            };
+
+            const transaction = db.transaction(["artists"], "readwrite");
+            const store = transaction.objectStore("artists");
+            const request = store.add(artistData);
+
+            request.onsuccess = () => {
+                alert(`Artist "${name}" signed to the roster!`);
+                document.getElementById('artist-name').value = '';
+                document.getElementById('artist-bio').value = '';
+                renderArtistList();
+            };
+            
+            request.onerror = (e) => {
+                console.error("Error saving artist", e);
+                alert("Could not save artist. DB Error.");
+            };
         }
 
         function loadArtist(id) {
-            db.transaction("artists").objectStore("artists").get(id).onsuccess = (e) => {
-                const a = e.target.result;
-                if (a) {
-                    state = { ...state, ...a.profile, moods: [] }; // Reset moods
-                    updateAllVisuals();
+            const transaction = db.transaction(["artists"], "readonly");
+            const store = transaction.objectStore("artists");
+            const request = store.get(id);
+
+            request.onsuccess = () => {
+                const artist = request.result;
+                if (artist && artist.profile) {
+                    state.genreCat = artist.profile.genreCat;
+                    state.subgenres = [...artist.profile.subgenres];
+                    state.instruments = [...artist.profile.instruments];
+                    state.voices = [...artist.profile.voices];
+                    state.production = [...artist.profile.production];
+                    state.singerDescription = artist.profile.singerDescription || ""; 
+                    state.exclusions = artist.profile.exclusions || ""; 
+                    
+                    state.moods = []; 
+                    state.tempo = ""; 
+
+                    updateAllVisuals(); 
                     switchTab('style');
                 }
             };
         }
 
         function deleteArtist(id) {
-            if (confirm("Delete Artist?")) db.transaction(["artists"], "readwrite").objectStore("artists").delete(id).oncomplete = renderArtistList;
+            if(!confirm("Drop this artist from your label? (Delete permanently)")) return;
+            const transaction = db.transaction(["artists"], "readwrite");
+            const store = transaction.objectStore("artists");
+            store.delete(id);
+            transaction.oncomplete = () => renderArtistList();
         }
 
         function renderArtistList() {
-            if (!db) return;
+            if (!db || !db.objectStoreNames.contains("artists")) return;
+            const transaction = db.transaction(["artists"], "readonly");
+            const store = transaction.objectStore("artists");
+            const request = store.openCursor();
+            
             const list = document.getElementById('artist-list');
             list.innerHTML = '';
-            let count = 0;
-            db.transaction("artists").objectStore("artists").openCursor().onsuccess = (e) => {
-                const cursor = e.target.result;
+            let hasItems = false;
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
                 if (cursor) {
-                    count++;
-                    const a = cursor.value;
+                    hasItems = true;
+                    const artist = cursor.value;
+                    const p = artist.profile;
+
                     const el = document.createElement('div');
-                    el.className = "p-4 rounded-xl bg-slate-900/50 border border-slate-800/50 hover:border-pink-500/50 transition-all cursor-pointer group";
-                    el.onclick = (ev) => { if (!ev.target.closest('button')) loadArtist(a.id); };
+                    el.className = "bg-slate-50 border border-slate-200 rounded-xl p-5 flex flex-col group hover:border-pink-300 hover:bg-white hover:shadow-md transition-all cursor-pointer relative";
+                    el.onclick = (e) => {
+                        if(e.target.closest('button')) return; 
+                        loadArtist(artist.id);
+                    };
+
                     el.innerHTML = `
-                        <div class="flex justify-between mb-2">
-                             <h4 class="font-bold text-slate-200 group-hover:text-pink-400">${a.name}</h4>
-                             <button onclick="deleteArtist(${a.id})" class="text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-800 text-lg group-hover:text-pink-600 transition-colors">${artist.name}</h4>
+                            <button onclick="deleteArtist(${artist.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
                         </div>
-                        <div class="text-xs text-slate-500 line-clamp-2">${a.bio || "No bio"}</div>
-                     `;
+                        <div class="text-xs text-slate-500 mb-3 italic font-medium line-clamp-2">${artist.bio || "No description"}</div>
+                        
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="bg-white text-slate-600 px-2 py-1 rounded-md text-[10px] border border-slate-200 font-medium">${p.genreCat}</span>
+                            ${p.singerDescription ? `<span class="bg-pink-50 text-pink-600 px-2 py-1 rounded-md text-[10px] border border-pink-100 truncate max-w-[150px] block" title="${p.singerDescription}">${p.singerDescription}</span>` : ''}
+                            ${p.exclusions ? `<span class="bg-red-50 text-red-600 px-2 py-1 rounded-md text-[10px] border border-red-100 truncate max-w-[100px] block" title="Excludes: ${p.exclusions}">No ${p.exclusions}</span>` : ''}
+                        </div>
+
+                        <div class="mt-auto pt-3 border-t border-slate-200 flex justify-end">
+                            <span class="text-[10px] text-pink-600 font-bold uppercase tracking-wider group-hover:underline flex items-center gap-1">Load Profile <i data-lucide="arrow-right" class="w-3 h-3"></i></span>
+                        </div>
+                    `;
                     list.appendChild(el);
                     cursor.continue();
-                }
-                if (count === 0 && !cursor) {
-                    list.innerHTML = `<div class="text-center py-10 text-slate-500 italic">No artists.</div>`;
+                } else if (!hasItems) {
+                    list.innerHTML = `<div class="flex flex-col items-center justify-center h-40 text-slate-400 text-sm italic">
+                                <i data-lucide="ghost" class="w-8 h-8 mb-2 opacity-30"></i>
+                                No artists yet.
+                            </div>`;
                 }
                 lucide.createIcons();
             };
         }
 
-        function updateArtistPreviewStats() {
-            const div = document.getElementById('artist-preview-stats');
-            if (!div) return;
-            if (!state.genreCat && !state.subgenres.length) {
-                div.innerHTML = `<p class="italic text-slate-600">Start simply: Select a genre foundation...</p>`;
-                return;
-            }
-            div.innerHTML = `
-                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">Foundation</span> <span class="text-purple-400">${state.genreCat}</span></div>
-                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">Subs</span> <span class="text-slate-300 w-1/2 truncate text-right">${state.subgenres.join(", ")}</span></div>
-                <div class="flex justify-between border-b border-white/5 pb-1"><span class="text-slate-500">Vocal Tag</span> <span class="text-blue-400 w-1/2 truncate text-right">${state.voices.join(", ")}</span></div>
-             `;
-        }
     </script>
 </body>
-
 </html>
