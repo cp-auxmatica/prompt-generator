@@ -99,6 +99,9 @@
             <button onclick="app.navigate('artists')" id="nav-artists" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
                 <i class="fa-solid fa-users w-5 text-center"></i> Artists
             </button>
+            <button onclick="app.navigate('library')" id="nav-library" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
+                <i class="fa-solid fa-list w-5 text-center"></i> Production Library
+            </button>
             <button onclick="app.navigate('styles')" id="nav-styles" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
                 <i class="fa-solid fa-sliders w-5 text-center"></i> Style Manager
             </button>
@@ -265,6 +268,11 @@
                 if (params.albumId) this.state.albumId = params.albumId;
                 if (params.songId) this.state.songId = params.songId;
                 
+                // Handle tab parameter for workstation
+                if (view === 'workstation') {
+                    this.state.wsTab = params.tab || 'lyrics';
+                }
+                
                 this.updateSidebar();
                 this.render();
             }
@@ -273,6 +281,8 @@
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 if (this.state.view === 'artists' || this.state.view.includes('artist') || this.state.view.includes('album') || this.state.view === 'workstation') {
                     document.getElementById('nav-artists').classList.add('active');
+                } else if (this.state.view === 'library') {
+                    document.getElementById('nav-library').classList.add('active');
                 } else if (this.state.view === 'styles') {
                     document.getElementById('nav-styles').classList.add('active');
                 }
@@ -303,6 +313,7 @@
                     case 'artist-detail': this.renderArtistDetail(container); break;
                     case 'album-detail': this.renderAlbumDetail(container); break;
                     case 'workstation': this.renderWorkstation(container); break;
+                    case 'library': this.renderLibrary(container); break;
                     case 'styles': this.renderStyleManager(container); break;
                 }
             }
@@ -346,6 +357,76 @@
                             }).join('')}
                         </div>
                         ${artists.length === 0 ? `<div class="text-center text-slate-500 mt-20">No artists yet. Create one to get started.</div>` : ''}
+                    </div>
+                `;
+                container.innerHTML = html;
+            }
+
+            renderLibrary(container) {
+                // Flatten data structure for table view
+                let allSongs = this.cache.songs.map(song => {
+                    const album = this.cache.albums.find(a => a.id === song.albumId);
+                    const artist = album ? this.cache.artists.find(a => a.id === album.artistId) : null;
+                    return {
+                        ...song,
+                        albumName: album ? album.title : 'Unknown Album',
+                        artistName: artist ? artist.name : 'Unknown Artist',
+                        artistId: artist ? artist.id : null,
+                        albumId: album ? album.id : null,
+                        year: album ? album.year : ''
+                    };
+                });
+
+                // Default Sort: Artist Name -> Album Name -> Song Order
+                allSongs.sort((a, b) => {
+                    if (a.artistName !== b.artistName) return a.artistName.localeCompare(b.artistName);
+                    if (a.albumName !== b.albumName) return a.albumName.localeCompare(b.albumName);
+                    return a.order - b.order;
+                });
+
+                let html = `
+                    <div class="flex flex-col h-full fade-in">
+                        <div class="p-6 bg-slate-900 border-b border-slate-800 shrink-0">
+                            <h2 class="text-2xl font-bold text-white mb-2">Production Library</h2>
+                            <p class="text-slate-400 text-sm">Comprehensive list of all tracks, sorted by Artist and Album.</p>
+                        </div>
+                        
+                        <div class="flex-1 overflow-y-auto p-0">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-950 text-xs font-bold text-slate-500 uppercase sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="p-4 border-b border-slate-800">Artist</th>
+                                        <th class="p-4 border-b border-slate-800">Album</th>
+                                        <th class="p-4 border-b border-slate-800">Song Title</th>
+                                        <th class="p-4 border-b border-slate-800 w-24 text-center">BPM</th>
+                                        <th class="p-4 border-b border-slate-800 w-32">Rating</th>
+                                        <th class="p-4 border-b border-slate-800 w-32 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm text-slate-300 divide-y divide-slate-800 bg-slate-900">
+                                    ${allSongs.map(s => `
+                                        <tr class="hover:bg-slate-800/50 group transition-colors">
+                                            <td class="p-4 font-medium text-white">${s.artistName}</td>
+                                            <td class="p-4 text-slate-400">${s.albumName} <span class="text-slate-600 text-xs ml-1">${s.year}</span></td>
+                                            <td class="p-4 font-bold text-indigo-100">${s.title}</td>
+                                            <td class="p-4 text-center text-slate-500 font-mono text-xs">${s.bpm || '-'}</td>
+                                            <td class="p-4">
+                                                <div class="text-yellow-500 text-xs">
+                                                    ${s.rating ? '★'.repeat(s.rating) + '<span class="text-slate-700"></span>' : '<span class="text-slate-600 italic">Unrated</span>'}
+                                                </div>
+                                            </td>
+                                            <td class="p-4 text-right">
+                                                <button onclick="app.navigate('workstation', {songId: '${s.id}', artistId: '${s.artistId}', albumId: '${s.albumId}', tab: 'notes'})" 
+                                                        class="text-xs bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 px-3 py-1.5 rounded transition-colors border border-slate-700 hover:border-indigo-500">
+                                                    Notes <i class="fa-solid fa-arrow-right ml-1"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            ${allSongs.length === 0 ? `<div class="text-center text-slate-500 mt-20">No songs found in library.</div>` : ''}
+                        </div>
                     </div>
                 `;
                 container.innerHTML = html;
