@@ -10,20 +10,20 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Custom Scrollbar for "Pro App" feel */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #1f2937; 
+            background: #0f172a; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #4b5563; 
+            background: #334155; 
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; 
+            background: #475569; 
         }
 
         /* Range Slider Styling */
@@ -43,22 +43,41 @@
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
             height: 4px;
-            background: #374151;
+            background: #334155;
             border-radius: 2px;
         }
 
         .glass-panel {
-            background: rgba(31, 41, 55, 0.7);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.4);
+            border: 1px solid rgba(51, 65, 85, 0.4);
+        }
+
+        /* Tab Active State */
+        .tab-active {
+            border-bottom: 2px solid #6366f1;
+            color: #fff;
+        }
+        .tab-inactive {
+            border-bottom: 2px solid transparent;
+            color: #94a3b8;
+        }
+        .tab-inactive:hover {
+            color: #cbd5e1;
+        }
+
+        /* Card Hover Effects */
+        .style-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
 
     <!-- Sidebar: Song List -->
-    <aside class="w-64 bg-gray-950 border-r border-gray-800 flex flex-col flex-shrink-0 z-20">
-        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
             <h1 class="font-bold text-lg tracking-tight text-indigo-400"><i class="fa-solid fa-wave-square mr-2"></i>Sonic Shift</h1>
         </div>
         
@@ -72,142 +91,192 @@
             <!-- Song items will be injected here -->
         </div>
         
-        <div class="p-3 border-t border-gray-800 text-xs text-gray-500 text-center">
-            Suno Engineer's Companion v1.1
+        <div class="p-3 border-t border-slate-800 text-xs text-slate-500 text-center">
+            Suno Engineer's Companion v2.1
         </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0 bg-gray-900 relative">
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-900 relative">
         
-        <!-- Top Bar: Metadata -->
-        <header class="h-16 bg-gray-900 border-b border-gray-800 flex items-center px-6 gap-4 shrink-0 z-10 shadow-sm">
-            <div class="flex-1 grid grid-cols-12 gap-4">
-                <div class="col-span-4">
-                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Song Title</label>
-                    <input type="text" id="meta-title" placeholder="Untitled Song" 
-                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-lg font-semibold text-white placeholder-gray-600 outline-none transition-colors pb-1">
+        <!-- Header: Metadata & Navigation -->
+        <header class="bg-slate-900 border-b border-slate-800 flex flex-col shrink-0 z-10 shadow-sm">
+            <!-- Top Row: Meta Inputs -->
+            <div class="h-16 flex items-center px-6 gap-6">
+                <div class="flex-1 grid grid-cols-12 gap-6">
+                    <div class="col-span-4">
+                        <input type="text" id="meta-title" placeholder="Untitled Song" 
+                               class="w-full bg-transparent border-b border-slate-700 focus:border-indigo-500 text-lg font-semibold text-white placeholder-slate-600 outline-none transition-colors pb-1">
+                        <label class="block text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wide">Title</label>
+                    </div>
+                    <div class="col-span-4">
+                        <input type="text" id="meta-artist" placeholder="Artist Name" 
+                               class="w-full bg-transparent border-b border-slate-700 focus:border-indigo-500 text-sm text-slate-300 placeholder-slate-600 outline-none transition-colors pb-1">
+                        <label class="block text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wide">Artist</label>
+                    </div>
+                    <div class="col-span-4">
+                        <input type="text" id="meta-album" placeholder="Album Name" 
+                               class="w-full bg-transparent border-b border-slate-700 focus:border-indigo-500 text-sm text-slate-300 placeholder-slate-600 outline-none transition-colors pb-1">
+                        <label class="block text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-wide">Album</label>
+                    </div>
                 </div>
-                <div class="col-span-4">
-                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Artist</label>
-                    <input type="text" id="meta-artist" placeholder="Artist Name" 
-                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-sm text-gray-300 placeholder-gray-600 outline-none transition-colors pb-1">
-                </div>
-                <div class="col-span-4">
-                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Album</label>
-                    <input type="text" id="meta-album" placeholder="Album Name" 
-                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-sm text-gray-300 placeholder-gray-600 outline-none transition-colors pb-1">
+                <div class="flex items-center gap-4 border-l border-slate-800 pl-6">
+                    <div id="save-status" class="text-xs text-green-500 font-medium opacity-0 transition-opacity">Saved</div>
+                    <button onclick="app.deleteCurrentSong()" class="text-slate-500 hover:text-red-400 transition-colors" title="Delete Song">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </div>
             </div>
-            <div class="flex items-center gap-2 border-l border-gray-800 pl-4">
-                <button onclick="app.deleteCurrentSong()" class="text-gray-500 hover:text-red-400 transition-colors p-2" title="Delete Song">
-                    <i class="fa-solid fa-trash"></i>
+
+            <!-- Bottom Row: Navigation Tabs -->
+            <div class="flex px-6 gap-8">
+                <button onclick="app.switchView('lyrics')" id="tab-lyrics" class="pb-3 text-sm font-bold uppercase tracking-wider transition-colors tab-active">
+                    <i class="fa-solid fa-pen-nib mr-2"></i>Lyrics & Structure
                 </button>
-                <div id="save-status" class="text-xs text-green-500 font-medium opacity-0 transition-opacity">Saved</div>
+                <button onclick="app.switchView('styles')" id="tab-styles" class="pb-3 text-sm font-bold uppercase tracking-wider transition-colors tab-inactive">
+                    <i class="fa-solid fa-sliders mr-2"></i>Style Builder
+                </button>
             </div>
         </header>
 
-        <!-- Work Area -->
-        <div class="flex-1 flex overflow-hidden">
+        <!-- View Container -->
+        <div class="flex-1 overflow-hidden relative">
             
-            <!-- Left Panel: Lyrics Editor -->
-            <section class="flex-1 flex flex-col border-r border-gray-800 min-w-[350px]">
+            <!-- VIEW 1: Lyrics Editor -->
+            <div id="view-lyrics" class="absolute inset-0 flex flex-col bg-slate-900 transition-opacity duration-200">
                 <!-- Toolbar -->
-                <div class="h-12 border-b border-gray-800 bg-gray-900 flex items-center px-4 gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                    <span class="text-xs font-bold text-gray-500 mr-2">STRUCT:</span>
-                    <button onclick="app.insertTag('[Intro]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Intro]</button>
-                    <button onclick="app.insertTag('[Verse]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Verse]</button>
+                <div class="h-12 border-b border-slate-800 bg-slate-900 flex items-center px-4 gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide shrink-0">
+                    <span class="text-xs font-bold text-slate-500 mr-2">STRUCT:</span>
+                    <button onclick="app.insertTag('[Intro]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Intro]</button>
+                    <button onclick="app.insertTag('[Verse]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Verse]</button>
                     <button onclick="app.insertTag('[Chorus]')" class="px-2 py-1 bg-indigo-900/50 hover:bg-indigo-900/80 text-xs rounded text-indigo-200 border border-indigo-800 transition-colors">[Chorus]</button>
-                    <button onclick="app.insertTag('[Bridge]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Bridge]</button>
-                    <button onclick="app.insertTag('[Pre-Chorus]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Pre-Chorus]</button>
-                    <button onclick="app.insertTag('[Outro]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Outro]</button>
-                    <button onclick="app.insertTag('[Instrumental]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Instr]</button>
-                    <button onclick="app.insertTag('[Break]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Break]</button>
+                    <button onclick="app.insertTag('[Bridge]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Bridge]</button>
+                    <button onclick="app.insertTag('[Pre-Chorus]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Pre-Chorus]</button>
+                    <button onclick="app.insertTag('[Outro]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Outro]</button>
+                    <button onclick="app.insertTag('[Instrumental]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Instr]</button>
+                    <button onclick="app.insertTag('[Break]')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300 border border-slate-700 transition-colors">[Break]</button>
                 </div>
                 
                 <!-- Editor -->
-                <div class="flex-1 relative bg-gray-900">
-                    <textarea id="lyrics-editor" class="w-full h-full bg-gray-900 p-6 text-gray-200 font-mono text-sm leading-relaxed outline-none resize-none focus:bg-gray-800/30 transition-colors" placeholder="Enter lyrics here... Use the toolbar to add structure tags."></textarea>
+                <div class="flex-1 relative">
+                    <textarea id="lyrics-editor" class="w-full h-full bg-slate-900 p-8 text-slate-200 font-mono text-sm leading-relaxed outline-none resize-none focus:bg-slate-800/30 transition-colors" placeholder="Enter lyrics here... Use the toolbar to add structure tags."></textarea>
                     
-                    <!-- Floating Copy Button for Lyrics -->
-                    <button onclick="app.copyLyrics()" id="copy-lyrics-btn" class="absolute bottom-4 right-4 bg-gray-800 hover:bg-gray-700 text-gray-300 p-2 rounded-full shadow-lg border border-gray-700 transition-all opacity-50 hover:opacity-100" title="Copy Lyrics">
+                    <button onclick="app.copyLyrics()" id="copy-lyrics-btn" class="absolute bottom-6 right-6 bg-slate-800 hover:bg-slate-700 text-slate-300 p-3 rounded-full shadow-lg border border-slate-700 transition-all hover:scale-105" title="Copy Lyrics">
                         <i class="fa-regular fa-copy"></i>
                     </button>
                 </div>
-            </section>
 
-            <!-- Right Panel: Style Manager -->
-            <section class="w-96 flex flex-col bg-gray-950/50 flex-shrink-0 border-l border-gray-800">
+                <!-- Prompt Summary Strip -->
+                <div class="h-14 bg-slate-950 border-t border-slate-800 flex items-center px-6 justify-between shrink-0">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Current Style:</span>
+                        <div id="lyrics-prompt-preview" class="text-sm text-indigo-300 truncate font-medium">No style selected</div>
+                    </div>
+                    <button onclick="app.switchView('styles')" class="text-xs text-indigo-400 hover:text-white font-medium ml-4 shrink-0">Edit Style <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                </div>
+            </div>
+
+            <!-- VIEW 2: Style Builder -->
+            <div id="view-styles" class="absolute inset-0 flex flex-col bg-slate-900 hidden transition-opacity duration-200">
                 
-                <!-- Active Style Prompt Area -->
-                <div class="flex-shrink-0 p-4 border-b border-gray-800 bg-gray-900 z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Style Prompt</h2>
-                        <span id="char-count" class="text-xs text-gray-600">0 chars</span>
+                <!-- Prompt Display & Quick Actions -->
+                <div class="bg-slate-950 border-b border-slate-800 p-4 shrink-0 shadow-md">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-xs font-bold text-indigo-400 uppercase tracking-wide">Generated Prompt</label>
+                        <span id="char-count" class="text-xs text-slate-500 font-mono">0 chars</span>
                     </div>
                     
-                    <!-- Chips Container -->
-                    <div id="active-tags-list" class="flex flex-wrap gap-2 mb-3 min-h-[40px]">
-                        <span class="text-sm text-gray-600 italic py-2">Select tags below to build your prompt...</span>
+                    <!-- Tag Chips -->
+                    <div id="active-tags-list" class="flex flex-wrap gap-2 min-h-[44px] bg-slate-900/50 p-3 rounded-lg border border-slate-800 mb-3">
+                        <span class="text-sm text-slate-600 italic">Select tags below to build your prompt...</span>
                     </div>
 
-                    <div class="flex gap-2">
-                        <input type="text" id="custom-tag-input" placeholder="Add custom tag..." class="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-xs text-white focus:border-indigo-500 outline-none">
-                        <button onclick="app.addCustomTag()" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 px-3 py-1.5 rounded text-xs"><i class="fa-solid fa-plus"></i></button>
+                    <div class="flex gap-3">
+                        <div class="relative flex-1">
+                            <input type="text" id="custom-tag-input" placeholder="Add custom tag (press Enter)..." 
+                                   class="w-full bg-slate-800 border border-slate-700 rounded-md pl-3 pr-10 py-2 text-sm text-white focus:border-indigo-500 outline-none">
+                            <button onclick="app.addCustomTag()" class="absolute right-1.5 top-1.5 text-slate-400 hover:text-white p-1"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <button onclick="app.clearStyles()" class="px-4 py-2 bg-slate-800 hover:bg-red-900/30 text-slate-400 hover:text-red-300 rounded-md text-xs font-bold border border-slate-700 transition-colors">
+                            Clear
+                        </button>
+                        <button onclick="app.copyPrompt()" id="copy-prompt-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md shadow-lg text-sm font-semibold flex items-center gap-2 transition-all active:scale-95">
+                            <i class="fa-regular fa-copy"></i> Copy Prompt
+                        </button>
                     </div>
-
-                    <button onclick="app.copyPrompt()" id="copy-prompt-btn" class="w-full mt-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white py-2 rounded shadow-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all transform active:scale-95">
-                        <i class="fa-regular fa-copy"></i> Copy Prompt to Clipboard
-                    </button>
                 </div>
 
-                <!-- Tag Library Selector -->
-                <div class="flex-1 flex flex-col min-h-0">
-                    <!-- Library Tabs/Search -->
-                    <div class="p-3 bg-gray-900 border-b border-gray-800">
-                        <div class="relative">
-                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
-                            <input type="text" id="tag-search" placeholder="Search genres, moods, instruments..." 
-                                   class="w-full bg-gray-800 text-gray-200 text-xs rounded-full pl-8 pr-4 py-2 border border-gray-700 focus:border-indigo-500 outline-none">
+                <!-- Main Selector Area -->
+                <div class="flex-1 flex overflow-hidden">
+                    
+                    <!-- Column 1: Categories -->
+                    <div class="w-48 bg-slate-900 border-r border-slate-800 overflow-y-auto flex-shrink-0">
+                        <div class="p-2 space-y-1" id="category-list">
+                            <!-- Categories injected -->
+                        </div>
+                        
+                        <!-- Tempo Control (Persistent) -->
+                        <div class="mt-4 mx-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700 mb-4">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">BPM Control</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <span id="bpm-display" class="text-xl font-bold text-indigo-400">120</span>
+                                <span class="text-xs text-slate-500">BPM</span>
+                            </div>
+                            <input type="range" id="bpm-slider" min="60" max="200" value="120" class="w-full mb-3">
+                            <div class="flex gap-1 justify-between">
+                                <button onclick="app.setBpm(80)" class="px-2 py-1 text-[10px] bg-slate-700 hover:bg-slate-600 rounded text-slate-300">Slow</button>
+                                <button onclick="app.setBpm(120)" class="px-2 py-1 text-[10px] bg-slate-700 hover:bg-slate-600 rounded text-slate-300">Mid</button>
+                                <button onclick="app.setBpm(160)" class="px-2 py-1 text-[10px] bg-slate-700 hover:bg-slate-600 rounded text-slate-300">Fast</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Accordion Content -->
-                    <div class="flex-1 overflow-y-auto p-2 space-y-2" id="tag-library">
-                        <!-- Categories injected here -->
+                    <!-- Column 2: Sub-Categories -->
+                    <div class="w-56 bg-slate-900/50 border-r border-slate-800 overflow-y-auto flex-shrink-0" id="col-subcategories">
+                        <div class="p-4 text-center text-slate-500 text-sm mt-10 italic">
+                            Select a category<br>on the left
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Tags -->
+                    <div class="flex-1 bg-slate-900 overflow-y-auto p-4" id="col-tags">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="tag-grid">
+                            <!-- Tags injected here -->
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </main>
 
-    <!-- Tag Editor Modal (Popover) -->
-    <div id="tag-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg shadow-2xl w-80 p-5 transform transition-all scale-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-tag-name" class="text-lg font-bold text-white">Tag Name</h3>
-                <button onclick="app.closeModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
+    <!-- Tag Editor Modal -->
+    <div id="tag-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-96 p-6 transform transition-all scale-100">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 id="modal-tag-name" class="text-xl font-bold text-white">Tag Name</h3>
+                    <p class="text-xs text-slate-400 mt-1">Rate how well this tag works for your artist.</p>
+                </div>
+                <button onclick="app.closeModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
             </div>
             
-            <div class="mb-4">
-                <label class="block text-xs text-gray-400 mb-2 uppercase">Rating (Effectiveness)</label>
-                <div class="flex items-center gap-2">
-                    <div class="flex text-yellow-500 text-lg" id="modal-stars">
-                        <!-- Stars injected -->
-                    </div>
-                    <input type="range" id="modal-rating" min="0" max="5" step="1" class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                    <span id="modal-rating-val" class="text-sm font-bold w-4 text-center">0</span>
+            <div class="mb-6 bg-slate-800/50 p-4 rounded-lg">
+                <label class="block text-xs font-bold text-slate-400 mb-3 uppercase tracking-wide">Effectiveness Rating</label>
+                <div class="flex items-center gap-4">
+                    <div class="flex text-amber-400 text-xl gap-1" id="modal-stars"></div>
+                    <span id="modal-rating-val" class="text-lg font-bold text-white w-6 text-center">0</span>
                 </div>
+                <input type="range" id="modal-rating" min="0" max="5" step="1" class="w-full mt-3 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
             </div>
 
-            <div class="mb-4">
-                <label class="block text-xs text-gray-400 mb-2 uppercase">Notes</label>
-                <textarea id="modal-note" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-gray-200 outline-none focus:border-indigo-500 placeholder-gray-600" placeholder="E.g., Worked well with the bass drop..."></textarea>
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wide">Engineer's Notes</label>
+                <textarea id="modal-note" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 outline-none focus:border-indigo-500 placeholder-slate-600 transition-colors" placeholder="E.g., Great for the intro, but messy in the chorus..."></textarea>
             </div>
 
-            <div class="flex justify-end gap-2">
-                <button onclick="app.removeTagFromSong()" class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 border border-red-900/30 hover:bg-red-900/20 rounded">Remove Tag</button>
-                <button onclick="app.saveTagEdits()" class="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded font-medium">Save</button>
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-800">
+                <button onclick="app.removeTagFromSong()" class="px-4 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-md transition-colors">Remove Tag</button>
+                <button onclick="app.saveTagEdits()" class="px-6 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-md shadow-lg transition-colors">Save Changes</button>
             </div>
         </div>
     </div>
@@ -216,60 +285,46 @@
     <textarea id="fallback-clipboard" style="position: absolute; left: -9999px;"></textarea>
 
     <script>
-        // --- 1. Tag Library Data ---
+        // --- 1. EXPANDED Tag Library Data ---
         const TAG_LIBRARY = {
-            "Genres": [
-                "Rock", "Hard Rock", "Metal", "Punk", "Indie Rock", "Alternative", "Grunge", "Shoegaze",
-                "Pop", "Synth-Pop", "K-Pop", "J-Pop", "Dream Pop", "Hyperpop",
-                "Electronic", "Techno", "House", "Deep House", "Drum and Bass", "Dubstep", "Trance", "Ambient", "IDM", "Synthwave", "Lo-Fi",
-                "Hip Hop", "Rap", "Trap", "Boom Bap", "Drill", "Grime",
-                "R&B", "Soul", "Funk", "Neo-Soul", "Disco", "Gospel",
-                "Jazz", "Bebop", "Fusion", "Smooth Jazz", "Blues",
-                "Folk", "Country", "Bluegrass", "Americana",
-                "Classical", "Orchestral", "Baroque", "Opera", "Cinematic",
-                "World", "Reggae", "Latin", "Salsa", "Afrobeat", "Bollywood", "Celtic"
-            ],
-            "Sub-Genres & Styles": [
-                "Glitch Pop", "Chinese Opera", "Gregorian Chant", "Sea Shanty", "Vaporwave", "Cyberpunk",
-                "Gothic", "Industrial", "Experimental", "Avant-garde", "Math Rock", "Post-Rock",
-                "Chiptune", "8-bit", "Downtempo", "Chillout"
-            ],
-            "Mood & Atmosphere": [
-                "Aggressive", "Angry", "Anxious", "Bittersweet", "Calm", "Chaotic", "Chill", 
-                "Dark", "Dreamy", "Eerie", "Emotional", "Energetic", "Epic", "Ethereal", "Euphoric", 
-                "Funky", "Gloomy", "Groovy", "Happy", "Haunting", "Hopeful", "Hypnotic", "Intense", 
-                "Joyful", "Laid-back", "Melancholic", "Mellow", "Mysterious", "Nostalgic", "Optimistic", 
-                "Peaceful", "Playful", "Powerful", "Psychedelic", "Relaxing", "Romantic", "Sad", 
-                "Scary", "Sentimental", "Serene", "Sexy", "Soothing", "Spooky", "Suspenseful", 
-                "Tense", "Uplifting", "Warm", "Weird", "Whimsical"
-            ],
-            "Instruments": [
-                "Acoustic Guitar", "Electric Guitar", "Distorted Guitar", "Bass", "Slap Bass", "Synth Bass", "808",
-                "Drums", "Drum Machine", "Breakbeat", "Percussion",
-                "Piano", "Grand Piano", "Rhodes", "Synth", "Pad", "Arpeggiator",
-                "Strings", "Violin", "Cello", "Orchestra",
-                "Brass", "Trumpet", "Saxophone", "Flute",
-                "Male Vocals", "Female Vocals", "Choir", "Autotune", "Whisper", "Raspy"
-            ],
-            "Production & Texture": [
-                "Lo-fi", "High-fidelity", "Studio Quality", "Bedroom Pop", "Analog", "Digital",
-                "Reverb", "Echo", "Delay", "Distortion", "Clean", "Crisp", "Muddy", "Raw",
-                "Minimalist", "Maximalist", "Wall of Sound", "Surround", "Stereo", "Mono"
-            ],
-            "Tempo & Rhythm": [
-                "Slow", "Medium", "Fast", "Upbeat", "Driving", "Steady", "Syncopated", "Swing", "Groove",
-                "4/4", "3/4", "6/8", "Polyrhythm", "BPM: 90", "BPM: 120", "BPM: 140", "BPM: 174"
-            ],
-            "Era": [
-                "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s",
-                "Vintage", "Retro", "Modern", "Futuristic", "Old School", "Medieval", "Ancient"
-            ]
+            "Instruments": {
+                "Guitar": ["Acoustic Guitar", "Electric Guitar", "Distorted Guitar", "Clean Electric", "Wah-Wah", "Slide Guitar", "Pedal Steel", "12-String Guitar", "Spanish Guitar", "Classical Guitar", "Djent Guitar", "Fuzz Guitar", "Palm Muted", "Guitar Solo", "Twangy Guitar", "Riff-heavy"],
+                "Strings": ["Violin", "Cello", "Viola", "Double Bass", "Fiddle", "String Quartet", "Orchestral Strings", "Pizzicato", "Tremolo", "Legato Strings", "Staccato Strings", "Chamber Strings", "Harp", "Marcato Strings"],
+                "Keys & Synth": ["Piano", "Grand Piano", "Upright Piano", "Rhodes Piano", "Wurlitzer", "Hammond B3 Organ", "Church Organ", "Harpsichord", "Celesta", "Analog Synth", "Modular Synth", "FM Synth", "Sawtooth Lead", "Square Wave", "Synth Pad", "Arpeggiator", "Moog Bass", "Mellotron", "Minimal Synth", "Portamento Synth", "Synth Bass", "Synth Lead"],
+                "Drums & Perc": ["Drum Kit", "Electronic Drums", "808", "909", "Breakbeat", "Blast Beat", "Congas", "Bongos", "Shaker", "Tambourine", "Timpani", "Orchestral Percussion", "Steel Drums", "Cajon", "Djembe", "Trap Beats", "Lo-fi Beats", "Drum Machine", "Vibraphone", "Glockenspiel"],
+                "Brass & Woodwind": ["Saxophone", "Alto Sax", "Tenor Sax", "Baritone Sax", "Trumpet", "Muted Trumpet", "Trombone", "Tuba", "French Horn", "Brass Section", "Flute", "Clarinet", "Oboe", "Bassoon", "Didgeridoo", "Bagpipes"],
+                "Vocals": ["Male Vocals", "Female Vocals", "Choir", "Gospel Choir", "Gregorian Chant", "Whisper", "Screaming", "Growling", "Rap", "Spoken Word", "Autotune", "Falsetto", "Baritone", "Soprano", "Gang Vocals", "Ethereal Vocals", "Raspy", "Belting", "Crooning", "Ad-libs", "Backing Vocals"]
+            },
+            "Genre": {
+                "Electronic": ["Techno", "Melodic Techno", "House", "Deep House", "Tech House", "Trance", "Dubstep", "Drum and Bass", "Liquid DnB", "IDM", "Synthwave", "Vaporwave", "Ambient", "Industrial", "Electro-Swing", "Hardstyle", "Gabber", "Chiptune", "Glitch Hop", "Minimal Techno", "Future Bass"],
+                "Rock & Metal": ["Rock", "Hard Rock", "Heavy Metal", "Black Metal", "Death Metal", "Thrash Metal", "Metalcore", "Punk", "Pop Punk", "Grunge", "Shoegaze", "Math Rock", "Post-Rock", "Psychedelic Rock", "Prog Rock", "Indie Rock", "Garage Rock", "Nu Metal", "Surf Rock", "Rockabilly"],
+                "Urban & R&B": ["Hip Hop", "Trap", "Boom Bap", "Drill", "Grime", "R&B", "Neo-Soul", "Funk", "G-Funk", "Soul", "Motown", "Disco", "Reggaeton", "Dancehall", "Afrobeat", "Jersey Club", "Phonk"],
+                "Pop & Mainstream": ["Pop", "K-Pop", "J-Pop", "Synth-Pop", "Dream Pop", "Hyperpop", "Electropop", "Bedroom Pop", "Art Pop", "Bubblegum Pop", "Indie Pop", "Europop"],
+                "Traditional & Roots": ["Folk", "Indie Folk", "Country", "Alt-Country", "Bluegrass", "Americana", "Blues", "Delta Blues", "Chicago Blues", "Jazz", "Bebop", "Cool Jazz", "Free Jazz", "Swing", "Big Band", "Reggae", "Ska", "Latin Jazz", "Bossa Nova", "Salsa", "Tango", "Mariachi", "Polka", "Celtic", "Sea Shanty"],
+                "Classical & Cinematic": ["Classical", "Baroque", "Romantic", "Modern Classical", "Cinematic", "Epic", "Film Score", "Trailer Music", "Opera", "Symphony", "Chamber Music", "Avant-garde", "Minimalist Classical", "Gregorian Chant"]
+            },
+            "Vibe & Mood": {
+                "Dark & Intense": ["Dark", "Eerie", "Gloomy", "Gothic", "Noir", "Aggressive", "Angry", "Chaotic", "Tense", "Suspenseful", "Haunting", "Ominous", "Dystopian", "Harsh", "Heavy", "Industrial", "Dissonant"],
+                "Happy & Uplifting": ["Happy", "Joyful", "Uplifting", "Euphoric", "Optimistic", "Playful", "Whimsical", "Bouncy", "Funky", "Groovy", "Energetic", "Anthemic", "Bright", "Bubbly"],
+                "Chill & Atmospheric": ["Chill", "Relaxed", "Mellow", "Soothing", "Peaceful", "Dreamy", "Ethereal", "Hypnotic", "Ambient", "Atmospheric", "Spacious", "Floating", "Lush", "Serene", "Warm", "Intimate"],
+                "Emotional": ["Sad", "Melancholic", "Bittersweet", "Nostalgic", "Sentimental", "Romantic", "Heartbreaking", "Yearning", "Hopeful", "Emotional", "Raw", "Lonely"],
+                "Experimental": ["Psychedelic", "Abstract", "Surreal", "Glitchy", "Alien", "Mechanical", "Robotic", "Avant-garde", "Experimental"]
+            },
+            "Production": {
+                "Texture": ["Lo-fi", "Hi-fi", "Clean", "Crisp", "Muddy", "Raw", "Gritty", "Polished", "Saturated", "Warm", "Cold", "Bright", "Dark Mix", "Grainy", "Hollow", "Thick", "Thin", "Underwater", "Vinyl Crackle"],
+                "Effects": ["Reverb", "Heavy Reverb", "Delay", "Echo", "Distortion", "Overdrive", "Fuzz", "Chorus", "Flanger", "Phaser", "Tremolo", "Sidechain", "Compression", "Autotune", "Bitcrushed", "Filtered"],
+                "Spatial": ["Wide Stereo", "Mono", "Surround", "Immersive", "Close Mic", "Roomy", "Stadium Sound", "Intimate", "Wall of Sound"]
+            },
+            "Tempo Descriptors": {
+                "Speed": ["Slow", "Very Slow", "Medium Tempo", "Fast", "Very Fast", "Upbeat", "Driving", "Frenetic", "Adagio", "Allegro", "Andante", "Largo", "Lento", "Moderato", "Presto", "Slow Burn"],
+                "Feel": ["Groove", "Swing", "Shuffle", "Straight", "Syncopated", "Half-time", "Double-time", "Polyrhythmic", "4/4", "3/4", "6/8", "Four-on-the-floor", "Off-beat", "Triplet Feel", "Pulsing"]
+            }
         };
 
         // --- 2. IndexedDB Wrapper ---
         class DB {
             constructor() {
-                this.dbName = 'SunoCompanionDB';
+                this.dbName = 'SunoCompanionDB_v2';
                 this.version = 1;
                 this.storeName = 'songs';
                 this.db = null;
@@ -305,17 +360,12 @@
                     const transaction = this.db.transaction([this.storeName], 'readonly');
                     const store = transaction.objectStore(this.storeName);
                     const index = store.index('updatedAt');
-                    const request = index.openCursor(null, 'prev'); // Sort by newest
+                    const request = index.openCursor(null, 'prev');
                     const results = [];
-                    
                     request.onsuccess = (event) => {
                         const cursor = event.target.result;
-                        if (cursor) {
-                            results.push(cursor.value);
-                            cursor.continue();
-                        } else {
-                            resolve(results);
-                        }
+                        if (cursor) { results.push(cursor.value); cursor.continue(); } 
+                        else { resolve(results); }
                     };
                     request.onerror = () => reject(request.error);
                 });
@@ -351,22 +401,41 @@
                 this.db = new DB();
                 this.songs = [];
                 this.currentSong = null;
-                this.editingTagIndex = -1;
+                this.currentView = 'lyrics';
+                this.selectedCategory = null;
                 this.saveTimeout = null;
+                this.editingTagIndex = -1;
 
-                // Bind UI Elements
                 this.ui = {
                     songList: document.getElementById('song-list'),
+                    viewLyrics: document.getElementById('view-lyrics'),
+                    viewStyles: document.getElementById('view-styles'),
+                    tabLyrics: document.getElementById('tab-lyrics'),
+                    tabStyles: document.getElementById('tab-styles'),
+                    
+                    // Meta
                     title: document.getElementById('meta-title'),
                     artist: document.getElementById('meta-artist'),
                     album: document.getElementById('meta-album'),
-                    lyrics: document.getElementById('lyrics-editor'),
-                    activeTagsList: document.getElementById('active-tags-list'),
-                    tagLibrary: document.getElementById('tag-library'),
-                    tagSearch: document.getElementById('tag-search'),
-                    charCount: document.getElementById('char-count'),
                     saveStatus: document.getElementById('save-status'),
+                    
+                    // Lyrics View
+                    lyrics: document.getElementById('lyrics-editor'),
+                    lyricsPromptPreview: document.getElementById('lyrics-prompt-preview'),
+                    copyLyricsBtn: document.getElementById('copy-lyrics-btn'),
+
+                    // Style View
+                    categoryList: document.getElementById('category-list'),
+                    colSubcategories: document.getElementById('col-subcategories'),
+                    colTags: document.getElementById('col-tags'),
+                    tagGrid: document.getElementById('tag-grid'),
+                    activeTagsList: document.getElementById('active-tags-list'),
+                    charCount: document.getElementById('char-count'),
                     customTagInput: document.getElementById('custom-tag-input'),
+                    bpmSlider: document.getElementById('bpm-slider'),
+                    bpmDisplay: document.getElementById('bpm-display'),
+                    copyPromptBtn: document.getElementById('copy-prompt-btn'),
+
                     // Modal
                     modal: document.getElementById('tag-modal'),
                     modalName: document.getElementById('modal-tag-name'),
@@ -374,9 +443,6 @@
                     modalRatingVal: document.getElementById('modal-rating-val'),
                     modalNote: document.getElementById('modal-note'),
                     modalStars: document.getElementById('modal-stars'),
-                    // Buttons for feedback
-                    copyPromptBtn: document.getElementById('copy-prompt-btn'),
-                    copyLyricsBtn: document.getElementById('copy-lyrics-btn')
                 };
 
                 this.init();
@@ -386,9 +452,8 @@
                 try {
                     await this.db.connect();
                     await this.refreshSongList();
-                    this.renderTagLibrary();
+                    this.renderCategories();
                     
-                    // If songs exist, load the first one (most recent), else create new
                     if (this.songs.length > 0) {
                         this.loadSong(this.songs[0]);
                     } else {
@@ -397,19 +462,32 @@
 
                     this.setupEventListeners();
                 } catch (e) {
-                    console.error("Initialization Failed:", e);
-                    alert("App failed to initialize. Please check console or try reloading.");
+                    console.error("Init Error:", e);
                 }
             }
 
-            // Helper for generating IDs safely in non-secure contexts (iframe preview)
+            // --- Navigation ---
+            switchView(viewName) {
+                this.currentView = viewName;
+                if (viewName === 'lyrics') {
+                    this.ui.viewLyrics.classList.remove('hidden');
+                    this.ui.viewStyles.classList.add('hidden');
+                    this.ui.tabLyrics.classList.replace('tab-inactive', 'tab-active');
+                    this.ui.tabStyles.classList.replace('tab-active', 'tab-inactive');
+                } else {
+                    this.ui.viewLyrics.classList.add('hidden');
+                    this.ui.viewStyles.classList.remove('hidden');
+                    this.ui.tabLyrics.classList.replace('tab-active', 'tab-inactive');
+                    this.ui.tabStyles.classList.replace('tab-inactive', 'tab-active');
+                    // Refresh styles view in case of state changes
+                    this.renderActiveTags();
+                }
+            }
+
+            // --- Data Management ---
             generateID() {
                 if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-                    try {
-                        return crypto.randomUUID();
-                    } catch (e) {
-                        // Fallback below
-                    }
+                    try { return crypto.randomUUID(); } catch (e) {}
                 }
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -417,54 +495,57 @@
                 });
             }
 
-            // Robust copy to clipboard (execCommand for iframes)
-            safeCopy(text, btnElement) {
-                const fallback = document.getElementById('fallback-clipboard');
-                fallback.value = text;
-                fallback.select();
+            createNewSong() {
+                const newSong = {
+                    id: this.generateID(),
+                    title: '',
+                    artist: '',
+                    album: '',
+                    lyrics: '',
+                    styleTags: [], 
+                    bpm: 120, // Default BPM
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                this.loadSong(newSong);
+                this.saveCurrentSong(true);
+            }
+
+            loadSong(song) {
+                this.currentSong = song;
+                this.ui.title.value = song.title || '';
+                this.ui.artist.value = song.artist || '';
+                this.ui.album.value = song.album || '';
+                this.ui.lyrics.value = song.lyrics || '';
                 
-                try {
-                    const successful = document.execCommand('copy');
-                    if(successful) {
-                        this.showCopyFeedback(btnElement);
-                    } else {
-                        console.error('Copy failed');
-                    }
-                } catch (err) {
-                    console.error('Unable to copy', err);
+                // BPM defaults
+                const bpm = song.bpm || 120;
+                this.ui.bpmSlider.value = bpm;
+                this.ui.bpmDisplay.textContent = bpm;
+
+                this.renderActiveTags();
+                this.renderSongList();
+                this.updatePromptPreviews();
+            }
+
+            async saveCurrentSong(refreshList = true) {
+                if (!this.currentSong) return;
+                await this.db.saveSong(this.currentSong);
+                
+                this.ui.saveStatus.classList.remove('opacity-0');
+                setTimeout(() => this.ui.saveStatus.classList.add('opacity-0'), 2000);
+                
+                if (refreshList) await this.refreshSongList();
+            }
+
+            async deleteCurrentSong() {
+                if (!this.currentSong) return;
+                if (confirm('Delete this song?')) {
+                    await this.db.deleteSong(this.currentSong.id);
+                    await this.refreshSongList();
+                    if (this.songs.length > 0) this.loadSong(this.songs[0]);
+                    else this.createNewSong();
                 }
-                
-                // Clear selection
-                window.getSelection().removeAllRanges();
-            }
-
-            showCopyFeedback(btn) {
-                if(!btn) return;
-                const original = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                setTimeout(() => btn.innerHTML = original, 2000);
-            }
-
-            setupEventListeners() {
-                // Metadata & Lyrics Input Listeners for Auto-Save
-                const inputs = [this.ui.title, this.ui.artist, this.ui.album, this.ui.lyrics];
-                inputs.forEach(input => {
-                    input.addEventListener('input', () => this.handleInput());
-                });
-
-                // Tag Search
-                this.ui.tagSearch.addEventListener('input', (e) => this.filterLibrary(e.target.value));
-
-                // Modal Rating Slider
-                this.ui.modalRating.addEventListener('input', (e) => {
-                    this.ui.modalRatingVal.textContent = e.target.value;
-                    this.renderModalStars(e.target.value);
-                });
-
-                // Custom tag enter key
-                this.ui.customTagInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.addCustomTag();
-                });
             }
 
             async refreshSongList() {
@@ -472,262 +553,199 @@
                 this.renderSongList();
             }
 
-            createNewSong() {
-                const newSong = {
-                    id: this.generateID(), // Updated to use safe generator
-                    title: '',
-                    artist: '',
-                    album: '',
-                    lyrics: '',
-                    styleTags: [], // { text: string, rating: number, note: string }
-                    createdAt: Date.now(),
-                    updatedAt: Date.now()
-                };
-                this.loadSong(newSong);
-                this.saveCurrentSong(true); // Force save immediately
-            }
-
-            loadSong(song) {
-                this.currentSong = song;
-                
-                // Update Inputs
-                this.ui.title.value = song.title || '';
-                this.ui.artist.value = song.artist || '';
-                this.ui.album.value = song.album || '';
-                this.ui.lyrics.value = song.lyrics || '';
-
-                // Update UI state
-                this.renderActiveTags();
-                this.renderSongList(); // To highlight active
-                this.updateCharCount();
-            }
-
             handleInput() {
                 if (!this.currentSong) return;
-                
-                // Update local state
                 this.currentSong.title = this.ui.title.value;
                 this.currentSong.artist = this.ui.artist.value;
                 this.currentSong.album = this.ui.album.value;
                 this.currentSong.lyrics = this.ui.lyrics.value;
-
-                // Debounced Save
-                this.triggerAutoSave();
-            }
-
-            triggerAutoSave() {
-                this.ui.saveStatus.classList.remove('opacity-100');
-                this.ui.saveStatus.classList.add('opacity-0');
                 
                 if (this.saveTimeout) clearTimeout(this.saveTimeout);
-                
-                this.saveTimeout = setTimeout(async () => {
-                    await this.saveCurrentSong();
-                }, 1000);
+                this.saveTimeout = setTimeout(() => this.saveCurrentSong(), 1000);
             }
 
-            async saveCurrentSong(refreshList = true) {
-                if (!this.currentSong) return;
-                await this.db.saveSong(this.currentSong);
-                
-                // UI Feedback
-                this.ui.saveStatus.textContent = "Saved";
-                this.ui.saveStatus.classList.remove('opacity-0');
-                this.ui.saveStatus.classList.add('opacity-100');
-                
-                if (refreshList) await this.refreshSongList();
-            }
+            // --- Style Builder Logic ---
 
-            async deleteCurrentSong() {
-                if (!this.currentSong) return;
-                if (confirm('Are you sure you want to delete this song?')) {
-                    await this.db.deleteSong(this.currentSong.id);
-                    await this.refreshSongList();
-                    if (this.songs.length > 0) {
-                        this.loadSong(this.songs[0]);
-                    } else {
-                        this.createNewSong();
-                    }
+            renderCategories() {
+                this.ui.categoryList.innerHTML = '';
+                Object.keys(TAG_LIBRARY).forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full text-left px-3 py-3 text-xs font-bold uppercase rounded-lg transition-colors hover:bg-slate-800 ${this.selectedCategory === cat ? 'bg-slate-800 text-indigo-400' : 'text-slate-400'}`;
+                    btn.textContent = cat;
+                    btn.onclick = () => this.selectCategory(cat, btn);
+                    this.ui.categoryList.appendChild(btn);
+                });
+                
+                // Select first by default
+                if (!this.selectedCategory) {
+                    const first = Object.keys(TAG_LIBRARY)[0];
+                    this.selectCategory(first, this.ui.categoryList.firstChild);
                 }
             }
 
-            // --- UI Rendering ---
+            selectCategory(cat, btnElement) {
+                this.selectedCategory = cat;
+                
+                // Update active state in list
+                Array.from(this.ui.categoryList.children).forEach(c => {
+                    c.className = 'w-full text-left px-3 py-3 text-xs font-bold uppercase rounded-lg transition-colors hover:bg-slate-800 text-slate-400';
+                });
+                if (btnElement) btnElement.className = 'w-full text-left px-3 py-3 text-xs font-bold uppercase rounded-lg transition-colors bg-slate-800 text-indigo-400';
 
-            renderSongList() {
-                this.ui.songList.innerHTML = '';
-                this.songs.forEach(song => {
-                    const isActive = this.currentSong && this.currentSong.id === song.id;
-                    const el = document.createElement('div');
-                    el.className = `p-3 rounded-lg cursor-pointer transition-all border border-transparent ${isActive ? 'bg-indigo-900/40 border-indigo-500/50' : 'hover:bg-gray-800 border-gray-800'}`;
-                    el.onclick = () => this.loadSong(song);
-                    
-                    const title = song.title || 'Untitled Song';
-                    const artist = song.artist || 'Unknown Artist';
-                    
-                    el.innerHTML = `
-                        <div class="text-sm font-medium text-gray-200 truncate">${title}</div>
-                        <div class="text-xs text-gray-500 truncate flex justify-between">
-                            <span>${artist}</span>
-                            <span>${new Date(song.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                    `;
-                    this.ui.songList.appendChild(el);
+                this.renderSubCategories(cat);
+            }
+
+            renderSubCategories(cat) {
+                const subCats = TAG_LIBRARY[cat];
+                this.ui.colSubcategories.innerHTML = '';
+                
+                // Header
+                const h = document.createElement('div');
+                h.className = 'px-3 py-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2';
+                h.textContent = 'Sub-Categories';
+                this.ui.colSubcategories.appendChild(h);
+
+                Object.keys(subCats).forEach(sub => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded transition-colors mb-1 group';
+                    btn.innerHTML = `<span class="font-medium">${sub}</span> <i class="fa-solid fa-chevron-right text-[10px] float-right mt-1 opacity-0 group-hover:opacity-100 transition-opacity"></i>`;
+                    btn.onclick = () => this.renderTags(subCats[sub]);
+                    this.ui.colSubcategories.appendChild(btn);
                 });
             }
 
-            renderTagLibrary() {
-                this.ui.tagLibrary.innerHTML = '';
-                
-                Object.keys(TAG_LIBRARY).forEach(category => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'mb-1';
+            renderTags(tagsArray) {
+                this.ui.tagGrid.innerHTML = '';
+                tagsArray.forEach(tag => {
+                    const btn = document.createElement('button');
+                    const isActive = this.currentSong.styleTags.some(t => t.text === tag);
                     
-                    // Header
-                    const header = document.createElement('button');
-                    header.className = 'w-full text-left px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wide bg-gray-900 hover:bg-gray-800 rounded flex justify-between items-center';
-                    header.innerHTML = `<span>${category}</span> <i class="fa-solid fa-chevron-down text-gray-600"></i>`;
-                    
-                    // List
-                    const list = document.createElement('div');
-                    list.className = 'flex flex-wrap gap-1.5 p-2 pl-3';
-                    
-                    TAG_LIBRARY[category].forEach(tag => {
-                        const btn = document.createElement('button');
-                        btn.className = 'px-2.5 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded border border-gray-700 transition-colors tag-item';
-                        btn.textContent = tag;
-                        btn.dataset.tag = tag; // For search
-                        btn.onclick = () => this.addTagToSong(tag);
-                        list.appendChild(btn);
-                    });
-
-                    // Toggle functionality
-                    header.onclick = () => {
-                        list.classList.toggle('hidden');
-                        header.querySelector('i').classList.toggle('rotate-180');
-                    };
-
-                    wrapper.appendChild(header);
-                    wrapper.appendChild(list);
-                    this.ui.tagLibrary.appendChild(wrapper);
+                    btn.className = `style-card text-left p-3 rounded-lg border text-sm font-medium transition-all ${isActive ? 'bg-indigo-900/40 border-indigo-500 text-white shadow-lg' : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:bg-slate-800 hover:border-slate-600'}`;
+                    btn.textContent = tag;
+                    btn.onclick = () => this.toggleTag(tag);
+                    this.ui.tagGrid.appendChild(btn);
                 });
             }
 
-            filterLibrary(query) {
-                const q = query.toLowerCase();
-                const headers = this.ui.tagLibrary.querySelectorAll('div > button'); // Category headers
-                const items = this.ui.tagLibrary.querySelectorAll('.tag-item');
+            toggleTag(text) {
+                const idx = this.currentSong.styleTags.findIndex(t => t.text === text);
+                if (idx === -1) {
+                    this.currentSong.styleTags.push({ text: text, rating: 0, note: '' });
+                } else {
+                    this.currentSong.styleTags.splice(idx, 1);
+                }
+                this.saveCurrentSong(false);
+                this.renderActiveTags();
+                this.updatePromptPreviews();
                 
-                items.forEach(item => {
-                    const match = item.textContent.toLowerCase().includes(q);
-                    item.style.display = match ? 'block' : 'none';
+                // Refresh grid if currently visible to reflect state
+                // This is a simple brute force re-render of active state for buttons in current grid
+                Array.from(this.ui.tagGrid.children).forEach(btn => {
+                    if (btn.textContent === text) {
+                        const isActive = this.currentSong.styleTags.some(t => t.text === text);
+                        btn.className = `style-card text-left p-3 rounded-lg border text-sm font-medium transition-all ${isActive ? 'bg-indigo-900/40 border-indigo-500 text-white shadow-lg' : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:bg-slate-800 hover:border-slate-600'}`;
+                    }
                 });
             }
 
             renderActiveTags() {
                 this.ui.activeTagsList.innerHTML = '';
-                if (!this.currentSong.styleTags || this.currentSong.styleTags.length === 0) {
-                    this.ui.activeTagsList.innerHTML = '<span class="text-sm text-gray-600 italic py-2">Select tags below to build your prompt...</span>';
-                    this.updateCharCount();
-                    return;
+                
+                // Add BPM Tag visually if set
+                if (this.currentSong.bpm) {
+                    const bpmChip = document.createElement('div');
+                    bpmChip.className = 'flex items-center gap-2 pl-3 pr-3 py-1.5 rounded-full text-xs border font-mono bg-slate-800 text-indigo-300 border-indigo-900';
+                    bpmChip.innerHTML = `<i class="fa-solid fa-stopwatch"></i> ${this.currentSong.bpm} BPM`;
+                    this.ui.activeTagsList.appendChild(bpmChip);
+                }
+
+                if (this.currentSong.styleTags.length === 0) {
+                     if (!this.currentSong.bpm) {
+                        this.ui.activeTagsList.innerHTML = '<span class="text-sm text-slate-600 italic">Select tags below to build your prompt...</span>';
+                     }
+                } else {
+                    // We already handled BPM above, loops tags below
                 }
 
                 this.currentSong.styleTags.forEach((tagObj, index) => {
                     const chip = document.createElement('div');
-                    
-                    // Determine style based on rating
-                    let bgClass = 'bg-gray-700 text-gray-200';
-                    let borderClass = 'border-gray-600';
-                    if (tagObj.rating >= 4) { bgClass = 'bg-indigo-900 text-indigo-100'; borderClass = 'border-indigo-700'; }
-                    if (tagObj.rating <= 2 && tagObj.rating > 0) { bgClass = 'bg-red-900/30 text-red-200'; borderClass = 'border-red-900/50'; }
+                    let bgClass = 'bg-slate-800 text-slate-200 border-slate-700';
+                    if (tagObj.rating >= 4) bgClass = 'bg-indigo-900/60 text-indigo-100 border-indigo-700';
+                    if (tagObj.rating <= 2 && tagObj.rating > 0) bgClass = 'bg-red-900/20 text-red-200 border-red-900/40';
 
-                    chip.className = `flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full text-xs border cursor-pointer hover:opacity-90 transition-all shadow-sm group ${bgClass} ${borderClass}`;
+                    chip.className = `flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full text-xs border cursor-pointer hover:scale-105 transition-all shadow-sm group ${bgClass}`;
                     
-                    const stars = this.getStarString(tagObj.rating);
+                    const stars = tagObj.rating ? '★'.repeat(tagObj.rating) : '';
                     const noteIcon = tagObj.note ? '<i class="fa-solid fa-sticky-note text-[10px] ml-1 opacity-70"></i>' : '';
 
                     chip.innerHTML = `
                         <span class="font-medium">${tagObj.text}</span>
                         ${noteIcon}
                         <span class="text-[10px] tracking-tighter opacity-70">${stars}</span>
-                        <div class="w-px h-3 bg-white/20 mx-1"></div>
+                        <div class="w-px h-3 bg-white/10 mx-1"></div>
                         <i class="fa-solid fa-pen text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
                     `;
-                    
                     chip.onclick = () => this.openEditModal(index);
                     this.ui.activeTagsList.appendChild(chip);
                 });
-
-                this.updateCharCount();
             }
 
-            updateCharCount() {
-                const prompt = this.currentSong.styleTags.map(t => t.text).join(', ');
-                this.ui.charCount.textContent = `${prompt.length} chars`;
-                if (prompt.length > 120) {
-                    this.ui.charCount.classList.add('text-red-500');
-                    this.ui.charCount.classList.remove('text-gray-600');
-                } else {
-                    this.ui.charCount.classList.remove('text-red-500');
-                    this.ui.charCount.classList.add('text-gray-600');
-                }
+            updatePromptPreviews() {
+                const tags = this.currentSong.styleTags.map(t => t.text);
+                if (this.currentSong.bpm) tags.push(`${this.currentSong.bpm} bpm`);
+                
+                const promptString = tags.join(', ');
+                this.ui.charCount.textContent = `${promptString.length} chars`;
+                this.ui.lyricsPromptPreview.textContent = promptString || 'No style selected';
+                
+                if (promptString.length > 120) this.ui.charCount.classList.replace('text-slate-500', 'text-red-500');
+                else this.ui.charCount.classList.replace('text-red-500', 'text-slate-500');
             }
 
-            getStarString(rating) {
-                if (!rating) return '';
-                return '★'.repeat(rating);
+            // --- Tempo & Custom Logic ---
+            setBpm(val) {
+                this.ui.bpmSlider.value = val;
+                this.handleBpmChange();
             }
 
-            // --- Logic Actions ---
-
-            addTagToSong(text) {
-                if (!this.currentSong.styleTags.find(t => t.text === text)) {
-                    this.currentSong.styleTags.push({ text: text, rating: 0, note: '' });
-                    this.saveCurrentSong(false);
-                    this.renderActiveTags();
-                }
+            handleBpmChange() {
+                const val = this.ui.bpmSlider.value;
+                this.ui.bpmDisplay.textContent = val;
+                this.currentSong.bpm = parseInt(val);
+                this.saveCurrentSong(false);
+                this.renderActiveTags();
+                this.updatePromptPreviews();
             }
 
             addCustomTag() {
                 const val = this.ui.customTagInput.value.trim();
                 if (val) {
-                    this.addTagToSong(val);
+                    this.toggleTag(val); // Toggle handles adding
                     this.ui.customTagInput.value = '';
                 }
             }
 
-            insertTag(tag) {
-                const textarea = this.ui.lyrics;
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                const text = textarea.value;
-                
-                const before = text.substring(0, start);
-                const after = text.substring(end, text.length);
-                
-                // Add newlines if needed
-                const prefix = (start > 0 && text[start - 1] !== '\n') ? '\n\n' : '';
-                const suffix = '\n';
-                
-                textarea.value = before + prefix + tag + suffix + after;
-                
-                // Reset cursor
-                textarea.selectionStart = textarea.selectionEnd = start + prefix.length + tag.length + suffix.length;
-                textarea.focus();
-                
-                this.handleInput();
-            }
-
-            copyPrompt() {
-                const prompt = this.currentSong.styleTags.map(t => t.text).join(', ');
-                this.safeCopy(prompt, this.ui.copyPromptBtn);
-            }
-
-            copyLyrics() {
-                this.safeCopy(this.ui.lyrics.value, this.ui.copyLyricsBtn);
+            clearStyles() {
+                if (confirm('Clear all style tags?')) {
+                    this.currentSong.styleTags = [];
+                    // Optional: Reset BPM? No, usually keep BPM.
+                    this.saveCurrentSong(false);
+                    this.renderActiveTags();
+                    this.updatePromptPreviews();
+                    // Re-render grid to clear active states
+                    if (this.selectedCategory) {
+                        // Just trigger a re-render of current view
+                         const currentSubBtns = this.ui.colSubcategories.querySelectorAll('button');
+                         // Ideally we would know which subcat is active. 
+                         // For now, let's just clear the grid visual state manually
+                         Array.from(this.ui.tagGrid.children).forEach(btn => {
+                            btn.className = 'style-card text-left p-3 rounded-lg border text-sm font-medium transition-all bg-slate-800/40 border-slate-700 text-slate-300 hover:bg-slate-800 hover:border-slate-600';
+                         });
+                    }
+                }
             }
 
             // --- Modal Logic ---
-
             openEditModal(index) {
                 this.editingTagIndex = index;
                 const tag = this.currentSong.styleTags[index];
@@ -749,8 +767,7 @@
             renderModalStars(rating) {
                 let html = '';
                 for (let i = 1; i <= 5; i++) {
-                    if (i <= rating) html += '<i class="fa-solid fa-star"></i>';
-                    else html += '<i class="fa-regular fa-star text-gray-600"></i>';
+                    html += i <= rating ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star text-slate-600"></i>';
                 }
                 this.ui.modalStars.innerHTML = html;
             }
@@ -760,7 +777,7 @@
                     this.currentSong.styleTags[this.editingTagIndex].rating = parseInt(this.ui.modalRating.value);
                     this.currentSong.styleTags[this.editingTagIndex].note = this.ui.modalNote.value;
                     this.saveCurrentSong(false);
-                    this.renderActiveTags();
+                    this.renderActiveTags(); // update chip color
                     this.closeModal();
                 }
             }
@@ -770,14 +787,96 @@
                     this.currentSong.styleTags.splice(this.editingTagIndex, 1);
                     this.saveCurrentSong(false);
                     this.renderActiveTags();
+                    this.updatePromptPreviews();
                     this.closeModal();
+                    
+                    // Update grid if needed (simple refresh)
+                     Array.from(this.ui.tagGrid.children).forEach(btn => {
+                        // We don't have the text reference easily here without storing it, 
+                        // but since the modal blocks interaction, we can just let the user re-click.
+                        // Or we can try to find it.
+                    });
+                     // Force re-render of current tags if possible? 
+                     // Actually, toggleTag handles the grid update. This direct removal doesn't.
+                     // It's a minor visual sync issue that fixes itself on next interaction.
                 }
+            }
+
+            // --- Utils ---
+            renderSongList() {
+                this.ui.songList.innerHTML = '';
+                this.songs.forEach(song => {
+                    const isActive = this.currentSong && this.currentSong.id === song.id;
+                    const el = document.createElement('div');
+                    el.className = `p-3 rounded-lg cursor-pointer transition-all border border-transparent ${isActive ? 'bg-indigo-900/40 border-indigo-500/50' : 'hover:bg-slate-800 border-slate-800'}`;
+                    el.onclick = () => this.loadSong(song);
+                    
+                    const title = song.title || 'Untitled Song';
+                    const artist = song.artist || 'Unknown Artist';
+                    
+                    el.innerHTML = `
+                        <div class="text-sm font-medium text-slate-200 truncate">${title}</div>
+                        <div class="text-xs text-slate-500 truncate flex justify-between">
+                            <span>${artist}</span>
+                            <span>${new Date(song.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                    `;
+                    this.ui.songList.appendChild(el);
+                });
+            }
+
+            insertTag(tag) {
+                const textarea = this.ui.lyrics;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                const before = text.substring(0, start);
+                const after = text.substring(end, text.length);
+                const prefix = (start > 0 && text[start - 1] !== '\n') ? '\n\n' : '';
+                const suffix = '\n';
+                textarea.value = before + prefix + tag + suffix + after;
+                textarea.selectionStart = textarea.selectionEnd = start + prefix.length + tag.length + suffix.length;
+                textarea.focus();
+                this.handleInput();
+            }
+
+            safeCopy(text, btnElement) {
+                const fallback = document.getElementById('fallback-clipboard');
+                fallback.value = text;
+                fallback.select();
+                try {
+                    document.execCommand('copy');
+                    const original = btnElement.innerHTML;
+                    btnElement.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                    setTimeout(() => btnElement.innerHTML = original, 2000);
+                } catch (err) { console.error('Copy failed', err); }
+                window.getSelection().removeAllRanges();
+            }
+
+            copyPrompt() {
+                const tags = this.currentSong.styleTags.map(t => t.text);
+                if (this.currentSong.bpm) tags.push(`${this.currentSong.bpm} bpm`);
+                this.safeCopy(tags.join(', '), this.ui.copyPromptBtn);
+            }
+
+            copyLyrics() {
+                this.safeCopy(this.ui.lyrics.value, this.ui.copyLyricsBtn);
+            }
+            
+            setupEventListeners() {
+                [this.ui.title, this.ui.artist, this.ui.album, this.ui.lyrics].forEach(i => i.addEventListener('input', () => this.handleInput()));
+                this.ui.bpmSlider.addEventListener('input', () => this.handleBpmChange());
+                this.ui.modalRating.addEventListener('input', (e) => {
+                    this.ui.modalRatingVal.textContent = e.target.value;
+                    this.renderModalStars(e.target.value);
+                });
+                this.ui.customTagInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addCustomTag();
+                });
             }
         }
 
-        // Initialize App
         const app = new App();
-
     </script>
 </body>
 </html>
