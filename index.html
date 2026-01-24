@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suno Architect v5.0</title>
+    <title>Suno Architect v5.1 (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -77,7 +77,7 @@
                     </div>
                     <div>
                         <h1 class="text-lg font-bold text-slate-900 leading-tight">Suno Architect</h1>
-                        <p class="text-xs text-slate-500 font-medium">Studio Production Suite v5.0</p>
+                        <p class="text-xs text-slate-500 font-medium">Studio Production Suite v5.1</p>
                     </div>
                 </div>
                 <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
@@ -278,7 +278,7 @@
 
                          <!-- Smart Conflict Warning -->
                          <div id="conflict-warning" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex flex-col gap-2">
-                             <!-- JS Injected -->
+                             <div id="conflict-text"></div>
                          </div>
 
                          <textarea id="style-output" readonly class="w-full h-40 bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono text-sm resize-none mb-4" placeholder="Prompt builds here..."></textarea>
@@ -287,6 +287,7 @@
                             <input id="style-exclusions-output" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-red-500 font-mono text-xs focus:outline-none">
                         </div>
                          <button onclick="copyToClipboard('style-output', this)" class="w-full py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-600/20 mb-2">Copy Prompt</button>
+                         <div id="char-count" class="text-xs text-right text-slate-400">0 chars</div>
                     </div>
                 </div>
             </div>
@@ -333,20 +334,14 @@
         const PLATFORM_RULES = { 
           suno: { 
             name: "Suno", 
-            maxTokens: 200, // Safe char limit
-            specialSyntax: { 
-              prefix: PROMPT_PREFIX, 
-              excludePrefix: "No " 
-            }, 
+            maxTokens: 200, 
+            specialSyntax: { prefix: PROMPT_PREFIX, excludePrefix: "No " }, 
             strengths: ["Excellent vocal quality", "Handles lo-fi well"] 
           }, 
           udio: { 
             name: "Udio", 
             maxTokens: 150, 
-            specialSyntax: { 
-              prefix: "", 
-              excludePrefix: "without " 
-            }, 
+            specialSyntax: { prefix: "", excludePrefix: "without " }, 
             strengths: ["Great with modern production", "Good genre fusion"] 
           },
           generic: {
@@ -396,7 +391,7 @@
             { tags: ["Dry Mix", "Reverb"], msg: "Conflict: 'Dry Mix' vs Reverb/Echo.", severity: "medium" }
         ];
 
-        // --- REST OF DATA (GENRES, INSTRUMENTS, ETC) IS SAME AS PREVIOUS ---
+        // --- DATA ---
         const GENRES = {
             "Indie/Alt": ["Dream Pop", "Shoegaze", "Slowcore", "Indie Folk", "Art Pop", "Noise Pop", "Indie Rock", "Post-Rock", "Math Rock", "Bedroom Pop", "Twee Pop", "Jangle Pop", "Folktronica"],
             "Rock": ["Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", "Industrial Rock", "Prog Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Soft Rock", "Southern Rock", "Stoner Rock", "Surf Rock", "Yacht Rock"],
@@ -440,7 +435,6 @@
 
         const VOICES = ["Male", "Female", "Androgynous", "Choir", "Whisper", "Screaming", "Rap Flow", "Autotune", "Operatic", "Baritone", "Falsetto", "Raspy", "Robot", "Vocoder"];
         const TEMPO_FEEL = ["Slow", "Medium", "Fast", "Groovy", "Driving", "Syncopated", "Swing", "Straight", "60 BPM", "90 BPM", "120 BPM", "140 BPM", "170 BPM"];
-        
         const METATAGS = [ { label: "Intro", tag: "[Intro]" }, { label: "Verse", tag: "[Verse]" }, { label: "Chorus", tag: "[Chorus]" }, { label: "Bridge", tag: "[Bridge]" }, { label: "Outro", tag: "[Outro]" }];
         const PERFORMANCE_TAGS = [ { label: "Whisper", tag: "[Whisper]" }, { label: "Scream", tag: "[Scream]" }, { label: "Drop", tag: "[Drop]" }, { label: "Solo", tag: "[Solo]" }];
 
@@ -466,11 +460,11 @@
             initSimpleMultiSelect("voices-container", VOICES, "voices");
             initTempoUI();
             initLyricsTags();
-            initPresetUI(); // New Preset UI
+            initPresetUI();
             initDB();
             
             document.getElementById('lyrics-input').value = LYRICS_PREFIX;
-            switchTab('studio'); // Start in Studio
+            switchTab('studio');
         });
 
         function initDB() {
@@ -532,10 +526,6 @@
                 exclusions: preset.exclusions || ""
             };
             updateAllVisuals();
-            // Flash output
-            const output = document.getElementById('style-output');
-            output.classList.add('bg-indigo-50');
-            setTimeout(() => output.classList.remove('bg-indigo-50'), 300);
         }
 
         // --- UI BUILDERS ---
@@ -600,7 +590,7 @@
             const c = document.getElementById(containerId); c.innerHTML = '';
             list.forEach(item => {
                 const btn = document.createElement('button');
-                btn.className = "px-3 py-1.5 rounded-full text-xs border transition-all bg-white border-slate-200 text-slate-600 hover:border-indigo-300";
+                btn.className = "px-3 py-1.5 rounded-full text-xs border transition-all bg-white border-slate-200 text-slate-600 hover:border-indigo-300 btn-base";
                 if(state[key].includes(item)) btn.classList.add("btn-selected");
                 btn.textContent = item;
                 btn.onclick = () => {
@@ -679,7 +669,7 @@
             if(GENRES[cat]) {
                 GENRES[cat].forEach(sub => {
                     const b = document.createElement('button');
-                    b.className = "px-3 py-1.5 rounded-full text-xs border bg-white border-slate-200 text-slate-600";
+                    b.className = "px-3 py-1.5 rounded-full text-xs border bg-white border-slate-200 text-slate-600 btn-base";
                     if(state.subgenres.includes(sub)) b.classList.add('btn-selected');
                     b.textContent = sub;
                     b.onclick = () => {
@@ -719,33 +709,30 @@
             if(state.production.length) list.push(...state.production);
             if(state.tempo) list.push(state.tempo);
 
-            // Raw prompt for internal state
             const rawText = list.join(", ");
-            // We set the value, but updatePromptForPlatform will overwrite it if a platform is active
             document.getElementById('style-output').value = rawText; 
             
             validatePrompt(rawText);
         }
 
+        // *** RESTORED VALIDATION FUNCTION ***
         function validatePrompt(text) {
             const warningEl = document.getElementById('conflict-warning');
-            const container = document.getElementById('conflict-text');
+            const container = document.getElementById('conflict-text'); // Ensure this ID exists in HTML
+            if(!warningEl) return;
+            
             const fullText = (text + " " + state.exclusions).toLowerCase();
             
-            // Find issues
             const issues = [];
-            
-            // Semantic Conflicts
             CONFLICTS.forEach(c => {
                 if(c.tags.every(t => fullText.includes(t.toLowerCase()))) {
                     issues.push({ msg: c.msg, severity: c.severity });
                 }
             });
             
-            // Render
             if(issues.length > 0) {
                 warningEl.classList.remove('hidden');
-                container.innerHTML = issues.map(i => 
+                warningEl.innerHTML = issues.map(i => 
                     `<div class="text-${i.severity === 'high' ? 'red' : 'amber'}-700">⚠️ ${i.msg}</div>`
                 ).join('');
             } else {
@@ -753,12 +740,12 @@
             }
         }
 
+        // *** RESTORED PLATFORM FUNCTION ***
         function updatePromptForPlatform() {
             const platform = document.getElementById('platform-select').value;
             const tips = document.getElementById('platform-tips');
-            let rawList = [];
             
-            // Re-build raw list logic (should abstract this, but keeping simple)
+            let rawList = [];
             if(state.genreCat) rawList.push(state.genreCat);
             if(state.subgenres.length) rawList.push(...state.subgenres);
             if(state.singerDescription) rawList.push(`Vocals: ${state.singerDescription}`);
@@ -778,7 +765,7 @@
             if(state.exclusions) {
                 const exParts = state.exclusions.split(',').map(e => e.trim());
                 const exString = exParts.map(e => rule.specialSyntax.excludePrefix + e).join(", ");
-                if(platform === 'suno') finalPrompt += "\n" + exString; // Suno usually likes new line or explicit exclusion block
+                if(platform === 'suno') finalPrompt += "\n" + exString; 
                 else finalPrompt += ", " + exString;
             }
 
@@ -787,24 +774,25 @@
             // Char Count logic
             const len = finalPrompt.length;
             const counter = document.getElementById('char-count');
-            counter.textContent = `${len}/${rule.maxTokens} chars`;
-            if(len > rule.maxTokens) counter.classList.add('text-red-500', 'font-bold');
-            else counter.classList.remove('text-red-500', 'font-bold');
+            if(counter) {
+                counter.textContent = `${len}/${rule.maxTokens} chars`;
+                if(len > rule.maxTokens) counter.classList.add('text-red-500', 'font-bold');
+                else counter.classList.remove('text-red-500', 'font-bold');
+            }
 
             // Tips
-            if(rule.strengths.length > 0) {
-                 tips.innerHTML = `<div class="text-[10px] text-indigo-500 font-semibold uppercase">Optimizer: ${rule.name}</div>
-                 <div class="text-[10px] text-slate-400">${rule.strengths.join(", ")}</div>`;
-            } else {
-                 tips.innerHTML = "";
+            if(tips) {
+                 if(rule.strengths.length > 0) {
+                     tips.innerHTML = `<div class="text-[10px] text-indigo-500 font-semibold uppercase">Optimizer: ${rule.name}</div>
+                     <div class="text-[10px] text-slate-400">${rule.strengths.join(", ")}</div>`;
+                } else {
+                     tips.innerHTML = "";
+                }
             }
         }
 
         // --- DIALS LOGIC (Synced) ---
         function updateDials() {
-            // Simplified dial mapping logic
-            // In a real implementation this would map ranges to specific tags
-            // For now we ensure it triggers the prompt update
             updatePrompt();
             updatePromptForPlatform();
         }
@@ -812,16 +800,12 @@
         function applyDialsToMain() {
             const baseGenre = document.getElementById('dial-genre-select').value;
             if (!baseGenre) return alert("Select a base genre first.");
-            
-            // Apply logic similar to v4.1 but ensure visual updates
-            // (Mocking the dial->tag conversion for brevity)
             state.subgenres = [baseGenre]; 
             updateAllVisuals();
             switchTab('style');
         }
 
         function updateAllVisuals() {
-             // Re-render lists to show selected state
              initInstrumentUI(); initMoodUI(); initProductionUI(); initSimpleMultiSelect("voices-container", VOICES, "voices");
              
              if(state.genreCat) {
@@ -959,24 +943,25 @@
             }
         }
         
+        function closeModal() { document.getElementById('save-modal').classList.add('hidden'); }
+        
         function commitSaveSong() {
             const artistId = parseInt(document.getElementById('save-artist-select').value);
             const albumId = parseInt(document.getElementById('save-album-select').value);
             const title = document.getElementById('save-song-title').value;
             const notes = document.getElementById('save-song-notes').value;
+            const link = document.getElementById('save-song-link').value;
             
             if(!artistId || !albumId || !title) return alert("Please fill in required fields.");
             
             const song = {
                 id: Date.now(),
-                artistId,
-                albumId,
-                title,
-                notes,
+                artistId, albumId, title, notes,
                 prompt: document.getElementById('style-output').value,
                 lyrics: document.getElementById('lyrics-input').value,
                 state: JSON.parse(JSON.stringify(state)),
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                versions: link ? [{name: "Initial", link: link}] : []
             };
             
             const tx = db.transaction("songs", "readwrite");
@@ -984,11 +969,49 @@
             tx.oncomplete = () => {
                 closeModal();
                 alert("Song Saved to Album!");
-                // Optionally switch to studio and show it
                 selectedStudioArtistId = artistId;
                 selectStudioAlbum(albumId);
                 switchTab('studio');
             };
+        }
+        
+        // Versions
+        function openVersionModal(id) {
+             document.getElementById('version-modal').classList.remove('hidden');
+             document.getElementById('version-song-id').value = id;
+        }
+        function closeVersionModal() { document.getElementById('version-modal').classList.add('hidden'); }
+        function commitAddVersion() {
+             const id = parseInt(document.getElementById('version-song-id').value);
+             const name = document.getElementById('version-label').value;
+             const link = document.getElementById('version-link').value;
+             const tx = db.transaction("songs", "readwrite");
+             const store = tx.objectStore("songs");
+             store.get(id).onsuccess = (e) => {
+                 const s = e.target.result;
+                 if(!s.versions) s.versions = [];
+                 s.versions.push({ name, link });
+                 store.put(s);
+                 closeVersionModal();
+                 if(selectedStudioAlbumId) renderStudioSongs(selectedStudioAlbumId);
+             };
+        }
+
+        // Functions from previous turns kept for compatibility
+        function validateAndLoadModels() { alert("Validation simulation active. Add real API logic if needed."); }
+        function generateLyrics() { alert("AI generation simulation. Add real API logic if needed."); }
+        function generateJsonOutput() { document.getElementById('json-output').value = JSON.stringify(state, null, 2); }
+        function saveArtist() {
+             const name = document.getElementById('artist-name').value;
+             if(!name) return alert("Name required");
+             const tx = db.transaction("artists", "readwrite");
+             tx.objectStore("artists").add({
+                 id: Date.now(),
+                 name: name,
+                 bio: document.getElementById('artist-bio').value,
+                 profile: JSON.parse(JSON.stringify(state))
+             });
+             tx.oncomplete = () => { alert("Artist Created"); switchTab('studio'); };
         }
 
     </script>
