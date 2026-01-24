@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suno Architect v5.1</title>
+    <title>Suno Architect v5.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -46,7 +46,8 @@
         }
 
         /* Filter Chips */
-        .filter-chip { font-size: 11px; font-weight: 500; text-transform: uppercase; background: #ffffff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 99px; cursor: pointer; transition: all 0.2s; }
+        .filter-chip { font-size: 11px; font-weight: 500; text-transform: uppercase; background: #ffffff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 99px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .filter-chip:hover { border-color: #cbd5e1; color: #334155; background: #f8fafc; }
         .filter-chip.active-filter { background: #4f46e5; color: white; border-color: #4f46e5; }
 
         .modal-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
@@ -65,7 +66,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <div class="bg-indigo-600 p-2 rounded-lg shadow-sm"><i data-lucide="music" class="w-5 h-5 text-white"></i></div>
-                    <div><h1 class="text-lg font-bold text-slate-900">Suno Architect</h1><p class="text-xs text-slate-500">Studio Manager v5.1</p></div>
+                    <div><h1 class="text-lg font-bold text-slate-900">Suno Architect</h1><p class="text-xs text-slate-500">Studio Manager v5.2</p></div>
                 </div>
                 <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full no-scrollbar">
                     <button onclick="switchTab('studio')" id="tab-btn-studio" class="nav-btn px-4 py-2 text-sm font-medium rounded-lg">Studio</button>
@@ -155,7 +156,8 @@
         <!-- TAB: STYLE TUNER (DIALS) -->
         <div id="tab-dials" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div class="lg:col-span-7 space-y-6 pb-20">
+                <!-- Controls -->
+                <div class="lg:col-span-7 space-y-6 pb-10">
                     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                         <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">1. Foundation</h2>
                         <div class="space-y-4">
@@ -203,7 +205,9 @@
 
                     <!-- Genre -->
                     <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                        <h2 class="font-bold text-slate-900 mb-4 flex items-center"><i data-lucide="list-music" class="w-4 h-4 mr-2 text-purple-600"></i>1. Genre</h2>
+                        <h2 class="font-bold text-slate-900 mb-4 flex items-center"><i data-lucide="list-music" class="w-4 h-4 mr-2 text-purple-600"></i>1. Genre Foundation</h2>
+                        <!-- Category Filters for Genre -->
+                        <div id="genre-cats" class="flex flex-wrap gap-2 mb-3"></div>
                         <div id="genre-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
                         <div id="subgenre-container" class="flex flex-wrap gap-2"></div>
                     </section>
@@ -274,18 +278,82 @@
         </div>
     </div>
 
+    <!-- VERSION MODAL -->
+    <div id="version-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+             <h3 class="text-lg font-bold text-slate-900">Add Version</h3>
+             <input type="hidden" id="version-song-id">
+             <input type="text" id="version-label" placeholder="Version Name (e.g. V2, Remix)" class="w-full bg-slate-50 border rounded-lg px-3 py-2">
+             <input type="text" id="version-link" placeholder="Suno Link" class="w-full bg-slate-50 border rounded-lg px-3 py-2">
+             <div class="flex gap-3"><button onclick="closeVersionModal()" class="flex-1 py-2 bg-slate-100 rounded-lg">Cancel</button><button onclick="commitAddVersion()" class="flex-1 py-2 bg-indigo-600 text-white rounded-lg">Add</button></div>
+        </div>
+    </div>
+
     <script>
         // --- DATA ---
         const PROMPT_PREFIX = "[Is_MAX_MODE: MAX](MAX)\n[QUALITY: MAX](MAX)\n[REALISM: MAX](MAX)\n[REAL_INSTRUMENTS: MAX](MAX)\n";
         const LYRICS_PREFIX = "///*****///\n\n";
         
-        // CONSOLIDATED DATA
-        const GENRES = { "Indie": ["Dream Pop","Shoegaze","Slowcore","Indie Folk"], "Rock": ["Alt Rock","Classic Rock","Grunge","Punk"], "Electronic": ["Synthwave","Techno","House","Ambient","Folktronica"], "Pop": ["Art Pop","Hyperpop","K-Pop"], "Metal": ["Black Metal","Death Metal"], "Hip Hop": ["Boom Bap","Trap"], "Jazz": ["Bebop","Fusion"], "Folk": ["Americana","Neofolk"] };
-        const INSTRUMENTS = { "Strings": ["Violin","Cello"], "Guitars": ["Electric Guitar","Acoustic Guitar","Shoegaze Guitar"], "Keys": ["Piano","Synthesizer","Modular Synth"], "Percussion": ["Drum Kit","808"], "Studio": ["WA-47","Neve Console"] }; // Simplified for space, extend as needed
-        const MOODS = { "Atmospheric": ["Ethereal","Dreamy"], "Energy": ["High Energy","Aggressive"], "Dark": ["Gloomy","Ominous"], "Chill": ["Mellow","Relaxing"] };
-        const PRODUCTION = { "Texture": ["Lo-Fi","Warm","Crisp"], "Space": ["Massive Reverb","Dry"], "Tech": ["Auto-Tune","Compressed"] };
-        const VOICES = ["Male Vocals","Female Vocals","Whisper","Choir"];
-        const PRESETS = { "Dream Pop": { genre: "Indie", subs: ["Dream Pop"], inst: ["Electric Guitar","Synthesizer"], prod: ["Massive Reverb"] }, "Lo-Fi": { genre: "Electronic", subs: ["Lo-Fi"], inst: ["Piano"], prod: ["Lo-Fi","Warm"] } };
+        // COMPREHENSIVE DATA (Restored)
+        const GENRES = {
+            "Indie/Alt": ["Dream Pop", "Shoegaze", "Slowcore", "Indie Folk", "Art Pop", "Noise Pop", "Indie Rock", "Post-Rock", "Math Rock", "Bedroom Pop", "Twee Pop", "Jangle Pop", "Folktronica"],
+            "Rock": ["Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", "Industrial Rock", "Prog Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Soft Rock", "Southern Rock", "Stoner Rock", "Surf Rock", "Yacht Rock"],
+            "Metal": ["Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal", "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Metalcore", "Nu Metal", "Power Metal", "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal"],
+            "Electronic": ["Acid House", "Acid Techno", "Ambient", "Big Beat", "Breakbeat", "Chillstep", "Chillwave", "Chiptune", "Deep House", "Downtempo", "Drum and Bass", "Dubstep", "Electro", "Eurodance", "Future Bass", "Gabber", "Glitch", "Glitch Pop", "Hardcore", "Hardstyle", "House", "IDM", "Industrial", "Jungle", "Lo-Fi", "Melodic Techno", "Minimal", "Phonk", "Psytrance", "Synth-Pop", "Synthwave", "Tech House", "Techno", "Trance", "Trap", "Trip Hop", "UK Garage", "Vaporwave", "Witch House"],
+            "Pop": ["Art Pop", "Baroque Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "City Pop", "Country-Pop", "Dance-Pop", "Dream Pop", "Electropop", "Europop", "Hyperpop", "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Sophisti-Pop", "Sunshine Pop", "Teen Pop"],
+            "Hip Hop": ["Abstract Hip Hop", "Boom Bap", "Cloud Rap", "Conscious Hip Hop", "Crunk", "Drill", "East Coast", "Experimental Hip Hop", "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", "Horrorcore", "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", "Turntablism", "West Coast"],
+            "R&B/Soul": ["Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Modern Soul", "Motown", "Neo-Soul", "New Jack Swing", "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul"],
+            "Jazz": ["Acid Jazz", "Afro-Cuban Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz", "Fusion", "Gypsy Jazz", "Hard Bop", "Latin Jazz", "Modal Jazz", "Smooth Jazz", "Swing"],
+            "Folk/Country": ["Alt-Country", "Americana", "Bluegrass", "Celtic Folk", "Contemporary Folk", "Country", "Country Rock", "Dark Folk", "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", "Neofolk", "Outlaw Country", "Traditional Folk", "Western Swing"],
+            "Classical/Score": ["Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Drone", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Classical", "Neoclassical", "Opera", "Orchestral", "Romantic", "Score", "Soundtrack", "Symphonic"],
+            "Latin/World": ["Afrobeat", "Bachata", "Bossa Nova", "Cumbia", "Dancehall", "Flamenco", "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Merengue", "Reggae", "Reggaeton", "Salsa", "Samba", "Ska", "Tango"],
+            "Blues/Roots": ["Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Rhythm and Blues", "Roots Rock", "Swamp Blues", "Zydeco"],
+            "Atmospheric": ["Ethereal", "Cinematic", "Dark Ambient", "Drone", "Space Rock"],
+            "Time Period": ["1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"],
+            "Suno/Meta": ["Ritmiczna", "Melodyjna", "Dynamiczna", "Szybka", "Wolna", "Staccato", "Legato", "Syncopated", "Anthemic", "Broadcasting", "Trailer", "Anime Opening", "Eurovision", "Billboard 100", "Commercial", "Jingle"]
+        };
+
+        const INSTRUMENT_GROUPS = {
+            "Strings": ["Violin", "Cello", "Double Bass", "String Quartet", "Fiddle", "Harp", "Erhu", "Koto", "Sitar", "Sarangi", "Shamisen", "Zither"],
+            "Guitars": ["Fingerstyle Acoustic Guitar", "Electric Guitar", "Bass Guitar", "Distorted Guitar", "Clean Guitar", "Slide Guitar", "Pedal Steel", "Glide Guitar", "Shoegaze Guitar", "12-String Guitar", "Banjo", "Ukulele", "Mandolin", "Lute"],
+            "Keys": ["Piano", "Electric Piano", "Rhodes", "Wurlitzer", "Organ", "Hammond", "Synthesizer", "Modular Synthesizer", "Analog Synth", "Mellotron", "Toy Piano", "Celesta", "Harpsichord"],
+            "Percussion": ["Drum Kit", "Electronic Drums", "808 Drums", "909 Kit", "Hybrid Drums", "LinnDrum", "Congas", "Bongos", "Tabla", "Glitch Drums", "Brushes", "Shaker", "Tambourine", "Timpani", "Handclaps"],
+            "Wind/Brass": ["Saxophone", "Processed Saxophone", "Trumpet", "Flute", "Clarinet", "Oboe", "Trombone", "Tuba", "French Horn", "Bassoon", "Bagpipes", "Didgeridoo", "Harmonica"],
+            "Studio": ["WA-47", "Neumann U87", "Sony C800G", "Shure SM7B", "Neve Console", "SSL Console", "Tube Preamp", "Tape Machine", "Cassette"]
+        };
+
+        const MOOD_GROUPS = {
+            "Atmospheric": ["Ethereal", "Dreamy", "Winter Atmosphere", "Cosmic", "Floating", "Hypnotic", "Lush", "Spaced Out", "Hazy", "Cinematic", "Majestic", "Swirling", "Trippy"],
+            "Emotional": ["Melancholic", "Bittersweet", "Nostalgic", "Sentimental", "Yearning", "Heartbreaking", "Introspective", "Lonely", "Passionate", "Romantic", "Sad", "Sorrowful", "Soulful"],
+            "Dark": ["Gloomy", "Brooding", "Ominous", "Haunting", "Dark", "Gothic", "Noir", "Mysterious", "Spooky", "Suspenseful"],
+            "Energy": ["High Energy", "Aggressive", "Driving", "Manic", "Punchy", "Explosive", "Industrial", "Intense", "Powerful", "Upbeat"],
+            "Chill": ["Chill", "Mellow", "Laid-back", "Serene", "Pastoral", "Sleepy", "Calm", "Comforting", "Peaceful", "Relaxing", "Soothing", "Tranquil", "Warm"],
+            "Happy/Quirky": ["Bouncy", "Confident", "Happy", "Hopeful", "Inspirational", "Joyful", "Joyous", "Jubilant", "Optimistic", "Playful", "Quirky", "Sexy", "Silly", "Sophisticated", "Sweet", "Whimsical", "Witty", "Glitchy"]
+        };
+
+        const PRODUCTION_GROUPS = {
+            "Texture": ["Lo-Fi", "Lo-Fi Tape Saturation", "Granular Textures", "Grainy", "Warm", "Cold", "Crisp", "Fuzzy", "Distorted", "Vinyl Crackle", "Analog Warmth", "Brittle", "Crunchy", "Gritty", "Harsh", "Noise", "Old School", "Organic", "Raw", "Retro", "Saturated", "Tape Saturation", "8-bit"],
+            "Space": ["Massive Reverb", "Wide Stereo Field", "Binaural", "Dry", "Wet", "Echoey", "Cavernous", "Intimate", "Bedroom", "Atmospheric", "Immersive Soundstage", "Live Room", "Room Reverb", "Room Tone", "Stereo", "Wide Stereo", "Wet Mix"],
+            "Tech": ["Heavy Auto-Tune", "Vocoder", "Gated Reverb", "Sidechained", "Compressed", "Wall of Sound", "Minimalist", "Maximalist", "Breathy", "Glitched", "Hollow", "Monophonic", "Polyphonic", "Swirling Textures", "Synthetic", "Twangy", "Underwater"],
+            "Clarity": ["Bright", "Clean", "Clear", "Crisp", "Dry Mix", "Flat", "Hi-Fi", "Modern Production", "Polished", "Studio"],
+            "Mix": ["Deep", "Dense", "Heavy Bass", "Instrument-forward Balance", "Loud Master", "Minimal", "Muddy", "Muffled", "Punchy", "Sparse", "Thick", "Thin", "Tight"]
+        };
+
+        const VOICES = ["Male Vocals", "Female Vocals", "Androgynous", "Choir", "Whisper", "Screaming", "Rap Flow", "Autotune", "Operatic", "Baritone", "Falsetto", "Raspy", "Robot", "Vocoder", "Group Backing Vocals", "Children's Choir", "Gospel Choir", "Gang Vocals", "Growling", "Spoken Word", "Bass", "Alto", "Soprano", "Guttural", "Chant", "Crooner", "Scat Singing", "Yodeling", "Throat Singing", "Beatboxing", "Multi-layered Harmonies", "Introspective"];
+        const TEMPO_FEEL = ["Slow", "Medium", "Fast", "Groovy", "Driving", "Syncopated", "Swing", "Straight", "60 BPM", "90 BPM", "120 BPM", "140 BPM", "170 BPM", "Slow (Adagio)", "Walking Pace (Andante)", "Fast (Allegro)", "Very Fast (Presto)", "Driving 4/4", "Half-time", "Shuffle", "Triplet Feel", "Rubato", "Free Tempo", "Blast Beat", "Breakbeat", "D-Beat", "Double Time", "Down-tempo", "Four-on-the-Floor", "Latin Groove", "Motorik", "Off-beat", "Polyrhythmic", "Pulsing", "Skank", "Slow Burn", "Slow Jam", "Staccato", "Steady Beat", "Up-tempo", "Waltz (3/4)"];
+        
+        const METATAGS = [ { label: "Intro", tag: "[Intro]" }, { label: "Verse", tag: "[Verse]" }, { label: "Chorus", tag: "[Chorus]" }, { label: "Bridge", tag: "[Bridge]" }, { label: "Outro", tag: "[Outro]" } ];
+        const PERFORMANCE_TAGS = [ { label: "Whisper", tag: "[Whisper]" }, { label: "Scream", tag: "[Scream]" }, { label: "Drop", tag: "[Drop]" }, { label: "Solo", tag: "[Solo]" } ];
+        
+        const PRESETS = { "Dream Pop": { genre: "Indie/Alt", subs: ["Dream Pop"], inst: ["Electric Guitar","Synthesizer"], prod: ["Massive Reverb"] }, "Lo-Fi": { genre: "Electronic", subs: ["Lo-Fi"], inst: ["Piano"], prod: ["Lo-Fi","Warm"] } };
+
+        const CONFLICTS = [
+            { tags: ["Acoustic", "Synthesizer"], msg: "Mixing 'Acoustic' with 'Synthesizer' can be valid, but check if you want pure acoustic." },
+            { tags: ["Instrumental", "Male Vocals"], msg: "Conflict: 'Instrumental' and 'Male Vocals'." },
+            { tags: ["Instrumental", "Female Vocals"], msg: "Conflict: 'Instrumental' and 'Female Vocals'." },
+            { tags: ["Lo-Fi", "Hi-Fi"], msg: "Conflict: 'Lo-Fi' and 'Hi-Fi' are opposites." },
+            { tags: ["Slow", "Fast"], msg: "Conflict: Tempo contradiction." }
+        ];
 
         // --- STATE ---
         let state = { genreCat:"", subgenres:[], instruments:[], voices:[], moods:[], production:[], tempo:"", singerDescription:"", exclusions:"" };
@@ -317,23 +385,22 @@
         // --- UI INIT ---
         function initUI() {
             // Genres
-            const gc = document.getElementById('genre-container'); gc.innerHTML = '';
-            Object.keys(GENRES).forEach(cat => {
-                const b = document.createElement('button'); b.className = "btn-base p-3 rounded-lg text-sm text-left w-full"; b.textContent = cat;
-                b.onclick = () => selectGenre(cat, b);
-                gc.appendChild(b);
-            });
+            initCatList('genre-cats', 'genre-container', GENRES, 'genreCat', true); // True for single select behavior on cat, multi on item
+            
+            // Dials Genres
+            initCatList('dial-category-filters', null, GENRES, null, true, true);
+
             // Instruments
-            initCatList('instrument-cats', 'instruments-container', INSTRUMENTS, 'instruments');
+            initCatList('instrument-cats', 'instruments-container', INSTRUMENT_GROUPS, 'instruments');
             // Moods
-            initCatList('mood-cats', 'moods-container', MOODS, 'moods');
+            initCatList('mood-cats', 'moods-container', MOOD_GROUPS, 'moods');
             // Production
-            initCatList('prod-cats', 'production-container', PRODUCTION, 'production');
+            initCatList('prod-cats', 'production-container', PRODUCTION_GROUPS, 'production');
             // Voices
             renderList('voices-container', VOICES, 'voices');
             // Tempo
             const ts = document.getElementById('tempo-select');
-            ["Slow","Fast","120 BPM","90 BPM"].forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; ts.appendChild(o); });
+            TEMPO_FEEL.forEach(t => { const o = document.createElement('option'); o.value=t; o.textContent=t; ts.appendChild(o); });
             // Presets
             const pc = document.getElementById('preset-container');
             Object.keys(PRESETS).forEach(k => {
@@ -345,30 +412,62 @@
             document.getElementById('lyrics-input').value = LYRICS_PREFIX;
         }
 
-        function initCatList(catId, listId, data, key) {
-             const cc = document.getElementById(catId); cc.innerHTML = '';
+        // Generic Category UI
+        function initCatList(catId, listId, data, key, isSingleGenre = false, isDial = false) {
+             const cc = document.getElementById(catId); 
+             if(!cc) return;
+             cc.innerHTML = '';
+             
              Object.keys(data).forEach(grp => {
                  const b = document.createElement('button'); b.className = "filter-chip"; b.textContent = grp;
                  b.onclick = () => {
                      Array.from(cc.children).forEach(x => x.classList.remove('active-filter'));
                      b.classList.add('active-filter');
-                     renderList(listId, data[grp], key);
+                     
+                     if (isDial) {
+                         populateDialSelect(grp);
+                     } else if (listId) {
+                         // For Genres (isSingleGenre), clicking a category shows subgenres
+                         // For Instruments/etc, clicking category shows items
+                         if (isSingleGenre) {
+                             // Special handling for Genre Foundation (render subgenres)
+                             // Note: key here is passed as 'genreCat' but logic uses it to set main category
+                             state.genreCat = grp; // Set foundation
+                             renderList(listId, data[grp], 'subgenres'); // Render children
+                             updatePrompt();
+                         } else {
+                             renderList(listId, data[grp], key);
+                         }
+                     }
                  };
                  cc.appendChild(b);
              });
-             // Default first
-             if(Object.keys(data).length > 0) {
+
+             // Default selection for first load (except Dials which might default to ALL/None)
+             if(!isDial && Object.keys(data).length > 0) {
+                 // For Genre, maybe don't auto-select to keep it clean? 
+                 // Or select first. Let's select first.
                  const first = Object.keys(data)[0];
                  cc.firstChild.classList.add('active-filter');
-                 renderList(listId, data[first], key);
+                 if(listId) {
+                     if (isSingleGenre) {
+                         state.genreCat = first;
+                         renderList(listId, data[first], 'subgenres');
+                     } else {
+                         renderList(listId, data[first], key);
+                     }
+                 }
+             } else if (isDial) {
+                 populateDialSelect(null); // Init with all
              }
         }
 
         function renderList(id, items, key) {
-            const c = document.getElementById(id); c.innerHTML = '';
+            const c = document.getElementById(id); 
+            if(!c) return;
+            c.innerHTML = '';
             items.forEach(item => {
                 const b = document.createElement('button');
-                // Check if selected
                 const isSel = state[key].includes(item);
                 b.className = isSel ? "btn-selected px-3 py-1.5 rounded-full text-xs transition-colors border" : "btn-base px-3 py-1.5 rounded-full text-xs transition-colors";
                 b.textContent = item;
@@ -382,41 +481,87 @@
             });
         }
 
-        function selectGenre(cat, btn) {
-            state.genreCat = cat;
-            // Visuals
-            const p = document.getElementById('genre-container');
-            Array.from(p.children).forEach(x => { x.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50'); x.classList.add('btn-base'); });
-            btn.classList.remove('btn-base'); btn.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-            
-            // Subgenres
-            const c = document.getElementById('subgenre-container'); c.innerHTML = '';
-            GENRES[cat].forEach(sub => {
-                const b = document.createElement('button');
-                const isSel = state.subgenres.includes(sub);
-                b.className = isSel ? "btn-selected px-3 py-1 rounded text-xs" : "btn-base px-3 py-1 rounded text-xs";
-                b.textContent = sub;
-                b.onclick = () => {
-                     if(state.subgenres.includes(sub)) state.subgenres = state.subgenres.filter(x => x !== sub);
-                     else state.subgenres.push(sub);
-                     b.className = state.subgenres.includes(sub) ? "btn-selected px-3 py-1 rounded text-xs" : "btn-base px-3 py-1 rounded text-xs";
-                     updatePrompt();
-                };
-                c.appendChild(b);
+        // DIAL SPECIFIC
+        function populateDialSelect(filterCategory) {
+            const select = document.getElementById('dial-genre-select');
+            const currentValue = select.value; 
+            select.innerHTML = ''; 
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = filterCategory ? `[ ${filterCategory.toUpperCase()} ]` : "[ SELECT BASE GENRE ]";
+            select.appendChild(defaultOpt);
+
+            const categories = filterCategory ? [filterCategory] : Object.keys(GENRES);
+
+            categories.forEach(cat => {
+                if (filterCategory) {
+                    GENRES[cat].forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub; option.textContent = sub; option.dataset.category = cat;
+                        select.appendChild(option);
+                    });
+                } else {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = cat;
+                    GENRES[cat].forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub; option.textContent = sub; option.dataset.category = cat; 
+                        optGroup.appendChild(option);
+                    });
+                    select.appendChild(optGroup);
+                }
             });
-            updatePrompt();
+
+             if (currentValue) {
+                let exists = false;
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === currentValue) { exists = true; break; }
+                }
+                if (exists) select.value = currentValue;
+            }
+        }
+        
+        function updateDials() {
+            // Simplified dial visual feedback logic
+            // In full version, this would map slider values to tags
+            // For now, it ensures the UI feels responsive
+            const sub = document.getElementById('dial-genre-select').value;
+            document.getElementById('preview-genre').textContent = sub || "Select Genre...";
+            
+            // Example mapping for one dial
+            const wVal = document.getElementById('dial-weirdness').value;
+            const wTag = wVal < 33 ? "Standard" : (wVal < 66 ? "Experimental" : "Avant-Garde");
+            document.getElementById('val-weird').textContent = wTag;
+            document.getElementById('preview-weirdness').textContent = wTag;
+
+            // Trigger prompt update logic if needed, but usually Dials generates a fresh state object
+        }
+
+        function applyDialsToMain() {
+            const baseGenre = document.getElementById('dial-genre-select').value;
+            if (!baseGenre) return alert("Select a base genre first.");
+            
+            state.genreCat = ""; // Reset main cat or find it
+            // Find category
+            for(const cat in GENRES) {
+                if(GENRES[cat].includes(baseGenre)) { state.genreCat = cat; break; }
+            }
+            state.subgenres = [baseGenre];
+            
+            // Mock Dial Application
+            updateAllVisuals();
+            switchTab('style');
         }
 
         function loadPreset(name) {
             const p = PRESETS[name];
             if(p) {
+                state.genreCat = p.genre; // Set category
                 state.subgenres = [...p.subs];
                 state.instruments = [...p.inst];
                 state.production = [...p.prod];
-                // Select Genre visually if possible
-                const gb = Array.from(document.getElementById('genre-container').children).find(b => b.textContent === p.genre);
-                if(gb) selectGenre(p.genre, gb);
-                updatePrompt();
+                updateAllVisuals();
             }
         }
 
@@ -424,7 +569,8 @@
         function updatePrompt() {
             state.tempo = document.getElementById('tempo-select').value;
             state.singerDescription = document.getElementById('singer-desc').value;
-            
+            state.exclusions = document.getElementById('exclusion-input').value;
+
             let list = [];
             if(state.genreCat) list.push(state.genreCat);
             if(state.subgenres.length) list.push(...state.subgenres);
@@ -445,22 +591,21 @@
             }
 
             document.getElementById('style-output').value = text;
+            document.getElementById('char-count').textContent = text.length + "/200";
             
             // Conflict Check
             const conflictBox = document.getElementById('conflict-box');
-            if(state.instruments.includes("Acoustic Guitar") && state.production.includes("Distorted")) {
-                conflictBox.textContent = "Warning: Acoustic + Distorted is unusual.";
+            const fullText = (text + " " + state.exclusions).toLowerCase();
+            const conflict = CONFLICTS.find(c => c.tags.every(t => fullText.includes(t.toLowerCase())));
+            
+            if(conflict) {
+                conflictBox.textContent = conflict.msg;
                 conflictBox.classList.remove('hidden');
             } else {
                 conflictBox.classList.add('hidden');
             }
-            
-            // Update Builder Preview
-            const preview = document.getElementById('builder-preview-stats');
-            if(preview) preview.innerHTML = `Genre: ${state.genreCat || '-'} | Inst: ${state.instruments.length}`;
-            if(document.getElementById('artist-preview-stats')) document.getElementById('artist-preview-stats').innerHTML = preview.innerHTML;
         }
-
+        
         function updateExclusions(val) { state.exclusions = val; updatePrompt(); }
         
         function copyToClipboard(id, btn) {
@@ -500,7 +645,7 @@
                     c.continue();
                 }
             };
-            renderRoster(); // Update read-only list too
+            renderRoster(); 
         }
         
         function renderRoster() {
@@ -555,7 +700,23 @@
                      const s = c.value;
                      const d = document.createElement('div');
                      d.className = "bg-white border rounded p-3 mb-2 shadow-sm";
-                     d.innerHTML = `<div class="font-bold">${s.title}</div><div class="text-xs text-slate-500 truncate">${s.prompt}</div>`;
+                     
+                     let versions = '';
+                     if(s.versions) {
+                         versions = s.versions.map(v => `<a href="${v.link}" target="_blank" class="text-xs text-indigo-500 hover:underline mr-2">${v.name}</a>`).join("");
+                     }
+
+                     d.innerHTML = `
+                         <div class="flex justify-between">
+                             <div class="font-bold">${s.title}</div>
+                             <button onclick="openVersionModal(${s.id})" class="text-[10px] border px-1 rounded hover:bg-slate-50">+Ver</button>
+                         </div>
+                         <div class="text-xs text-slate-500 truncate mb-1">${s.prompt}</div>
+                         <div class="flex items-center gap-2">
+                             <button onclick="loadSongState(${s.id})" class="text-[10px] text-indigo-600 font-bold hover:underline">Load</button>
+                             ${versions}
+                         </div>
+                     `;
                      list.appendChild(d);
                      c.continue();
                  }
@@ -592,8 +753,11 @@
         function commitSaveSong() {
              const aid = parseInt(document.getElementById('save-artist-select').value);
              const albid = parseInt(document.getElementById('save-album-select').value);
-             const title = document.getElementById('save-title').value;
+             const title = document.getElementById('save-song-title').value;
+             const link = document.getElementById('save-song-link').value;
              if(!albid || !title) return alert("Missing fields");
+             
+             const v = link ? [{ name: "Initial", link }] : [];
              
              const tx = db.transaction("songs", "readwrite");
              tx.objectStore("songs").add({
@@ -601,7 +765,10 @@
                  prompt: document.getElementById('style-output').value,
                  state: JSON.parse(JSON.stringify(state)),
                  lyrics: document.getElementById('lyrics-input').value,
-                 link: document.getElementById('save-link').value
+                 link: link,
+                 versions: v,
+                 notes: document.getElementById('save-song-notes').value,
+                 timestamp: Date.now()
              });
              tx.oncomplete = () => { document.getElementById('save-modal').classList.add('hidden'); alert("Saved"); renderSongs(albid); switchTab('studio'); };
         }
@@ -615,18 +782,55 @@
             document.getElementById(`tab-btn-${id}`).classList.add('active');
             
             if(id === 'studio') renderArtists();
-            // Re-render UI to ensure visuals match state if returning from JSON/Library
-            if(id === 'style') { 
-                // Quick refresh logic if needed
+            // Refresh visuals if navigating to blueprint
+            if(id === 'style') updateAllVisuals();
+        }
+
+        // --- UTILS ---
+        function updateAllVisuals() {
+            // Re-run init category UI logic to refresh highlights
+            initCatList('genre-cats', 'genre-container', GENRES, 'genreCat', true);
+            initCatList('instrument-cats', 'instruments-container', INSTRUMENT_GROUPS, 'instruments');
+            initCatList('mood-cats', 'moods-container', MOOD_GROUPS, 'moods');
+            initCatList('prod-cats', 'production-container', PRODUCTION_GROUPS, 'production');
+            renderList('voices-container', VOICES, 'voices');
+            
+            document.getElementById('singer-desc').value = state.singerDescription;
+            document.getElementById('exclusion-input').value = state.exclusions;
+            updatePrompt();
+        }
+
+        function loadSongState(id) {
+            const tx = db.transaction("songs", "readonly");
+            tx.objectStore("songs").get(id).onsuccess = (e) => {
+                const s = e.target.result;
+                state = s.state;
+                document.getElementById('lyrics-input').value = s.lyrics;
+                updateAllVisuals();
+                switchTab('style');
             }
         }
 
-        // --- DIALS (Visual Only for now) ---
-        function updateDials() {
-             // Mapping logic would go here
-             // For v5.1 we prioritize stability of the Blueprint selection
+        function closeModal() { document.getElementById('save-modal').classList.add('hidden'); }
+        function openVersionModal(id) { document.getElementById('version-song-id').value = id; document.getElementById('version-modal').classList.remove('hidden'); }
+        function closeVersionModal() { document.getElementById('version-modal').classList.add('hidden'); }
+        function commitAddVersion() {
+            const id = parseInt(document.getElementById('version-song-id').value);
+            const name = document.getElementById('version-label').value;
+            const link = document.getElementById('version-link').value;
+            const tx = db.transaction("songs", "readwrite");
+            const store = tx.objectStore("songs");
+            store.get(id).onsuccess = (e) => {
+                const s = e.target.result;
+                if(!s.versions) s.versions = [];
+                s.versions.push({ name, link });
+                store.put(s).onsuccess = () => { closeVersionModal(); renderStudioSongs(s.albumId); };
+            }
         }
-        function applyDialsToMain() { switchTab('style'); }
+        
+        function validateAndLoadModels() { alert("Simulated Model Load"); }
+        function generateLyrics() { alert("Simulated AI Generation"); }
+        function copyToClipboard(id) { navigator.clipboard.writeText(document.getElementById(id).value); }
 
     </script>
 </body>
