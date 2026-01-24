@@ -803,7 +803,7 @@
              const aid = parseInt(document.getElementById('save-artist-select').value);
              const albid = parseInt(document.getElementById('save-album-select').value);
              const title = document.getElementById('save-song-title').value;
-             const link = document.getElementById('save-song-link').value;
+             const link = document.getElementById('save-link').value; // Fixed ID reference
              if(!albid || !title) return alert("Missing fields");
              
              const v = link ? [{ name: "Initial", link }] : [];
