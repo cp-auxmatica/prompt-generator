@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suno Architect v5.3</title>
+    <title>Suno Architect v5.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -65,7 +65,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <div class="bg-indigo-600 p-2 rounded-lg shadow-sm"><i data-lucide="music" class="w-5 h-5 text-white"></i></div>
-                    <div><h1 class="text-lg font-bold text-slate-900">Suno Architect</h1><p class="text-xs text-slate-500">Studio Manager v5.3</p></div>
+                    <div><h1 class="text-lg font-bold text-slate-900">Suno Architect</h1><p class="text-xs text-slate-500">Studio Manager v5.4</p></div>
                 </div>
                 <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full no-scrollbar">
                     <button onclick="switchTab('studio')" id="tab-btn-studio" class="nav-btn px-4 py-2 text-sm font-medium rounded-lg">Studio</button>
@@ -160,7 +160,7 @@
                     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                         <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">1. Foundation</h2>
                         <div class="space-y-4">
-                            <div id="dial-category-filters" class="flex flex-wrap gap-2"></div>
+                            <div id="dial-category-filters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
                             <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-500"><option value="">Select Base Genre...</option></select>
                         </div>
                     </div>
@@ -396,9 +396,9 @@
 
         // CONSOLIDATED DATA
         const GENRES = { "Indie/Alt": ["Dream Pop","Shoegaze","Slowcore","Indie Folk","Art Pop","Noise Pop","Indie Rock","Post-Rock","Math Rock","Bedroom Pop","Twee Pop","Jangle Pop","Folktronica"], "Rock": ["Alt Rock","Classic Rock","Grunge","Punk","Prog Rock","Psych Rock"], "Electronic": ["Synthwave","Techno","House","Ambient","Folktronica","IDM"], "Pop": ["Art Pop","Hyperpop","K-Pop"], "Metal": ["Black Metal","Death Metal"], "Hip Hop": ["Boom Bap","Trap"], "Jazz": ["Bebop","Fusion"], "Folk": ["Americana","Neofolk"] };
-        const INSTRUMENTS = { "Strings": ["Violin","Cello"], "Guitars": ["Electric Guitar","Acoustic Guitar","Shoegaze Guitar"], "Keys": ["Piano","Synthesizer","Modular Synth"], "Percussion": ["Drum Kit","808"], "Studio": ["WA-47","Neve Console"] }; 
-        const MOODS = { "Atmospheric": ["Ethereal","Dreamy"], "Energy": ["High Energy","Aggressive"], "Dark": ["Gloomy","Ominous"], "Chill": ["Mellow","Relaxing"] };
-        const PRODUCTION = { "Texture": ["Lo-Fi","Warm","Crisp"], "Space": ["Massive Reverb","Dry"], "Tech": ["Auto-Tune","Compressed"] };
+        const INSTRUMENT_GROUPS = { "Strings": ["Violin","Cello"], "Guitars": ["Electric Guitar","Acoustic Guitar","Shoegaze Guitar"], "Keys": ["Piano","Synthesizer","Modular Synth"], "Percussion": ["Drum Kit","808"], "Studio": ["WA-47","Neve Console"] }; 
+        const MOOD_GROUPS = { "Atmospheric": ["Ethereal","Dreamy"], "Energy": ["High Energy","Aggressive"], "Dark": ["Gloomy","Ominous"], "Chill": ["Mellow","Relaxing"] };
+        const PRODUCTION_GROUPS = { "Texture": ["Lo-Fi","Warm","Crisp"], "Space": ["Massive Reverb","Dry"], "Tech": ["Auto-Tune","Compressed"] };
         const VOICES = ["Male Vocals","Female Vocals","Whisper","Choir"];
         const PRESETS = { "Dream Pop": { genre: "Indie/Alt", subs: ["Dream Pop"], inst: ["Electric Guitar","Synthesizer"], prod: ["Massive Reverb"] }, "Lo-Fi": { genre: "Electronic", subs: ["Lo-Fi"], inst: ["Piano"], prod: ["Lo-Fi","Warm"] } };
         const METATAGS = [ { label: "Intro", tag: "[Intro]" }, { label: "Verse", tag: "[Verse]" }, { label: "Chorus", tag: "[Chorus]" }, { label: "Bridge", tag: "[Bridge]" }, { label: "Outro", tag: "[Outro]" } ];
