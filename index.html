@@ -2,1017 +2,781 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Suno Architect v5.1 (Fixed)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suno Engineer's Companion</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { font-family: 'Inter', sans-serif; }
         
-        body { overscroll-behavior: none; background-color: #f8fafc; color: #0f172a; }
-
-        .tab-content { display: none; animation: fadeIn 0.2s ease-out; }
-        .tab-content.active { display: block; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(2px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Custom Scrollbar for "Pro App" feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
         }
 
-        /* --- HIGH VISIBILITY SELECTION STATES --- */
-        .btn-base {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #64748b;
-            transition: all 0.15s ease;
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
         }
-        .btn-base:hover {
-            border-color: #cbd5e1;
-            color: #334155;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            margin-top: -6px;
         }
-
-        .btn-selected {
-            background-color: #4f46e5 !important; /* Indigo 600 */
-            border-color: #4338ca !important;
-            color: #ffffff !important;
-            font-weight: 600 !important;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3) !important;
-            transform: translateY(-1px);
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #374151;
+            border-radius: 2px;
         }
 
-        /* --- SLIDER STYLING --- */
-        input[type=range] { -webkit-appearance: none; background: transparent; touch-action: none; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e2e8f0; border-radius: 99px; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #4f46e5; cursor: grab; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.1s; }
-        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.1); cursor: grabbing; }
-
-        /* --- NAV --- */
-        .nav-btn { color: #64748b; background: transparent; border-radius: 0.5rem; }
-        .nav-btn:hover { color: #0f172a; background: #f1f5f9; }
-        .nav-btn.active { background: #ffffff; color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
-
-        /* Filter Chips */
-        .filter-chip { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.025em; background: #ffffff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 99px; cursor: pointer; transition: all 0.2s; }
-        .filter-chip:hover { border-color: #cbd5e1; color: #334155; background: #f8fafc; }
-        .filter-chip.active-filter { background: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
-
-        .modal-overlay { background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); }
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.4);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans">
+<body class="bg-gray-900 text-gray-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 py-3">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-indigo-600 p-2 rounded-lg shadow-sm">
-                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-slate-900 leading-tight">Suno Architect</h1>
-                        <p class="text-xs text-slate-500 font-medium">Studio Production Suite v5.1</p>
-                    </div>
-                </div>
-                <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
-                    <button onclick="switchTab('studio')" id="tab-btn-studio" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">Studio</button>
-                    <button onclick="switchTab('dials')" id="tab-btn-dials" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">Tuner</button>
-                    <button onclick="switchTab('style')" id="tab-btn-style" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">Blueprint</button>
-                    <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">Lyrics</button>
-                    <button onclick="switchTab('library')" id="tab-btn-library" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">Library</button>
-                    <button onclick="switchTab('json')" id="tab-btn-json" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap">JSON</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
-        
-        <!-- TAB: STUDIO -->
-        <div id="tab-studio" class="tab-content active">
-             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-140px)] min-h-[600px]">
-                <!-- Artists -->
-                <div class="lg:col-span-3 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                        <h3 class="font-bold text-slate-700 text-sm">1. Select Artist</h3>
-                        <button onclick="switchTab('artist-builder')" class="p-1.5 hover:bg-slate-200 rounded text-slate-500 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                    </div>
-                    <div id="studio-artist-list" class="overflow-y-auto p-2 space-y-1 flex-grow custom-scrollbar"></div>
-                </div>
-                <!-- Albums -->
-                <div class="lg:col-span-3 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                        <h3 class="font-bold text-slate-700 text-sm">2. Select Album</h3>
-                        <button onclick="promptCreateAlbum()" class="p-1.5 hover:bg-slate-200 rounded text-slate-500 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                    </div>
-                    <div id="studio-album-list" class="overflow-y-auto p-2 space-y-2 flex-grow custom-scrollbar">
-                        <div class="text-center py-10 text-slate-400 text-xs italic">Select an Artist first</div>
-                    </div>
-                </div>
-                <!-- Songs -->
-                <div class="lg:col-span-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col overflow-hidden">
-                     <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-700 text-sm">3. Songs & Versions</h3>
-                    </div>
-                    <div id="studio-song-list" class="overflow-y-auto p-4 space-y-3 flex-grow custom-scrollbar">
-                        <div class="text-center py-20 text-slate-400 text-sm italic">Select an Album to manage songs</div>
-                    </div>
-                </div>
-             </div>
-        </div>
-
-        <!-- HIDDEN SUB-TAB: ARTIST BUILDER -->
-        <div id="tab-artist-builder" class="tab-content">
-            <div class="max-w-2xl mx-auto space-y-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <button onclick="switchTab('studio')" class="p-2 hover:bg-slate-200 rounded-lg"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                    <h2 class="text-xl font-bold text-slate-900">Create New Artist</h2>
-                </div>
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
-                     <input type="text" id="artist-name" placeholder="Band Name (e.g. Cigarettes After Lunch)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 font-bold">
-                     <textarea id="artist-bio" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 h-24 text-sm" placeholder="Bio / Sound signature notes..."></textarea>
-                     <input type="text" id="artist-exclusions" placeholder="Signature Exclusions (e.g. No Drums, No Synths)" class="w-full bg-slate-50 border border-red-100 rounded-lg px-4 py-3 text-sm text-red-600">
-                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                         <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Captured Sound Profile</h4>
-                         <div id="artist-preview-stats" class="text-xs text-slate-600 font-mono space-y-1"></div>
-                    </div>
-                    <button onclick="saveArtist()" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg hover:bg-indigo-700">Create Artist</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: STYLE TUNER (DIALS) -->
-        <div id="tab-dials" class="tab-content">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Controls -->
-                <div class="lg:col-span-7 space-y-6 pb-10">
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center space-x-2 mb-4 pb-2 border-b border-slate-100">
-                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">1. Foundation</h2>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-xs font-semibold text-slate-500 uppercase mb-2 block">Category Filter</label>
-                                <div id="dial-category-filters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
-                            </div>
-                            <div>
-                                <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-indigo-500 shadow-sm">
-                                    <option value="">Select Base Genre...</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Faders Panel -->
-                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center space-x-2 mb-6 pb-2 border-b border-slate-100">
-                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">2. Style Shaping</h2>
-                        </div>
-                        <div class="grid gap-8">
-                            <!-- Sliders -->
-                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700">Innovation</label><span id="tags-weirdness" class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-full">Standard</span></div><input type="range" id="dial-weirdness" min="0" max="100" value="0" oninput="updateDials()"></div>
-                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700">Texture</label><span id="tags-era" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">Clean</span></div><input type="range" id="dial-era" min="0" max="100" value="50" oninput="updateDials()"></div>
-                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700">Energy</label><span id="tags-intensity" class="text-[10px] font-bold text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">Balanced</span></div><input type="range" id="dial-intensity" min="0" max="100" value="50" oninput="updateDials()"></div>
-                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700">Speed</label><span id="tags-tempo" class="text-[10px] font-bold text-red-700 bg-red-50 px-2 py-1 rounded-full">Mid</span></div><input type="range" id="dial-tempo" min="0" max="100" value="50" oninput="updateDials()"></div>
-                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700">Voice</label><span id="tags-vocals" class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-full">Vocals</span></div><input type="range" id="dial-vocals" min="0" max="100" value="75" oninput="updateDials()"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Preview (Sidebar) -->
-                <div class="lg:col-span-5">
-                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3 font-mono text-xs">
-                             <div id="preview-genre" class="text-slate-800"></div>
-                             <div id="preview-weirdness" class="text-slate-600"></div>
-                             <div id="preview-era" class="text-slate-600"></div>
-                             <div id="preview-intensity" class="text-slate-600"></div>
-                             <div id="preview-tempo" class="text-slate-600"></div>
-                             <div id="preview-vocals" class="text-slate-600"></div>
-                        </div>
-                        <button onclick="applyDialsToMain()" class="mt-6 w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2">
-                            Send to Blueprint
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: SONIC BLUEPRINT -->
-        <div id="tab-style" class="tab-content">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div class="lg:col-span-7 space-y-8 pb-20">
-                    
-                    <!-- PRESETS (New Feature) -->
-                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-indigo-900 flex items-center"><i data-lucide="zap" class="w-4 h-4 mr-2"></i> Quick Start Presets</h3>
-                            <button onclick="togglePresets()" class="text-xs text-indigo-600 hover:underline">Show All</button>
-                        </div>
-                        <div id="preset-quick" class="flex flex-wrap gap-2"></div>
-                        <div id="preset-all" class="hidden mt-4 grid grid-cols-2 md:grid-cols-3 gap-2"></div>
-                    </div>
-
-                    <!-- Genre -->
-                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="list-music" class="w-5 h-5 text-purple-600"></i><h2 class="text-lg font-bold text-slate-900">1. Genre</h2></div>
-                        <div id="genre-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
-                        <div id="subgenre-wrapper" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200"><div id="subgenre-container" class="flex flex-wrap gap-2"></div></div>
-                    </section>
-                    
-                    <!-- Instruments -->
-                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="mic-vocal" class="w-5 h-5 text-blue-600"></i><h2 class="text-lg font-bold text-slate-900">2. Players</h2></div>
-                        <div class="mb-6">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Singer Identity</p>
-                            <input type="text" id="singer-desc" placeholder="e.g. 'Victoria Legrand style alto', 'Whispery male vocals'" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:border-indigo-500" oninput="updatePrompt()">
-                            <div id="voices-container" class="flex flex-wrap gap-2 mt-2"></div>
-                        </div>
-                        <div class="mb-4">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Instrumentation Racks</p>
-                            <div id="instrument-cats" class="flex flex-wrap gap-2 mb-3"></div>
-                            <div id="instruments-container" class="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
-                        </div>
-                    </section>
-
-                    <!-- Mood -->
-                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i><h2 class="text-lg font-bold text-slate-900">3. Vibe</h2></div>
-                        <div id="mood-cats" class="flex flex-wrap gap-2 mb-3"></div>
-                        <div id="moods-container" class="flex flex-wrap gap-2 mb-4"></div>
-                        <select id="tempo-select" onchange="updatePrompt()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm"><option value="">Select Tempo...</option></select>
-                    </section>
-
-                    <!-- Production -->
-                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                         <div class="flex items-center space-x-2 mb-4"><i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-600"></i><h2 class="text-lg font-bold text-slate-900">4. Production</h2></div>
-                         <div id="production-cats" class="flex flex-wrap gap-2 mb-3"></div>
-                         <div id="production-container" class="flex flex-wrap gap-2 mb-6"></div>
-                         <div class="border-t border-slate-100 pt-4">
-                             <label class="text-xs font-bold text-red-500 uppercase mb-2 block">Exclusions</label>
-                             <input type="text" id="exclusion-input" placeholder="e.g. Drums, Acoustic..." class="w-full bg-red-50 border border-red-100 rounded-lg px-4 py-2.5 text-sm text-red-700 placeholder:text-red-300" oninput="updateExclusions(this.value)">
-                         </div>
-                    </section>
-                </div>
-
-                <!-- Sticky Output -->
-                <div class="lg:col-span-5">
-                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
-                         <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-slate-900">Output</h3><button onclick="promptSaveSong()" class="p-2 text-indigo-600 bg-indigo-50 rounded hover:bg-indigo-100"><i data-lucide="save" class="w-5 h-5"></i></button></div>
-                         
-                         <!-- Platform Selector (New) -->
-                         <div class="mb-4 bg-slate-50 border border-slate-200 rounded-lg p-2">
-                             <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block px-1">Target Platform</label>
-                             <select id="platform-select" onchange="updatePromptForPlatform()" class="w-full bg-white border border-slate-200 rounded-md px-2 py-1 text-xs">
-                                 <option value="suno">Suno (v3/v4)</option>
-                                 <option value="udio">Udio</option>
-                                 <option value="generic">Generic</option>
-                             </select>
-                         </div>
-                         <div id="platform-tips" class="mb-4"></div>
-
-                         <!-- Smart Conflict Warning -->
-                         <div id="conflict-warning" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex flex-col gap-2">
-                             <div id="conflict-text"></div>
-                         </div>
-
-                         <textarea id="style-output" readonly class="w-full h-40 bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono text-sm resize-none mb-4" placeholder="Prompt builds here..."></textarea>
-                         <div class="relative mb-6">
-                            <label class="text-xs font-bold text-slate-400 uppercase mb-1.5 block">Exclusions</label>
-                            <input id="style-exclusions-output" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-red-500 font-mono text-xs focus:outline-none">
-                        </div>
-                         <button onclick="copyToClipboard('style-output', this)" class="w-full py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-600/20 mb-2">Copy Prompt</button>
-                         <div id="char-count" class="text-xs text-right text-slate-400">0 chars</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Sidebar: Song List -->
+    <aside class="w-64 bg-gray-950 border-r border-gray-800 flex flex-col flex-shrink-0 z-20">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+            <h1 class="font-bold text-lg tracking-tight text-indigo-400"><i class="fa-solid fa-wave-square mr-2"></i>Sonic Shift</h1>
         </div>
         
-        <!-- Other Tabs -->
-        <div id="tab-lyrics" class="tab-content"><div class="max-w-4xl mx-auto"><div class="bg-white border rounded-2xl p-4 h-[600px] flex flex-col"><div class="flex justify-between mb-4"><h2 class="font-bold">Lyrics</h2><button onclick="promptSaveSong()" class="text-indigo-600"><i data-lucide="save"></i></button></div><textarea id="lyrics-input" class="flex-grow p-4 bg-slate-50 font-mono text-sm resize-none"></textarea></div></div></div>
-        <div id="tab-library" class="tab-content"><div class="max-w-4xl mx-auto"><div class="bg-white border rounded-2xl p-6"><h2 class="font-bold mb-4">Prompt Library</h2><div id="library-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></div></div></div>
-        <div id="tab-json" class="tab-content"><div class="max-w-4xl mx-auto"><div class="bg-white border rounded-2xl p-6"><h2 class="font-bold mb-4">JSON</h2><textarea id="json-output" class="w-full h-96 bg-slate-50 font-mono text-sm p-4"></textarea></div></div></div>
+        <div class="p-2">
+            <button onclick="app.createNewSong()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus"></i> New Song
+            </button>
+        </div>
 
+        <div class="flex-1 overflow-y-auto px-2 pb-2 space-y-1" id="song-list">
+            <!-- Song items will be injected here -->
+        </div>
+        
+        <div class="p-3 border-t border-gray-800 text-xs text-gray-500 text-center">
+            Suno Engineer's Companion v1.1
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 bg-gray-900 relative">
+        
+        <!-- Top Bar: Metadata -->
+        <header class="h-16 bg-gray-900 border-b border-gray-800 flex items-center px-6 gap-4 shrink-0 z-10 shadow-sm">
+            <div class="flex-1 grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Song Title</label>
+                    <input type="text" id="meta-title" placeholder="Untitled Song" 
+                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-lg font-semibold text-white placeholder-gray-600 outline-none transition-colors pb-1">
+                </div>
+                <div class="col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Artist</label>
+                    <input type="text" id="meta-artist" placeholder="Artist Name" 
+                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-sm text-gray-300 placeholder-gray-600 outline-none transition-colors pb-1">
+                </div>
+                <div class="col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Album</label>
+                    <input type="text" id="meta-album" placeholder="Album Name" 
+                           class="w-full bg-transparent border-b border-gray-700 focus:border-indigo-500 text-sm text-gray-300 placeholder-gray-600 outline-none transition-colors pb-1">
+                </div>
+            </div>
+            <div class="flex items-center gap-2 border-l border-gray-800 pl-4">
+                <button onclick="app.deleteCurrentSong()" class="text-gray-500 hover:text-red-400 transition-colors p-2" title="Delete Song">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <div id="save-status" class="text-xs text-green-500 font-medium opacity-0 transition-opacity">Saved</div>
+            </div>
+        </header>
+
+        <!-- Work Area -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- Left Panel: Lyrics Editor -->
+            <section class="flex-1 flex flex-col border-r border-gray-800 min-w-[350px]">
+                <!-- Toolbar -->
+                <div class="h-12 border-b border-gray-800 bg-gray-900 flex items-center px-4 gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    <span class="text-xs font-bold text-gray-500 mr-2">STRUCT:</span>
+                    <button onclick="app.insertTag('[Intro]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Intro]</button>
+                    <button onclick="app.insertTag('[Verse]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Verse]</button>
+                    <button onclick="app.insertTag('[Chorus]')" class="px-2 py-1 bg-indigo-900/50 hover:bg-indigo-900/80 text-xs rounded text-indigo-200 border border-indigo-800 transition-colors">[Chorus]</button>
+                    <button onclick="app.insertTag('[Bridge]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Bridge]</button>
+                    <button onclick="app.insertTag('[Pre-Chorus]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Pre-Chorus]</button>
+                    <button onclick="app.insertTag('[Outro]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Outro]</button>
+                    <button onclick="app.insertTag('[Instrumental]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Instr]</button>
+                    <button onclick="app.insertTag('[Break]')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-xs rounded text-gray-300 border border-gray-700 transition-colors">[Break]</button>
+                </div>
+                
+                <!-- Editor -->
+                <div class="flex-1 relative bg-gray-900">
+                    <textarea id="lyrics-editor" class="w-full h-full bg-gray-900 p-6 text-gray-200 font-mono text-sm leading-relaxed outline-none resize-none focus:bg-gray-800/30 transition-colors" placeholder="Enter lyrics here... Use the toolbar to add structure tags."></textarea>
+                    
+                    <!-- Floating Copy Button for Lyrics -->
+                    <button onclick="app.copyLyrics()" id="copy-lyrics-btn" class="absolute bottom-4 right-4 bg-gray-800 hover:bg-gray-700 text-gray-300 p-2 rounded-full shadow-lg border border-gray-700 transition-all opacity-50 hover:opacity-100" title="Copy Lyrics">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Style Manager -->
+            <section class="w-96 flex flex-col bg-gray-950/50 flex-shrink-0 border-l border-gray-800">
+                
+                <!-- Active Style Prompt Area -->
+                <div class="flex-shrink-0 p-4 border-b border-gray-800 bg-gray-900 z-10">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Style Prompt</h2>
+                        <span id="char-count" class="text-xs text-gray-600">0 chars</span>
+                    </div>
+                    
+                    <!-- Chips Container -->
+                    <div id="active-tags-list" class="flex flex-wrap gap-2 mb-3 min-h-[40px]">
+                        <span class="text-sm text-gray-600 italic py-2">Select tags below to build your prompt...</span>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="text" id="custom-tag-input" placeholder="Add custom tag..." class="flex-1 bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-xs text-white focus:border-indigo-500 outline-none">
+                        <button onclick="app.addCustomTag()" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 px-3 py-1.5 rounded text-xs"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <button onclick="app.copyPrompt()" id="copy-prompt-btn" class="w-full mt-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white py-2 rounded shadow-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all transform active:scale-95">
+                        <i class="fa-regular fa-copy"></i> Copy Prompt to Clipboard
+                    </button>
+                </div>
+
+                <!-- Tag Library Selector -->
+                <div class="flex-1 flex flex-col min-h-0">
+                    <!-- Library Tabs/Search -->
+                    <div class="p-3 bg-gray-900 border-b border-gray-800">
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-gray-500 text-xs"></i>
+                            <input type="text" id="tag-search" placeholder="Search genres, moods, instruments..." 
+                                   class="w-full bg-gray-800 text-gray-200 text-xs rounded-full pl-8 pr-4 py-2 border border-gray-700 focus:border-indigo-500 outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Accordion Content -->
+                    <div class="flex-1 overflow-y-auto p-2 space-y-2" id="tag-library">
+                        <!-- Categories injected here -->
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <!-- SAVE MODAL -->
-    <div id="save-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
-            <h3 class="text-lg font-bold text-slate-900">Mixdown (Save Song)</h3>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Artist</label><select id="save-artist-select" onchange="populateSaveAlbums()" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm"></select></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Album</label><div class="flex gap-2"><select id="save-album-select" class="flex-grow bg-slate-50 border rounded-lg px-3 py-2 text-sm"></select><button onclick="promptCreateAlbum()" class="px-3 bg-slate-100 rounded text-xs font-bold">+ New</button></div></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Title</label><input type="text" id="save-song-title" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm" placeholder="Song Name"></div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Notes</label><textarea id="save-song-notes" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm h-16"></textarea></div>
-            <!-- VERSION LINKING -->
-            <div><label class="text-xs font-bold text-slate-500 uppercase">Initial Version Link (Optional)</label><input type="text" id="save-song-link" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm" placeholder="https://suno.com/song/..."></div>
-            <div class="flex gap-3 pt-2"><button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-100 rounded-xl text-sm font-semibold">Cancel</button><button onclick="commitSaveSong()" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold">Save</button></div>
+    <!-- Tag Editor Modal (Popover) -->
+    <div id="tag-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-gray-900 border border-gray-700 rounded-lg shadow-2xl w-80 p-5 transform transition-all scale-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-tag-name" class="text-lg font-bold text-white">Tag Name</h3>
+                <button onclick="app.closeModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-xs text-gray-400 mb-2 uppercase">Rating (Effectiveness)</label>
+                <div class="flex items-center gap-2">
+                    <div class="flex text-yellow-500 text-lg" id="modal-stars">
+                        <!-- Stars injected -->
+                    </div>
+                    <input type="range" id="modal-rating" min="0" max="5" step="1" class="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <span id="modal-rating-val" class="text-sm font-bold w-4 text-center">0</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-xs text-gray-400 mb-2 uppercase">Notes</label>
+                <textarea id="modal-note" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-gray-200 outline-none focus:border-indigo-500 placeholder-gray-600" placeholder="E.g., Worked well with the bass drop..."></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button onclick="app.removeTagFromSong()" class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 border border-red-900/30 hover:bg-red-900/20 rounded">Remove Tag</button>
+                <button onclick="app.saveTagEdits()" class="px-4 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white rounded font-medium">Save</button>
+            </div>
         </div>
     </div>
 
-    <!-- VERSION MODAL -->
-    <div id="version-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
-             <h3 class="text-lg font-bold text-slate-900">Add Version</h3>
-             <input type="hidden" id="version-song-id">
-             <input type="text" id="version-label" placeholder="Version Name (e.g. V2, Remix)" class="w-full bg-slate-50 border rounded-lg px-3 py-2">
-             <input type="text" id="version-link" placeholder="Suno Link" class="w-full bg-slate-50 border rounded-lg px-3 py-2">
-             <div class="flex gap-3"><button onclick="closeVersionModal()" class="flex-1 py-2 bg-slate-100 rounded-lg">Cancel</button><button onclick="commitAddVersion()" class="flex-1 py-2 bg-indigo-600 text-white rounded-lg">Add</button></div>
-        </div>
-    </div>
+    <!-- Hidden Textarea for Fallback Copy -->
+    <textarea id="fallback-clipboard" style="position: absolute; left: -9999px;"></textarea>
 
     <script>
-        // --- CONSTANTS ---
-        const PROMPT_PREFIX = "[Is_MAX_MODE: MAX](MAX)\n[QUALITY: MAX](MAX)\n[REALISM: MAX](MAX)\n[REAL_INSTRUMENTS: MAX](MAX)\n";
-        const LYRICS_PREFIX = "///*****///\n\n";
-
-        // --- PLATFORM RULES ---
-        const PLATFORM_RULES = { 
-          suno: { 
-            name: "Suno", 
-            maxTokens: 200, 
-            specialSyntax: { prefix: PROMPT_PREFIX, excludePrefix: "No " }, 
-            strengths: ["Excellent vocal quality", "Handles lo-fi well"] 
-          }, 
-          udio: { 
-            name: "Udio", 
-            maxTokens: 150, 
-            specialSyntax: { prefix: "", excludePrefix: "without " }, 
-            strengths: ["Great with modern production", "Good genre fusion"] 
-          },
-          generic: {
-            name: "Generic",
-            maxTokens: 500,
-            specialSyntax: { prefix: "", excludePrefix: "No " },
-            strengths: []
-          }
+        // --- 1. Tag Library Data ---
+        const TAG_LIBRARY = {
+            "Genres": [
+                "Rock", "Hard Rock", "Metal", "Punk", "Indie Rock", "Alternative", "Grunge", "Shoegaze",
+                "Pop", "Synth-Pop", "K-Pop", "J-Pop", "Dream Pop", "Hyperpop",
+                "Electronic", "Techno", "House", "Deep House", "Drum and Bass", "Dubstep", "Trance", "Ambient", "IDM", "Synthwave", "Lo-Fi",
+                "Hip Hop", "Rap", "Trap", "Boom Bap", "Drill", "Grime",
+                "R&B", "Soul", "Funk", "Neo-Soul", "Disco", "Gospel",
+                "Jazz", "Bebop", "Fusion", "Smooth Jazz", "Blues",
+                "Folk", "Country", "Bluegrass", "Americana",
+                "Classical", "Orchestral", "Baroque", "Opera", "Cinematic",
+                "World", "Reggae", "Latin", "Salsa", "Afrobeat", "Bollywood", "Celtic"
+            ],
+            "Sub-Genres & Styles": [
+                "Glitch Pop", "Chinese Opera", "Gregorian Chant", "Sea Shanty", "Vaporwave", "Cyberpunk",
+                "Gothic", "Industrial", "Experimental", "Avant-garde", "Math Rock", "Post-Rock",
+                "Chiptune", "8-bit", "Downtempo", "Chillout"
+            ],
+            "Mood & Atmosphere": [
+                "Aggressive", "Angry", "Anxious", "Bittersweet", "Calm", "Chaotic", "Chill", 
+                "Dark", "Dreamy", "Eerie", "Emotional", "Energetic", "Epic", "Ethereal", "Euphoric", 
+                "Funky", "Gloomy", "Groovy", "Happy", "Haunting", "Hopeful", "Hypnotic", "Intense", 
+                "Joyful", "Laid-back", "Melancholic", "Mellow", "Mysterious", "Nostalgic", "Optimistic", 
+                "Peaceful", "Playful", "Powerful", "Psychedelic", "Relaxing", "Romantic", "Sad", 
+                "Scary", "Sentimental", "Serene", "Sexy", "Soothing", "Spooky", "Suspenseful", 
+                "Tense", "Uplifting", "Warm", "Weird", "Whimsical"
+            ],
+            "Instruments": [
+                "Acoustic Guitar", "Electric Guitar", "Distorted Guitar", "Bass", "Slap Bass", "Synth Bass", "808",
+                "Drums", "Drum Machine", "Breakbeat", "Percussion",
+                "Piano", "Grand Piano", "Rhodes", "Synth", "Pad", "Arpeggiator",
+                "Strings", "Violin", "Cello", "Orchestra",
+                "Brass", "Trumpet", "Saxophone", "Flute",
+                "Male Vocals", "Female Vocals", "Choir", "Autotune", "Whisper", "Raspy"
+            ],
+            "Production & Texture": [
+                "Lo-fi", "High-fidelity", "Studio Quality", "Bedroom Pop", "Analog", "Digital",
+                "Reverb", "Echo", "Delay", "Distortion", "Clean", "Crisp", "Muddy", "Raw",
+                "Minimalist", "Maximalist", "Wall of Sound", "Surround", "Stereo", "Mono"
+            ],
+            "Tempo & Rhythm": [
+                "Slow", "Medium", "Fast", "Upbeat", "Driving", "Steady", "Syncopated", "Swing", "Groove",
+                "4/4", "3/4", "6/8", "Polyrhythm", "BPM: 90", "BPM: 120", "BPM: 140", "BPM: 174"
+            ],
+            "Era": [
+                "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s",
+                "Vintage", "Retro", "Modern", "Futuristic", "Old School", "Medieval", "Ancient"
+            ]
         };
 
-        // --- PRESETS ---
-        const STYLE_PRESETS = { 
-          "Ethereal Dream Pop": { 
-            genreCat: "Indie/Alt", subgenres: ["Dream Pop"], 
-            instruments: ["Analog Synthesizer", "Electric Guitar", "Bass Guitar"], 
-            voices: ["Female Vocals"], moods: ["Ethereal", "Dreamy", "Melancholic"], 
-            production: ["Massive Reverb", "Warm", "Wide Stereo Field"], tempo: "Slow", 
-            singerDescription: "Breathy alto, reverb-drenched delivery" 
-          }, 
-          "Gritty Lo-Fi Hip Hop": { 
-            genreCat: "Hip Hop", subgenres: ["Boom Bap"], 
-            instruments: ["808 Drums", "Electric Piano", "Vinyl Crackle"], 
-            moods: ["Chill", "Nostalgic"], production: ["Lo-Fi Tape Saturation", "Warm", "Compressed"], 
-            tempo: "90 BPM", exclusions: "Clean Production, Hi-Fi" 
-          }, 
-          "Aggressive Industrial": { 
-            genreCat: "Electronic", subgenres: ["Industrial"], 
-            instruments: ["Distorted Synthesizer", "Heavy Drums"], voices: ["Male Vocals"], 
-            moods: ["Aggressive", "Dark"], production: ["Distorted", "Compressed", "Harsh"], 
-            tempo: "Fast", singerDescription: "Harsh, shouted vocals" 
-          },
-          "Slowcore Ballad": {
-            genreCat: "Indie/Alt", subgenres: ["Slowcore"],
-            instruments: ["Clean Guitar", "Drum Kit", "Bass Guitar"],
-            moods: ["Melancholic", "Sad", "Slow"], production: ["Minimal", "Dry Mix", "Tape Saturation"],
-            tempo: "Slow", singerDescription: "Whispery, intimate male vocals"
-          }
-        };
-
-        // --- CONFLICT RULES ---
-        const CONFLICTS = [
-            { tags: ["Acoustic", "Synthesizer"], msg: "Mixing 'Acoustic' with 'Synthesizer' can be valid, but check if you want pure acoustic.", severity: "low" },
-            { tags: ["Instrumental", "Male Vocals"], msg: "Conflict: 'Instrumental' and 'Male Vocals'.", severity: "high" },
-            { tags: ["Instrumental", "Female Vocals"], msg: "Conflict: 'Instrumental' and 'Female Vocals'.", severity: "high" },
-            { tags: ["Lo-Fi", "Hi-Fi"], msg: "Conflict: 'Lo-Fi' and 'Hi-Fi' are opposites.", severity: "high" },
-            { tags: ["Slow", "Fast"], msg: "Conflict: Tempo contradiction.", severity: "high" },
-            { tags: ["Dry Mix", "Reverb"], msg: "Conflict: 'Dry Mix' vs Reverb/Echo.", severity: "medium" }
-        ];
-
-        // --- DATA ---
-        const GENRES = {
-            "Indie/Alt": ["Dream Pop", "Shoegaze", "Slowcore", "Indie Folk", "Art Pop", "Noise Pop", "Indie Rock", "Post-Rock", "Math Rock", "Bedroom Pop", "Twee Pop", "Jangle Pop", "Folktronica"],
-            "Rock": ["Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock", "Garage Rock", "Glam Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", "Industrial Rock", "Prog Rock", "Psychedelic Rock", "Punk", "Rockabilly", "Soft Rock", "Southern Rock", "Stoner Rock", "Surf Rock", "Yacht Rock"],
-            "Metal": ["Alternative Metal", "Black Metal", "Death Metal", "Deathcore", "Djent", "Doom Metal", "Drone Metal", "Folk Metal", "Glam Metal", "Gothic Metal", "Grindcore", "Groove Metal", "Heavy Metal", "Industrial Metal", "Metalcore", "Nu Metal", "Power Metal", "Sludge Metal", "Speed Metal", "Symphonic Metal", "Thrash Metal"],
-            "Electronic": ["Acid House", "Acid Techno", "Ambient", "Big Beat", "Breakbeat", "Chillstep", "Chillwave", "Chiptune", "Deep House", "Downtempo", "Drum and Bass", "Dubstep", "Electro", "Eurodance", "Future Bass", "Gabber", "Glitch", "Glitch Pop", "Hardcore", "Hardstyle", "House", "IDM", "Industrial", "Jungle", "Lo-Fi", "Melodic Techno", "Minimal", "Phonk", "Psytrance", "Synth-Pop", "Synthwave", "Tech House", "Techno", "Trance", "Trap", "Trip Hop", "UK Garage", "Vaporwave", "Witch House"],
-            "Pop": ["Art Pop", "Baroque Pop", "Bedroom Pop", "Britpop", "Bubblegum Pop", "City Pop", "Country-Pop", "Dance-Pop", "Dream Pop", "Electropop", "Europop", "Hyperpop", "Indie Pop", "J-Pop", "K-Pop", "Latin Pop", "Power Pop", "Sophisti-Pop", "Sunshine Pop", "Teen Pop"],
-            "Hip Hop": ["Abstract Hip Hop", "Boom Bap", "Cloud Rap", "Conscious Hip Hop", "Crunk", "Drill", "East Coast", "Experimental Hip Hop", "G-Funk", "Gangsta Rap", "Grime", "Hardcore Hip Hop", "Horrorcore", "Jazz Rap", "Lyrical Hip Hop", "Mumble Rap", "Old School", "Pop Rap", "Trap", "Turntablism", "West Coast"],
-            "R&B/Soul": ["Alternative R&B", "Blue-Eyed Soul", "Contemporary R&B", "Disco", "Doo-Wop", "Funk", "Gospel", "Modern Soul", "Motown", "Neo-Soul", "New Jack Swing", "Northern Soul", "Psychedelic Soul", "Quiet Storm", "Soul"],
-            "Jazz": ["Acid Jazz", "Afro-Cuban Jazz", "Avant-Garde Jazz", "Bebop", "Big Band", "Bossa Nova", "Cool Jazz", "Dixieland", "Free Jazz", "Fusion", "Gypsy Jazz", "Hard Bop", "Latin Jazz", "Modal Jazz", "Smooth Jazz", "Swing"],
-            "Folk/Country": ["Alt-Country", "Americana", "Bluegrass", "Celtic Folk", "Contemporary Folk", "Country", "Country Rock", "Dark Folk", "Folk Punk", "Folk Rock", "Freak Folk", "Honky Tonk", "Indie Folk", "Neofolk", "Outlaw Country", "Traditional Folk", "Western Swing"],
-            "Classical/Score": ["Baroque", "Chamber Music", "Choral", "Cinematic", "Classical Period", "Drone", "Epic Trailer", "Experimental", "Impressionist", "Medieval", "Minimalism", "Modern Classical", "Neoclassical", "Opera", "Orchestral", "Romantic", "Score", "Soundtrack", "Symphonic"],
-            "Latin/World": ["Afrobeat", "Bachata", "Bossa Nova", "Cumbia", "Dancehall", "Flamenco", "Latin Jazz", "Latin Pop", "Latin Rock", "Mariachi", "Merengue", "Reggae", "Reggaeton", "Salsa", "Samba", "Ska", "Tango"],
-            "Blues/Roots": ["Acoustic Blues", "Chicago Blues", "Country Blues", "Delta Blues", "Electric Blues", "Rhythm and Blues", "Roots Rock", "Swamp Blues", "Zydeco"],
-            "Atmospheric": ["Ethereal", "Cinematic", "Dark Ambient", "Drone", "Space Rock"],
-            "Time Period": ["1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"],
-            "Suno/Meta": ["Ritmiczna", "Melodyjna", "Dynamiczna", "Szybka", "Wolna", "Staccato", "Legato", "Syncopated", "Anthemic", "Broadcasting", "Trailer", "Anime Opening", "Eurovision", "Billboard 100", "Commercial", "Jingle"]
-        };
-
-        const INSTRUMENT_GROUPS = {
-            "Strings": ["Violin", "Cello", "Double Bass", "String Quartet", "Fiddle", "Harp", "Erhu", "Koto"],
-            "Guitars": ["Fingerstyle Acoustic Guitar", "Electric Guitar", "Bass Guitar", "Distorted Guitar", "Clean Guitar", "Slide Guitar", "Pedal Steel", "Glide Guitar", "Shoegaze Guitar", "12-String Guitar"],
-            "Keys": ["Piano", "Electric Piano", "Rhodes", "Wurlitzer", "Organ", "Hammond", "Synthesizer", "Modular Synthesizer", "Analog Synth", "Mellotron", "Toy Piano"],
-            "Percussion": ["Drum Kit", "Electronic Drums", "808 Drums", "Hybrid Drums", "LinnDrum", "Congas", "Tabla", "Glitch Drums", "Brushes", "Shaker"],
-            "Wind/Brass": ["Saxophone", "Processed Saxophone", "Trumpet", "Flute", "Clarinet", "Oboe"],
-            "Studio": ["WA-47", "Neumann U87", "Tube Preamp", "Tape Machine", "Cassette"]
-        };
-
-        const MOOD_GROUPS = {
-            "Atmospheric": ["Ethereal", "Dreamy", "Winter Atmosphere", "Cosmic", "Floating", "Hypnotic", "Lush", "Spaced Out", "Hazy"],
-            "Emotional": ["Melancholic", "Bittersweet", "Nostalgic", "Sentimental", "Yearning", "Heartbreaking", "Introspective", "Lonely"],
-            "Dark": ["Gloomy", "Brooding", "Ominous", "Haunting", "Dark", "Gothic", "Noir", "Mysterious"],
-            "Energy": ["High Energy", "Aggressive", "Driving", "Manic", "Punchy", "Explosive"],
-            "Chill": ["Chill", "Mellow", "Laid-back", "Serene", "Pastoral", "Sleepy"]
-        };
-
-        const PRODUCTION_GROUPS = {
-            "Texture": ["Lo-Fi", "Lo-Fi Tape Saturation", "Granular Textures", "Grainy", "Warm", "Cold", "Crisp", "Fuzzy", "Distorted", "Vinyl Crackle"],
-            "Space": ["Massive Reverb", "Wide Stereo Field", "Binaural", "Dry", "Wet", "Echoey", "Cavernous", "Intimate", "Bedroom"],
-            "Tech": ["Heavy Auto-Tune", "Vocoder", "Gated Reverb", "Sidechained", "Compressed", "Wall of Sound", "Minimalist", "Maximalist"]
-        };
-
-        const VOICES = ["Male", "Female", "Androgynous", "Choir", "Whisper", "Screaming", "Rap Flow", "Autotune", "Operatic", "Baritone", "Falsetto", "Raspy", "Robot", "Vocoder"];
-        const TEMPO_FEEL = ["Slow", "Medium", "Fast", "Groovy", "Driving", "Syncopated", "Swing", "Straight", "60 BPM", "90 BPM", "120 BPM", "140 BPM", "170 BPM"];
-        const METATAGS = [ { label: "Intro", tag: "[Intro]" }, { label: "Verse", tag: "[Verse]" }, { label: "Chorus", tag: "[Chorus]" }, { label: "Bridge", tag: "[Bridge]" }, { label: "Outro", tag: "[Outro]" }];
-        const PERFORMANCE_TAGS = [ { label: "Whisper", tag: "[Whisper]" }, { label: "Scream", tag: "[Scream]" }, { label: "Drop", tag: "[Drop]" }, { label: "Solo", tag: "[Solo]" }];
-
-        // --- STATE ---
-        let state = {
-            genreCat: "", subgenres: [], instruments: [], voices: [], moods: [], tempo: "", production: [], singerDescription: "", exclusions: ""
-        };
-
-        // --- DB & INIT ---
-        const DB_NAME = 'SunoArchitectDB';
-        const DB_VERSION = 3; 
-        let db;
-        let selectedStudioArtistId = null;
-        let selectedStudioAlbumId = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initGenreUI();
-            initDialsGenreUI();
-            initInstrumentUI(); 
-            initMoodUI();
-            initProductionUI();
-            initSimpleMultiSelect("voices-container", VOICES, "voices");
-            initTempoUI();
-            initLyricsTags();
-            initPresetUI();
-            initDB();
-            
-            document.getElementById('lyrics-input').value = LYRICS_PREFIX;
-            switchTab('studio');
-        });
-
-        function initDB() {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
-            request.onupgradeneeded = (e) => {
-                db = e.target.result;
-                if(!db.objectStoreNames.contains("artists")) db.createObjectStore("artists", { keyPath: "id" });
-                if(!db.objectStoreNames.contains("albums")) {
-                    const albumStore = db.createObjectStore("albums", { keyPath: "id" });
-                    albumStore.createIndex("artistId", "artistId", { unique: false });
-                }
-                if(!db.objectStoreNames.contains("songs")) {
-                    const songStore = db.createObjectStore("songs", { keyPath: "id" });
-                    songStore.createIndex("albumId", "albumId", { unique: false });
-                }
-                if(!db.objectStoreNames.contains("prompts")) db.createObjectStore("prompts", { keyPath: "id" });
-            };
-            request.onsuccess = (e) => {
-                db = e.target.result;
-                renderStudioArtists();
-            };
-        }
-
-        // --- PRESETS ---
-        function initPresetUI() {
-            const quick = document.getElementById('preset-quick');
-            const all = document.getElementById('preset-all');
-            const presetNames = Object.keys(STYLE_PRESETS);
-            
-            presetNames.slice(0, 5).forEach(name => {
-                const btn = document.createElement('button');
-                btn.className = "px-3 py-1.5 bg-white border border-indigo-200 rounded-lg text-xs font-medium text-indigo-700 hover:bg-indigo-50 transition-colors";
-                btn.textContent = name;
-                btn.onclick = () => loadPreset(name);
-                quick.appendChild(btn);
-            });
-            
-            presetNames.forEach(name => {
-                const btn = document.createElement('button');
-                btn.className = "px-2 py-1.5 bg-white border rounded-lg text-xs font-medium hover:bg-slate-50 text-left truncate";
-                btn.textContent = name;
-                btn.onclick = () => { loadPreset(name); togglePresets(); };
-                all.appendChild(btn);
-            });
-        }
-        function togglePresets() { document.getElementById('preset-all').classList.toggle('hidden'); }
-        function loadPreset(name) {
-            const preset = STYLE_PRESETS[name];
-            if(!preset) return;
-            state = {
-                genreCat: preset.genreCat || "",
-                subgenres: [...(preset.subgenres || [])],
-                instruments: [...(preset.instruments || [])],
-                voices: [...(preset.voices || [])],
-                moods: [...(preset.moods || [])],
-                tempo: preset.tempo || "",
-                production: [...(preset.production || [])],
-                singerDescription: preset.singerDescription || "",
-                exclusions: preset.exclusions || ""
-            };
-            updateAllVisuals();
-        }
-
-        // --- UI BUILDERS ---
-        function initGenreUI() {
-            const container = document.getElementById('genre-container');
-            container.innerHTML = '';
-            Object.keys(GENRES).forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = "p-3 rounded-xl border bg-slate-50 border-slate-200 text-slate-600 hover:border-indigo-300 font-medium text-xs text-left";
-                btn.textContent = cat;
-                btn.onclick = () => selectGenreCat(cat, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function initInstrumentUI() { initCategoryUI('instrument-cats', 'instruments-container', INSTRUMENT_GROUPS, 'instruments'); }
-        function initMoodUI() { initCategoryUI('mood-cats', 'moods-container', MOOD_GROUPS, 'moods'); }
-        function initProductionUI() { initCategoryUI('production-cats', 'production-container', PRODUCTION_GROUPS, 'production'); }
-        function initSimpleMultiSelect(id, list, key) { renderBtnList(id, list, key); }
-        function initTempoUI() {
-            const s = document.getElementById('tempo-select');
-            TEMPO_FEEL.forEach(t => {
-                 const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o);
-            });
-        }
-
-        function initDialsGenreUI() {
-            const container = document.getElementById('dial-category-filters');
-            container.innerHTML = '';
-            const allBtn = document.createElement('button');
-            allBtn.className = "filter-chip active-filter"; allBtn.textContent = "ALL";
-            allBtn.onclick = () => filterDialsGenre('ALL', allBtn);
-            container.appendChild(allBtn);
-            Object.keys(GENRES).forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = "filter-chip"; btn.textContent = cat;
-                btn.onclick = () => filterDialsGenre(cat, btn);
-                container.appendChild(btn);
-            });
-            populateDialSelect(null);
-        }
-
-        // --- HELPERS ---
-        function initCategoryUI(catId, listId, data, stateKey) {
-            const catC = document.getElementById(catId); catC.innerHTML = '';
-            Object.keys(data).forEach(group => {
-                const btn = document.createElement('button');
-                btn.className = "filter-chip";
-                btn.textContent = group;
-                btn.onclick = () => {
-                    Array.from(catC.children).forEach(b => b.classList.remove('active-filter'));
-                    btn.classList.add('active-filter');
-                    renderBtnList(listId, data[group], stateKey);
-                };
-                catC.appendChild(btn);
-            });
-            renderBtnList(listId, data[Object.keys(data)[0]], stateKey);
-            catC.firstChild.classList.add('active-filter');
-        }
-
-        function renderBtnList(containerId, list, key) {
-            const c = document.getElementById(containerId); c.innerHTML = '';
-            list.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = "px-3 py-1.5 rounded-full text-xs border transition-all bg-white border-slate-200 text-slate-600 hover:border-indigo-300 btn-base";
-                if(state[key].includes(item)) btn.classList.add("btn-selected");
-                btn.textContent = item;
-                btn.onclick = () => {
-                    toggleSelection(item, key);
-                    if(state[key].includes(item)) btn.classList.add("btn-selected");
-                    else btn.classList.remove("btn-selected");
-                    updatePrompt();
-                    updatePromptForPlatform(); // Auto-update format
-                };
-                c.appendChild(btn);
-            });
-        }
-
-        function filterDialsGenre(category, btnElement) {
-            const container = document.getElementById('dial-category-filters');
-            Array.from(container.children).forEach(b => b.classList.remove('active-filter'));
-            btnElement.classList.add('active-filter');
-            populateDialSelect(category === 'ALL' ? null : category);
-        }
-
-        function populateDialSelect(filterCategory) {
-            const select = document.getElementById('dial-genre-select');
-            const current = select.value; select.innerHTML = ''; 
-            const defaultOpt = document.createElement('option'); defaultOpt.value = "";
-            defaultOpt.textContent = filterCategory ? `[ ${filterCategory.toUpperCase()} ]` : "[ SELECT BASE ]";
-            select.appendChild(defaultOpt);
-            
-            const cats = filterCategory ? [filterCategory] : Object.keys(GENRES);
-            cats.forEach(cat => {
-                if (filterCategory) {
-                    GENRES[cat].forEach(sub => {
-                        const o = document.createElement('option'); o.value = sub; o.textContent = sub; o.dataset.category = cat; select.appendChild(o);
-                    });
-                } else {
-                    const g = document.createElement('optgroup'); g.label = cat;
-                    GENRES[cat].forEach(sub => {
-                         const o = document.createElement('option'); o.value = sub; o.textContent = sub; o.dataset.category = cat; g.appendChild(o);
-                    });
-                    select.appendChild(g);
-                }
-            });
-            if(current) {
-                for(let i=0; i<select.options.length; i++) if(select.options[i].value === current) select.value = current;
+        // --- 2. IndexedDB Wrapper ---
+        class DB {
+            constructor() {
+                this.dbName = 'SunoCompanionDB';
+                this.version = 1;
+                this.storeName = 'songs';
+                this.db = null;
             }
-        }
 
-        // --- CORE ---
-        function switchTab(name) {
-            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-            document.getElementById(`tab-${name}`).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-btn-${name}`).classList.add('active');
-            if(name === 'studio') renderStudioArtists();
-            if(name === 'json') generateJsonOutput();
-        }
+            async connect() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
 
-        function toggleSelection(item, key) {
-            if(state[key].includes(item)) state[key] = state[key].filter(i => i !== item);
-            else state[key].push(item);
-            updatePrompt();
-            updatePromptForPlatform();
-        }
-        
-        function selectGenreCat(cat, btn) {
-            state.genreCat = cat;
-            const p = btn.parentElement;
-            Array.from(p.children).forEach(b => {
-                b.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-            });
-            btn.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-            
-            const subC = document.getElementById('subgenre-container');
-            const subW = document.getElementById('subgenre-wrapper');
-            subC.innerHTML = ''; subW.classList.remove('hidden');
-            
-            if(GENRES[cat]) {
-                GENRES[cat].forEach(sub => {
-                    const b = document.createElement('button');
-                    b.className = "px-3 py-1.5 rounded-full text-xs border bg-white border-slate-200 text-slate-600 btn-base";
-                    if(state.subgenres.includes(sub)) b.classList.add('btn-selected');
-                    b.textContent = sub;
-                    b.onclick = () => {
-                         toggleSelection(sub, 'subgenres');
-                         if(state.subgenres.includes(sub)) b.classList.add("btn-selected");
-                         else b.classList.remove("btn-selected");
-                         updatePrompt();
-                         updatePromptForPlatform();
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
+                            store.createIndex('updatedAt', 'updatedAt', { unique: false });
+                        }
                     };
-                    subC.appendChild(b);
+
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+
+                    request.onerror = (event) => {
+                        console.error("DB Error:", event.target.error);
+                        reject(event.target.error);
+                    };
                 });
             }
-            updatePrompt();
-            updatePromptForPlatform();
-        }
 
-        function updateExclusions(val) { 
-            state.exclusions = val; 
-            document.getElementById('style-exclusions-output').value = val;
-            updatePrompt(); // Trigger validation
-            updatePromptForPlatform();
-        }
-
-        // --- SMART PROMPT ENGINE ---
-        function updatePrompt() {
-            const s = document.getElementById('tempo-select');
-            state.tempo = s.value;
-            state.singerDescription = document.getElementById('singer-desc').value;
-
-            let list = [];
-            if(state.genreCat) list.push(state.genreCat);
-            if(state.subgenres.length) list.push(...state.subgenres);
-            if(state.singerDescription) list.push(`Vocals: ${state.singerDescription}`);
-            if(state.voices.length) list.push(...state.voices);
-            if(state.instruments.length) list.push(...state.instruments);
-            if(state.moods.length) list.push(...state.moods);
-            if(state.production.length) list.push(...state.production);
-            if(state.tempo) list.push(state.tempo);
-
-            const rawText = list.join(", ");
-            document.getElementById('style-output').value = rawText; 
-            
-            validatePrompt(rawText);
-        }
-
-        // *** RESTORED VALIDATION FUNCTION ***
-        function validatePrompt(text) {
-            const warningEl = document.getElementById('conflict-warning');
-            const container = document.getElementById('conflict-text'); // Ensure this ID exists in HTML
-            if(!warningEl) return;
-            
-            const fullText = (text + " " + state.exclusions).toLowerCase();
-            
-            const issues = [];
-            CONFLICTS.forEach(c => {
-                if(c.tags.every(t => fullText.includes(t.toLowerCase()))) {
-                    issues.push({ msg: c.msg, severity: c.severity });
-                }
-            });
-            
-            if(issues.length > 0) {
-                warningEl.classList.remove('hidden');
-                warningEl.innerHTML = issues.map(i => 
-                    `<div class="text-${i.severity === 'high' ? 'red' : 'amber'}-700">⚠️ ${i.msg}</div>`
-                ).join('');
-            } else {
-                warningEl.classList.add('hidden');
-            }
-        }
-
-        // *** RESTORED PLATFORM FUNCTION ***
-        function updatePromptForPlatform() {
-            const platform = document.getElementById('platform-select').value;
-            const tips = document.getElementById('platform-tips');
-            
-            let rawList = [];
-            if(state.genreCat) rawList.push(state.genreCat);
-            if(state.subgenres.length) rawList.push(...state.subgenres);
-            if(state.singerDescription) rawList.push(`Vocals: ${state.singerDescription}`);
-            if(state.voices.length) rawList.push(...state.voices);
-            if(state.instruments.length) rawList.push(...state.instruments);
-            if(state.moods.length) rawList.push(...state.moods);
-            if(state.production.length) rawList.push(...state.production);
-            if(state.tempo) rawList.push(state.tempo);
-            
-            let finalPrompt = rawList.join(", ");
-            const rule = PLATFORM_RULES[platform];
-
-            // Apply Prefix
-            if(rule.specialSyntax.prefix) finalPrompt = rule.specialSyntax.prefix + finalPrompt;
-
-            // Apply Exclusions
-            if(state.exclusions) {
-                const exParts = state.exclusions.split(',').map(e => e.trim());
-                const exString = exParts.map(e => rule.specialSyntax.excludePrefix + e).join(", ");
-                if(platform === 'suno') finalPrompt += "\n" + exString; 
-                else finalPrompt += ", " + exString;
-            }
-
-            document.getElementById('style-output').value = finalPrompt;
-            
-            // Char Count logic
-            const len = finalPrompt.length;
-            const counter = document.getElementById('char-count');
-            if(counter) {
-                counter.textContent = `${len}/${rule.maxTokens} chars`;
-                if(len > rule.maxTokens) counter.classList.add('text-red-500', 'font-bold');
-                else counter.classList.remove('text-red-500', 'font-bold');
-            }
-
-            // Tips
-            if(tips) {
-                 if(rule.strengths.length > 0) {
-                     tips.innerHTML = `<div class="text-[10px] text-indigo-500 font-semibold uppercase">Optimizer: ${rule.name}</div>
-                     <div class="text-[10px] text-slate-400">${rule.strengths.join(", ")}</div>`;
-                } else {
-                     tips.innerHTML = "";
-                }
-            }
-        }
-
-        // --- DIALS LOGIC (Synced) ---
-        function updateDials() {
-            updatePrompt();
-            updatePromptForPlatform();
-        }
-
-        function applyDialsToMain() {
-            const baseGenre = document.getElementById('dial-genre-select').value;
-            if (!baseGenre) return alert("Select a base genre first.");
-            state.subgenres = [baseGenre]; 
-            updateAllVisuals();
-            switchTab('style');
-        }
-
-        function updateAllVisuals() {
-             initInstrumentUI(); initMoodUI(); initProductionUI(); initSimpleMultiSelect("voices-container", VOICES, "voices");
-             
-             if(state.genreCat) {
-                 const container = document.getElementById('genre-container');
-                 const btn = Array.from(container.children).find(b => b.textContent === state.genreCat);
-                 if(btn) selectGenreCat(state.genreCat, btn);
-             }
-             
-             document.getElementById('tempo-select').value = state.tempo;
-             document.getElementById('singer-desc').value = state.singerDescription;
-             document.getElementById('exclusion-input').value = state.exclusions;
-             
-             updatePrompt();
-             updatePromptForPlatform();
-        }
-
-        // --- STUDIO ---
-        function renderStudioArtists() {
-            if(!db) return;
-            const tx = db.transaction("artists", "readonly");
-            const store = tx.objectStore("artists");
-            const list = document.getElementById('studio-artist-list'); list.innerHTML = '';
-            store.openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) {
-                    const div = document.createElement('div');
-                    div.className = `p-3 rounded-lg cursor-pointer flex justify-between items-center text-sm ${selectedStudioArtistId === c.value.id ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'hover:bg-slate-50 text-slate-700'}`;
-                    div.textContent = c.value.name;
-                    div.onclick = () => { selectedStudioArtistId = c.value.id; renderStudioArtists(); renderStudioAlbums(c.value.id); };
-                    list.appendChild(div);
-                    c.continue();
-                }
-            };
-        }
-        
-        function renderStudioAlbums(artistId) {
-             selectedStudioArtistId = artistId;
-             const list = document.getElementById('studio-album-list'); list.innerHTML = '';
-             const tx = db.transaction("albums", "readonly");
-             const idx = tx.objectStore("albums").index("artistId");
-             idx.openCursor(IDBKeyRange.only(artistId)).onsuccess = (e) => {
-                 const c = e.target.result;
-                 if(c) {
-                     const div = document.createElement('div');
-                     div.className = `p-3 rounded-lg cursor-pointer text-sm border ${selectedStudioAlbumId === c.value.id ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold' : 'hover:bg-slate-50 border-slate-100 text-slate-700'}`;
-                     div.textContent = c.value.title;
-                     div.onclick = () => { selectedStudioAlbumId = c.value.id; renderStudioAlbums(artistId); renderStudioSongs(c.value.id); };
-                     list.appendChild(div);
-                     c.continue();
-                 }
-             };
-        }
-
-        function renderStudioSongs(albumId) {
-            const list = document.getElementById('studio-song-list'); list.innerHTML = '';
-            const tx = db.transaction("songs", "readonly");
-            const idx = tx.objectStore("songs").index("albumId");
-            idx.openCursor(IDBKeyRange.only(albumId)).onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) {
-                    const song = c.value;
-                    const div = document.createElement('div');
-                    div.className = "bg-white border border-slate-100 p-4 rounded-xl shadow-sm mb-3";
+            async getAllSongs() {
+                if (!this.db) await this.connect();
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction([this.storeName], 'readonly');
+                    const store = transaction.objectStore(this.storeName);
+                    const index = store.index('updatedAt');
+                    const request = index.openCursor(null, 'prev'); // Sort by newest
+                    const results = [];
                     
-                    let versions = '';
-                    if(song.versions && song.versions.length) {
-                        versions = `<div class="mt-2 pt-2 border-t border-slate-50 space-y-1">
-                            ${song.versions.map(v => `<div class="flex justify-between text-xs bg-slate-50 p-1.5 rounded"><span class="font-medium">${v.name}</span><a href="${v.link}" target="_blank" class="text-indigo-500 hover:underline">Link</a></div>`).join('')}
-                        </div>`;
+                    request.onsuccess = (event) => {
+                        const cursor = event.target.result;
+                        if (cursor) {
+                            results.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(results);
+                        }
+                    };
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async saveSong(song) {
+                if (!this.db) await this.connect();
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction([this.storeName], 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    song.updatedAt = Date.now();
+                    const request = store.put(song);
+                    request.onsuccess = () => resolve(song);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async deleteSong(id) {
+                if (!this.db) await this.connect();
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction([this.storeName], 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.delete(id);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
+        // --- 3. Application Logic ---
+        class App {
+            constructor() {
+                this.db = new DB();
+                this.songs = [];
+                this.currentSong = null;
+                this.editingTagIndex = -1;
+                this.saveTimeout = null;
+
+                // Bind UI Elements
+                this.ui = {
+                    songList: document.getElementById('song-list'),
+                    title: document.getElementById('meta-title'),
+                    artist: document.getElementById('meta-artist'),
+                    album: document.getElementById('meta-album'),
+                    lyrics: document.getElementById('lyrics-editor'),
+                    activeTagsList: document.getElementById('active-tags-list'),
+                    tagLibrary: document.getElementById('tag-library'),
+                    tagSearch: document.getElementById('tag-search'),
+                    charCount: document.getElementById('char-count'),
+                    saveStatus: document.getElementById('save-status'),
+                    customTagInput: document.getElementById('custom-tag-input'),
+                    // Modal
+                    modal: document.getElementById('tag-modal'),
+                    modalName: document.getElementById('modal-tag-name'),
+                    modalRating: document.getElementById('modal-rating'),
+                    modalRatingVal: document.getElementById('modal-rating-val'),
+                    modalNote: document.getElementById('modal-note'),
+                    modalStars: document.getElementById('modal-stars'),
+                    // Buttons for feedback
+                    copyPromptBtn: document.getElementById('copy-prompt-btn'),
+                    copyLyricsBtn: document.getElementById('copy-lyrics-btn')
+                };
+
+                this.init();
+            }
+
+            async init() {
+                try {
+                    await this.db.connect();
+                    await this.refreshSongList();
+                    this.renderTagLibrary();
+                    
+                    // If songs exist, load the first one (most recent), else create new
+                    if (this.songs.length > 0) {
+                        this.loadSong(this.songs[0]);
+                    } else {
+                        this.createNewSong();
                     }
 
-                    div.innerHTML = `
-                        <div class="flex justify-between mb-1">
-                            <span class="font-bold text-slate-800 text-sm">${song.title}</span>
-                            <button onclick="openVersionModal(${song.id})" class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 hover:text-indigo-600">+ Ver</button>
+                    this.setupEventListeners();
+                } catch (e) {
+                    console.error("Initialization Failed:", e);
+                    alert("App failed to initialize. Please check console or try reloading.");
+                }
+            }
+
+            // Helper for generating IDs safely in non-secure contexts (iframe preview)
+            generateID() {
+                if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                    try {
+                        return crypto.randomUUID();
+                    } catch (e) {
+                        // Fallback below
+                    }
+                }
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            // Robust copy to clipboard (execCommand for iframes)
+            safeCopy(text, btnElement) {
+                const fallback = document.getElementById('fallback-clipboard');
+                fallback.value = text;
+                fallback.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    if(successful) {
+                        this.showCopyFeedback(btnElement);
+                    } else {
+                        console.error('Copy failed');
+                    }
+                } catch (err) {
+                    console.error('Unable to copy', err);
+                }
+                
+                // Clear selection
+                window.getSelection().removeAllRanges();
+            }
+
+            showCopyFeedback(btn) {
+                if(!btn) return;
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = original, 2000);
+            }
+
+            setupEventListeners() {
+                // Metadata & Lyrics Input Listeners for Auto-Save
+                const inputs = [this.ui.title, this.ui.artist, this.ui.album, this.ui.lyrics];
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => this.handleInput());
+                });
+
+                // Tag Search
+                this.ui.tagSearch.addEventListener('input', (e) => this.filterLibrary(e.target.value));
+
+                // Modal Rating Slider
+                this.ui.modalRating.addEventListener('input', (e) => {
+                    this.ui.modalRatingVal.textContent = e.target.value;
+                    this.renderModalStars(e.target.value);
+                });
+
+                // Custom tag enter key
+                this.ui.customTagInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addCustomTag();
+                });
+            }
+
+            async refreshSongList() {
+                this.songs = await this.db.getAllSongs();
+                this.renderSongList();
+            }
+
+            createNewSong() {
+                const newSong = {
+                    id: this.generateID(), // Updated to use safe generator
+                    title: '',
+                    artist: '',
+                    album: '',
+                    lyrics: '',
+                    styleTags: [], // { text: string, rating: number, note: string }
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                this.loadSong(newSong);
+                this.saveCurrentSong(true); // Force save immediately
+            }
+
+            loadSong(song) {
+                this.currentSong = song;
+                
+                // Update Inputs
+                this.ui.title.value = song.title || '';
+                this.ui.artist.value = song.artist || '';
+                this.ui.album.value = song.album || '';
+                this.ui.lyrics.value = song.lyrics || '';
+
+                // Update UI state
+                this.renderActiveTags();
+                this.renderSongList(); // To highlight active
+                this.updateCharCount();
+            }
+
+            handleInput() {
+                if (!this.currentSong) return;
+                
+                // Update local state
+                this.currentSong.title = this.ui.title.value;
+                this.currentSong.artist = this.ui.artist.value;
+                this.currentSong.album = this.ui.album.value;
+                this.currentSong.lyrics = this.ui.lyrics.value;
+
+                // Debounced Save
+                this.triggerAutoSave();
+            }
+
+            triggerAutoSave() {
+                this.ui.saveStatus.classList.remove('opacity-100');
+                this.ui.saveStatus.classList.add('opacity-0');
+                
+                if (this.saveTimeout) clearTimeout(this.saveTimeout);
+                
+                this.saveTimeout = setTimeout(async () => {
+                    await this.saveCurrentSong();
+                }, 1000);
+            }
+
+            async saveCurrentSong(refreshList = true) {
+                if (!this.currentSong) return;
+                await this.db.saveSong(this.currentSong);
+                
+                // UI Feedback
+                this.ui.saveStatus.textContent = "Saved";
+                this.ui.saveStatus.classList.remove('opacity-0');
+                this.ui.saveStatus.classList.add('opacity-100');
+                
+                if (refreshList) await this.refreshSongList();
+            }
+
+            async deleteCurrentSong() {
+                if (!this.currentSong) return;
+                if (confirm('Are you sure you want to delete this song?')) {
+                    await this.db.deleteSong(this.currentSong.id);
+                    await this.refreshSongList();
+                    if (this.songs.length > 0) {
+                        this.loadSong(this.songs[0]);
+                    } else {
+                        this.createNewSong();
+                    }
+                }
+            }
+
+            // --- UI Rendering ---
+
+            renderSongList() {
+                this.ui.songList.innerHTML = '';
+                this.songs.forEach(song => {
+                    const isActive = this.currentSong && this.currentSong.id === song.id;
+                    const el = document.createElement('div');
+                    el.className = `p-3 rounded-lg cursor-pointer transition-all border border-transparent ${isActive ? 'bg-indigo-900/40 border-indigo-500/50' : 'hover:bg-gray-800 border-gray-800'}`;
+                    el.onclick = () => this.loadSong(song);
+                    
+                    const title = song.title || 'Untitled Song';
+                    const artist = song.artist || 'Unknown Artist';
+                    
+                    el.innerHTML = `
+                        <div class="text-sm font-medium text-gray-200 truncate">${title}</div>
+                        <div class="text-xs text-gray-500 truncate flex justify-between">
+                            <span>${artist}</span>
+                            <span>${new Date(song.updatedAt).toLocaleDateString()}</span>
                         </div>
-                        <div class="text-xs text-slate-400 font-mono mb-2 truncate">${song.prompt}</div>
-                        <div class="flex gap-3 text-xs">
-                             <button onclick="loadSongState(${song.id})" class="text-indigo-600 font-medium hover:underline">Load Setup</button>
-                        </div>
-                        ${versions}
                     `;
-                    list.appendChild(div);
-                    c.continue();
+                    this.ui.songList.appendChild(el);
+                });
+            }
+
+            renderTagLibrary() {
+                this.ui.tagLibrary.innerHTML = '';
+                
+                Object.keys(TAG_LIBRARY).forEach(category => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'mb-1';
+                    
+                    // Header
+                    const header = document.createElement('button');
+                    header.className = 'w-full text-left px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wide bg-gray-900 hover:bg-gray-800 rounded flex justify-between items-center';
+                    header.innerHTML = `<span>${category}</span> <i class="fa-solid fa-chevron-down text-gray-600"></i>`;
+                    
+                    // List
+                    const list = document.createElement('div');
+                    list.className = 'flex flex-wrap gap-1.5 p-2 pl-3';
+                    
+                    TAG_LIBRARY[category].forEach(tag => {
+                        const btn = document.createElement('button');
+                        btn.className = 'px-2.5 py-1 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 rounded border border-gray-700 transition-colors tag-item';
+                        btn.textContent = tag;
+                        btn.dataset.tag = tag; // For search
+                        btn.onclick = () => this.addTagToSong(tag);
+                        list.appendChild(btn);
+                    });
+
+                    // Toggle functionality
+                    header.onclick = () => {
+                        list.classList.toggle('hidden');
+                        header.querySelector('i').classList.toggle('rotate-180');
+                    };
+
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(list);
+                    this.ui.tagLibrary.appendChild(wrapper);
+                });
+            }
+
+            filterLibrary(query) {
+                const q = query.toLowerCase();
+                const headers = this.ui.tagLibrary.querySelectorAll('div > button'); // Category headers
+                const items = this.ui.tagLibrary.querySelectorAll('.tag-item');
+                
+                items.forEach(item => {
+                    const match = item.textContent.toLowerCase().includes(q);
+                    item.style.display = match ? 'block' : 'none';
+                });
+            }
+
+            renderActiveTags() {
+                this.ui.activeTagsList.innerHTML = '';
+                if (!this.currentSong.styleTags || this.currentSong.styleTags.length === 0) {
+                    this.ui.activeTagsList.innerHTML = '<span class="text-sm text-gray-600 italic py-2">Select tags below to build your prompt...</span>';
+                    this.updateCharCount();
+                    return;
                 }
-            };
+
+                this.currentSong.styleTags.forEach((tagObj, index) => {
+                    const chip = document.createElement('div');
+                    
+                    // Determine style based on rating
+                    let bgClass = 'bg-gray-700 text-gray-200';
+                    let borderClass = 'border-gray-600';
+                    if (tagObj.rating >= 4) { bgClass = 'bg-indigo-900 text-indigo-100'; borderClass = 'border-indigo-700'; }
+                    if (tagObj.rating <= 2 && tagObj.rating > 0) { bgClass = 'bg-red-900/30 text-red-200'; borderClass = 'border-red-900/50'; }
+
+                    chip.className = `flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full text-xs border cursor-pointer hover:opacity-90 transition-all shadow-sm group ${bgClass} ${borderClass}`;
+                    
+                    const stars = this.getStarString(tagObj.rating);
+                    const noteIcon = tagObj.note ? '<i class="fa-solid fa-sticky-note text-[10px] ml-1 opacity-70"></i>' : '';
+
+                    chip.innerHTML = `
+                        <span class="font-medium">${tagObj.text}</span>
+                        ${noteIcon}
+                        <span class="text-[10px] tracking-tighter opacity-70">${stars}</span>
+                        <div class="w-px h-3 bg-white/20 mx-1"></div>
+                        <i class="fa-solid fa-pen text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    `;
+                    
+                    chip.onclick = () => this.openEditModal(index);
+                    this.ui.activeTagsList.appendChild(chip);
+                });
+
+                this.updateCharCount();
+            }
+
+            updateCharCount() {
+                const prompt = this.currentSong.styleTags.map(t => t.text).join(', ');
+                this.ui.charCount.textContent = `${prompt.length} chars`;
+                if (prompt.length > 120) {
+                    this.ui.charCount.classList.add('text-red-500');
+                    this.ui.charCount.classList.remove('text-gray-600');
+                } else {
+                    this.ui.charCount.classList.remove('text-red-500');
+                    this.ui.charCount.classList.add('text-gray-600');
+                }
+            }
+
+            getStarString(rating) {
+                if (!rating) return '';
+                return '★'.repeat(rating);
+            }
+
+            // --- Logic Actions ---
+
+            addTagToSong(text) {
+                if (!this.currentSong.styleTags.find(t => t.text === text)) {
+                    this.currentSong.styleTags.push({ text: text, rating: 0, note: '' });
+                    this.saveCurrentSong(false);
+                    this.renderActiveTags();
+                }
+            }
+
+            addCustomTag() {
+                const val = this.ui.customTagInput.value.trim();
+                if (val) {
+                    this.addTagToSong(val);
+                    this.ui.customTagInput.value = '';
+                }
+            }
+
+            insertTag(tag) {
+                const textarea = this.ui.lyrics;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                
+                const before = text.substring(0, start);
+                const after = text.substring(end, text.length);
+                
+                // Add newlines if needed
+                const prefix = (start > 0 && text[start - 1] !== '\n') ? '\n\n' : '';
+                const suffix = '\n';
+                
+                textarea.value = before + prefix + tag + suffix + after;
+                
+                // Reset cursor
+                textarea.selectionStart = textarea.selectionEnd = start + prefix.length + tag.length + suffix.length;
+                textarea.focus();
+                
+                this.handleInput();
+            }
+
+            copyPrompt() {
+                const prompt = this.currentSong.styleTags.map(t => t.text).join(', ');
+                this.safeCopy(prompt, this.ui.copyPromptBtn);
+            }
+
+            copyLyrics() {
+                this.safeCopy(this.ui.lyrics.value, this.ui.copyLyricsBtn);
+            }
+
+            // --- Modal Logic ---
+
+            openEditModal(index) {
+                this.editingTagIndex = index;
+                const tag = this.currentSong.styleTags[index];
+                
+                this.ui.modalName.textContent = tag.text;
+                this.ui.modalRating.value = tag.rating || 0;
+                this.ui.modalRatingVal.textContent = tag.rating || 0;
+                this.renderModalStars(tag.rating || 0);
+                this.ui.modalNote.value = tag.note || '';
+                
+                this.ui.modal.classList.remove('hidden');
+            }
+
+            closeModal() {
+                this.ui.modal.classList.add('hidden');
+                this.editingTagIndex = -1;
+            }
+
+            renderModalStars(rating) {
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) html += '<i class="fa-solid fa-star"></i>';
+                    else html += '<i class="fa-regular fa-star text-gray-600"></i>';
+                }
+                this.ui.modalStars.innerHTML = html;
+            }
+
+            saveTagEdits() {
+                if (this.editingTagIndex > -1) {
+                    this.currentSong.styleTags[this.editingTagIndex].rating = parseInt(this.ui.modalRating.value);
+                    this.currentSong.styleTags[this.editingTagIndex].note = this.ui.modalNote.value;
+                    this.saveCurrentSong(false);
+                    this.renderActiveTags();
+                    this.closeModal();
+                }
+            }
+
+            removeTagFromSong() {
+                if (this.editingTagIndex > -1) {
+                    this.currentSong.styleTags.splice(this.editingTagIndex, 1);
+                    this.saveCurrentSong(false);
+                    this.renderActiveTags();
+                    this.closeModal();
+                }
+            }
         }
 
-        // --- ACTIONS ---
-        function promptCreateAlbum() {
-            if(!selectedStudioArtistId) return alert("Select an artist first");
-            const t = prompt("Album Title:");
-            if(t) {
-                const tx = db.transaction("albums", "readwrite");
-                tx.objectStore("albums").add({ id: Date.now(), artistId: selectedStudioArtistId, title: t });
-                tx.oncomplete = () => renderStudioAlbums(selectedStudioArtistId);
-            }
-        }
-        
-        function loadSongState(id) {
-            const tx = db.transaction("songs", "readonly");
-            tx.objectStore("songs").get(id).onsuccess = (e) => {
-                const s = e.target.result;
-                state = s.state;
-                document.getElementById('lyrics-input').value = s.lyrics;
-                updateAllVisuals();
-                switchTab('style');
-            }
-        }
-        
-        // Modal Logic
-        function promptSaveSong() {
-            document.getElementById('save-modal').classList.remove('hidden');
-            const s = document.getElementById('save-artist-select'); s.innerHTML = "<option>Select Artist...</option>";
-            const tx = db.transaction("artists", "readonly");
-            tx.objectStore("artists").openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) {
-                    const o = document.createElement('option'); o.value = c.value.id; o.textContent = c.value.name; s.appendChild(o);
-                    c.continue();
-                }
-            }
-        }
-        
-        function populateSaveAlbums() {
-            const aid = parseInt(document.getElementById('save-artist-select').value);
-            const s = document.getElementById('save-album-select'); s.innerHTML = "<option>Select Album...</option>";
-            const tx = db.transaction("albums", "readonly");
-            tx.objectStore("albums").index("artistId").openCursor(IDBKeyRange.only(aid)).onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) {
-                     const o = document.createElement('option'); o.value = c.value.id; o.textContent = c.value.title; s.appendChild(o);
-                     c.continue();
-                }
-            }
-        }
-        
-        function closeModal() { document.getElementById('save-modal').classList.add('hidden'); }
-        
-        function commitSaveSong() {
-            const artistId = parseInt(document.getElementById('save-artist-select').value);
-            const albumId = parseInt(document.getElementById('save-album-select').value);
-            const title = document.getElementById('save-song-title').value;
-            const notes = document.getElementById('save-song-notes').value;
-            const link = document.getElementById('save-song-link').value;
-            
-            if(!artistId || !albumId || !title) return alert("Please fill in required fields.");
-            
-            const song = {
-                id: Date.now(),
-                artistId, albumId, title, notes,
-                prompt: document.getElementById('style-output').value,
-                lyrics: document.getElementById('lyrics-input').value,
-                state: JSON.parse(JSON.stringify(state)),
-                timestamp: Date.now(),
-                versions: link ? [{name: "Initial", link: link}] : []
-            };
-            
-            const tx = db.transaction("songs", "readwrite");
-            tx.objectStore("songs").add(song);
-            tx.oncomplete = () => {
-                closeModal();
-                alert("Song Saved to Album!");
-                selectedStudioArtistId = artistId;
-                selectStudioAlbum(albumId);
-                switchTab('studio');
-            };
-        }
-        
-        // Versions
-        function openVersionModal(id) {
-             document.getElementById('version-modal').classList.remove('hidden');
-             document.getElementById('version-song-id').value = id;
-        }
-        function closeVersionModal() { document.getElementById('version-modal').classList.add('hidden'); }
-        function commitAddVersion() {
-             const id = parseInt(document.getElementById('version-song-id').value);
-             const name = document.getElementById('version-label').value;
-             const link = document.getElementById('version-link').value;
-             const tx = db.transaction("songs", "readwrite");
-             const store = tx.objectStore("songs");
-             store.get(id).onsuccess = (e) => {
-                 const s = e.target.result;
-                 if(!s.versions) s.versions = [];
-                 s.versions.push({ name, link });
-                 store.put(s);
-                 closeVersionModal();
-                 if(selectedStudioAlbumId) renderStudioSongs(selectedStudioAlbumId);
-             };
-        }
-
-        // Functions from previous turns kept for compatibility
-        function validateAndLoadModels() { alert("Validation simulation active. Add real API logic if needed."); }
-        function generateLyrics() { alert("AI generation simulation. Add real API logic if needed."); }
-        function generateJsonOutput() { document.getElementById('json-output').value = JSON.stringify(state, null, 2); }
-        function saveArtist() {
-             const name = document.getElementById('artist-name').value;
-             if(!name) return alert("Name required");
-             const tx = db.transaction("artists", "readwrite");
-             tx.objectStore("artists").add({
-                 id: Date.now(),
-                 name: name,
-                 bio: document.getElementById('artist-bio').value,
-                 profile: JSON.parse(JSON.stringify(state))
-             });
-             tx.oncomplete = () => { alert("Artist Created"); switchTab('studio'); };
-        }
+        // Initialize App
+        const app = new App();
 
     </script>
 </body>
