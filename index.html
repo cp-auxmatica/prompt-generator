@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v3</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Suno Engineer's Companion v3.1</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)" rel="stylesheet">
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         
@@ -44,6 +44,45 @@
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.2s ease-out forwards; }
+
+        /* Tooltip */
+        #tooltip {
+            position: absolute;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #475569;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            max-width: 250px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        .has-meta {
+            border-color: #818cf8 !important; /* Indigo-400 */
+            position: relative;
+        }
+        .has-meta::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 8px;
+            height: 8px;
+            background: #6366f1;
+            border: 1px solid #0f172a;
+            border-radius: 50%;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #6366f1;
+            color: white;
+        }
+        .tab-btn {
+            border-bottom: 2px solid transparent;
+            color: #64748b;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
@@ -52,7 +91,7 @@
     <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div class="p-5 border-b border-slate-800">
             <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
-                <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v3.0</span>
+                <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v3.1</span>
             </h1>
         </div>
         
@@ -78,6 +117,9 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-900 relative overflow-hidden" id="main-content">
         <!-- Views will be injected here -->
     </main>
+
+    <!-- Global Tooltip -->
+    <div id="tooltip"></div>
 
     <!-- Hidden Textarea for Copy -->
     <textarea id="fallback-clipboard" style="position: absolute; left: -9999px;"></textarea>
@@ -136,7 +178,7 @@
         class DB {
             constructor() {
                 this.dbName = 'SunoCompanionDB_v3';
-                this.version = 1;
+                this.version = 2; // Upgraded for tag_metadata
                 this.db = null;
             }
             async connect() {
@@ -154,6 +196,8 @@
                             store.createIndex('albumId', 'albumId', { unique: false });
                         }
                         if (!db.objectStoreNames.contains('styles')) db.createObjectStore('styles', { keyPath: 'id' });
+                        // New in v3.1: Tag Intelligence
+                        if (!db.objectStoreNames.contains('tag_metadata')) db.createObjectStore('tag_metadata', { keyPath: 'tagName' });
                     };
                     req.onsuccess = (e) => { this.db = e.target.result; resolve(this.db); };
                     req.onerror = (e) => reject(e);
@@ -164,9 +208,6 @@
             async get(storeName, id) { return this.tx(storeName, 'readonly', store => store.get(id)); }
             async put(storeName, item) { return this.tx(storeName, 'readwrite', store => store.put(item)); }
             async delete(storeName, id) { return this.tx(storeName, 'readwrite', store => store.delete(id)); }
-            async getByIndex(storeName, indexName, value) {
-                return this.tx(storeName, 'readonly', store => store.index(indexName).getAll(value));
-            }
             tx(storeName, mode, callback) {
                 return new Promise((resolve, reject) => {
                     const tx = this.db.transaction(storeName, mode);
@@ -182,12 +223,11 @@
             constructor() {
                 this.db = new DB();
                 this.state = {
-                    view: 'artists', // artists, artist-detail, album-detail, workstation, styles
-                    artistId: null,
-                    albumId: null,
-                    songId: null
+                    view: 'artists', 
+                    artistId: null, albumId: null, songId: null,
+                    wsTab: 'lyrics' // lyrics, notes
                 };
-                this.cache = { artists: [], albums: [], songs: [], styles: [] };
+                this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                 this.init();
             }
 
@@ -195,6 +235,7 @@
                 await this.db.connect();
                 await this.refreshCache();
                 this.navigate('artists');
+                this.setupTooltip();
             }
 
             async refreshCache() {
@@ -202,6 +243,10 @@
                 this.cache.albums = await this.db.getAll('albums');
                 this.cache.songs = await this.db.getAll('songs');
                 this.cache.styles = await this.db.getAll('styles');
+                const metas = await this.db.getAll('tag_metadata');
+                // Convert array to map for easy lookup
+                this.cache.tagMeta = {};
+                metas.forEach(m => this.cache.tagMeta[m.tagName] = m);
             }
 
             // --- Navigation & Routing ---
@@ -408,30 +453,39 @@
                 if (!song) return this.navigate('artists');
                 const album = this.cache.albums.find(a => a.id === song.albumId);
                 
-                // Initialize active tags for editor
-                // If song has custom tags, use them. If not, use saved Style. If not, inherit.
                 let activeTags = song.customTags || [];
                 let activeBpm = song.bpm || 120;
                 
-                // If creating fresh context for UI, we rely on song data. 
-                // Render Layout: Left (Lyrics), Right (Style Controls)
+                // Tabs Logic
+                const isLyrics = this.state.wsTab === 'lyrics';
                 
                 container.innerHTML = `
                     <div class="flex h-full fade-in">
-                        <!-- Left: Lyrics -->
+                        <!-- Left Panel -->
                         <div class="flex-1 flex flex-col border-r border-slate-800 min-w-[50%]">
+                            
+                            <!-- Header / Tabs -->
                             <div class="h-12 border-b border-slate-800 bg-slate-950 flex items-center px-4 justify-between shrink-0">
-                                <div class="flex items-center gap-2 text-sm">
+                                <div class="flex items-center gap-4 text-sm">
                                     <button onclick="app.navigate('album-detail', {albumId: '${album.id}'})" class="text-slate-500 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button>
-                                    <span class="font-bold text-white">${song.title}</span>
+                                    <div class="flex gap-4 ml-2">
+                                        <button onclick="app.setWsTab('lyrics')" class="tab-btn pb-3 ${isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Lyrics</button>
+                                        <button onclick="app.setWsTab('notes')" class="tab-btn pb-3 ${!isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Session Notes</button>
+                                    </div>
                                 </div>
-                                <div class="flex gap-1">
+                                <div class="flex gap-1 ${!isLyrics ? 'invisible' : ''}">
                                     ${['Intro','Verse','Chorus','Bridge','Outro'].map(t => 
                                         `<button onclick="app.insertLyricTag('[${t}]')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] rounded border border-slate-700 text-slate-300 transition-colors">[${t}]</button>`
                                     ).join('')}
                                 </div>
                             </div>
-                            <textarea id="lyrics-editor" class="flex-1 bg-slate-900 p-6 text-slate-200 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors" placeholder="Lyrics...">${song.lyrics || ''}</textarea>
+
+                            <!-- Content Area -->
+                            <div class="flex-1 bg-slate-900 relative">
+                                <textarea id="lyrics-editor" class="absolute inset-0 w-full h-full bg-slate-900 p-6 text-slate-200 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors ${!isLyrics ? 'hidden' : ''}" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea>
+                                <textarea id="notes-editor" class="absolute inset-0 w-full h-full bg-slate-900 p-6 text-indigo-100 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors ${isLyrics ? 'hidden' : ''}" placeholder="Log generation notes, mix issues, or prompt adjustments here...">${song.notes || ''}</textarea>
+                            </div>
+
                             <div class="p-3 border-t border-slate-800 bg-slate-950 flex justify-between">
                                 <button onclick="app.saveWorkstation()" id="save-btn" class="text-xs font-bold text-indigo-400 hover:text-white transition-colors">Save Changes</button>
                                 <button onclick="app.copyLyrics()" class="text-xs text-slate-500 hover:text-white"><i class="fa-regular fa-copy"></i> Copy Lyrics</button>
@@ -442,7 +496,10 @@
                         <div class="w-[450px] flex flex-col bg-slate-900">
                             <!-- Style Preview / Prompt -->
                             <div class="p-4 bg-slate-950 border-b border-slate-800 shrink-0">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-2 block">Active Prompt</label>
+                                <div class="flex justify-between items-end mb-2">
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Active Prompt</label>
+                                    <span class="text-[10px] text-slate-500 italic">Right-click tags to annotate</span>
+                                </div>
                                 <div id="active-prompt-display" class="bg-slate-900 border border-slate-800 rounded p-3 text-sm text-indigo-300 font-medium mb-3 min-h-[3rem]"></div>
                                 <div class="flex gap-2">
                                     <button onclick="app.copyPrompt()" id="copy-prompt-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded text-xs font-bold shadow-lg transition-colors">
@@ -465,18 +522,21 @@
 
                 // Initialize Tag Builder
                 this.renderTagBuilder(document.getElementById('style-builder-container'), activeTags, activeBpm, (tags, bpm) => {
-                    // Update local song object state immediately (for preview)
                     song.customTags = tags;
                     song.bpm = bpm;
                     this.updatePromptDisplay(tags, bpm);
                 });
                 
-                // Add event listener for Lyrics
-                document.getElementById('lyrics-editor').addEventListener('input', (e) => {
-                    song.lyrics = e.target.value;
-                });
+                // Add event listeners
+                document.getElementById('lyrics-editor').addEventListener('input', (e) => { song.lyrics = e.target.value; });
+                document.getElementById('notes-editor').addEventListener('input', (e) => { song.notes = e.target.value; });
                 
                 this.updatePromptDisplay(activeTags, activeBpm);
+            }
+
+            setWsTab(tab) {
+                this.state.wsTab = tab;
+                this.render(); // Re-render to toggle visibility
             }
 
             renderStyleManager(container) {
@@ -507,7 +567,6 @@
             // --- Components ---
 
             renderTagBuilder(container, initialTags, initialBpm, onChange) {
-                // Determine current category view state
                 let activeCat = Object.keys(TAG_LIBRARY)[0];
                 let tags = [...initialTags]; // Local copy
                 let bpm = initialBpm;
@@ -532,7 +591,12 @@
                                         <div class="flex flex-wrap gap-2">
                                             ${tagList.map(t => {
                                                 const isActive = tags.includes(t);
-                                                return `<button class="tag-btn text-xs px-2 py-1 rounded border transition-all ${isActive ? 'bg-indigo-600 text-white border-indigo-500 shadow-md transform scale-105' : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'}" data-tag="${t}">${t}</button>`;
+                                                const meta = this.cache.tagMeta[t];
+                                                const hasMeta = !!meta;
+                                                return `<button class="tag-btn text-xs px-2 py-1 rounded border transition-all 
+                                                    ${isActive ? 'bg-indigo-600 text-white border-indigo-500 shadow-md transform scale-105' : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'} 
+                                                    ${hasMeta ? 'has-meta' : ''}" 
+                                                    data-tag="${t}">${t}</button>`;
                                             }).join('')}
                                         </div>
                                     </div>
@@ -552,25 +616,40 @@
                         </div>
                     `;
 
-                    // Event Listeners for this render cycle
+                    // Listeners
                     container.querySelectorAll('[id^="cat-"]').forEach(btn => {
                         btn.addEventListener('click', () => { activeCat = btn.id.replace('cat-', ''); render(); });
                     });
+                    
                     container.querySelectorAll('.tag-btn').forEach(btn => {
+                        const t = btn.dataset.tag;
+                        
+                        // Click to toggle
                         btn.addEventListener('click', () => {
-                            const t = btn.dataset.tag;
                             if (tags.includes(t)) tags = tags.filter(x => x !== t);
                             else tags.push(t);
                             onChange(tags, bpm);
-                            render(); // Re-render to show active state
+                            render();
                         });
+
+                        // Right-Click to Annotate
+                        btn.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                            app.modalAnnotateTag(t);
+                        });
+
+                        // Tooltip
+                        btn.addEventListener('mouseenter', (e) => app.showTooltip(e, t));
+                        btn.addEventListener('mouseleave', () => app.hideTooltip());
                     });
+                    
                     const bpmIn = container.querySelector('#bpm-input');
                     bpmIn.addEventListener('input', (e) => {
                         bpm = parseInt(e.target.value);
                         container.querySelector('#bpm-val').textContent = bpm;
                         onChange(tags, bpm);
                     });
+                    
                     const addCustom = () => {
                         const val = container.querySelector('#custom-tag').value.trim();
                         if (val && !tags.includes(val)) {
@@ -582,6 +661,55 @@
                     container.querySelector('#add-custom-btn').addEventListener('click', addCustom);
                 };
                 render();
+            }
+
+            // --- Tooltip & Modals ---
+            showTooltip(e, tagName) {
+                const meta = this.cache.tagMeta[tagName];
+                if (!meta) return;
+                
+                const tt = document.getElementById('tooltip');
+                const stars = '★'.repeat(meta.rating || 0);
+                tt.innerHTML = `<div class="font-bold text-indigo-400 mb-1">${tagName} <span class="text-yellow-500 text-[10px] ml-1">${stars}</span></div><div class="opacity-90 leading-snug">${meta.notes}</div>`;
+                tt.style.display = 'block';
+                tt.style.left = e.pageX + 10 + 'px';
+                tt.style.top = e.pageY + 10 + 'px';
+            }
+            
+            hideTooltip() {
+                document.getElementById('tooltip').style.display = 'none';
+            }
+
+            modalAnnotateTag(tagName) {
+                const modal = document.getElementById('generic-modal');
+                const content = document.getElementById('modal-content');
+                document.getElementById('modal-title').textContent = `Tag Intelligence: ${tagName}`;
+                
+                const meta = this.cache.tagMeta[tagName] || { rating: 3, notes: '' };
+
+                content.innerHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Effectiveness Rating</label>
+                            <input type="range" id="m-rating" min="1" max="5" value="${meta.rating}" class="w-full">
+                            <div class="flex justify-between text-[10px] text-slate-500 px-1"><span>1</span><span>5</span></div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Engineer's Notes</label>
+                            <textarea id="m-notes" rows="4" class="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-indigo-500 outline-none placeholder-slate-600 text-sm">${meta.notes}</textarea>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('modal-confirm-btn').onclick = async () => {
+                    const rating = parseInt(document.getElementById('m-rating').value);
+                    const notes = document.getElementById('m-notes').value;
+                    await this.db.put('tag_metadata', { tagName, rating, notes, updatedAt: Date.now() });
+                    await this.refreshCache();
+                    this.closeModal();
+                    this.render(); // Re-render to show indicators
+                };
+                modal.classList.remove('hidden');
             }
 
             // --- Logic Actions ---
@@ -605,136 +733,65 @@
                 el.textContent = all.join(', ');
             }
 
-            // Modal Actions
+            // Modal Actions (Artist, Album, Song) reused from v3
             modalAddArtist() {
                 const modal = document.getElementById('generic-modal');
                 const content = document.getElementById('modal-content');
                 document.getElementById('modal-title').textContent = "New Artist";
-                
                 content.innerHTML = `
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Name</label>
-                            <input type="text" id="m-name" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Genre</label>
-                            <input type="text" id="m-genre" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Default Style</label>
-                            <select id="m-style" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white outline-none">
-                                <option value="">None</option>
-                                ${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                `;
-                
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Name</label><input type="text" id="m-name" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Genre</label><input type="text" id="m-genre" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Default Style</label><select id="m-style" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white outline-none"><option value="">None</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select></div>
+                    </div>`;
                 document.getElementById('modal-confirm-btn').onclick = async () => {
                     const name = document.getElementById('m-name').value;
                     const genre = document.getElementById('m-genre').value;
                     const style = document.getElementById('m-style').value;
-                    if(name) {
-                        await this.db.put('artists', { id: generateID(), name, genre, defaultStyleId: style, createdAt: Date.now() });
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.render(); // refresh current list
-                    }
+                    if(name) { await this.db.put('artists', { id: generateID(), name, genre, defaultStyleId: style, createdAt: Date.now() }); await this.refreshCache(); this.closeModal(); this.render(); }
                 };
                 modal.classList.remove('hidden');
             }
-
             modalAddAlbum(artistId) {
                 const modal = document.getElementById('generic-modal');
                 const content = document.getElementById('modal-content');
                 document.getElementById('modal-title').textContent = "New Album";
-                
                 content.innerHTML = `
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label>
-                            <input type="text" id="m-title" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Year</label>
-                            <input type="text" id="m-year" value="${new Date().getFullYear()}" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Default Style (Optional)</label>
-                            <select id="m-style" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white outline-none">
-                                <option value="">Use Artist Default</option>
-                                ${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                `;
-                
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label><input type="text" id="m-title" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Year</label><input type="text" id="m-year" value="${new Date().getFullYear()}" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Default Style (Optional)</label><select id="m-style" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white outline-none"><option value="">Use Artist Default</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select></div>
+                    </div>`;
                 document.getElementById('modal-confirm-btn').onclick = async () => {
                     const title = document.getElementById('m-title').value;
                     const year = document.getElementById('m-year').value;
                     const style = document.getElementById('m-style').value;
-                    if(title) {
-                        await this.db.put('albums', { id: generateID(), artistId, title, year, defaultStyleId: style, createdAt: Date.now() });
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.render();
-                    }
+                    if(title) { await this.db.put('albums', { id: generateID(), artistId, title, year, defaultStyleId: style, createdAt: Date.now() }); await this.refreshCache(); this.closeModal(); this.render(); }
                 };
                 modal.classList.remove('hidden');
             }
-
             modalAddSong(albumId) {
-                // Determine inheritance for initial setup
                 const album = this.cache.albums.find(a => a.id === albumId);
                 const artist = this.cache.artists.find(a => a.id === album.artistId);
                 const inheritedStyleId = album.defaultStyleId || artist.defaultStyleId;
-                let inheritedTags = [];
-                let inheritedBpm = 120;
-
-                if (inheritedStyleId) {
-                    const st = this.cache.styles.find(s => s.id === inheritedStyleId);
-                    if(st) { inheritedTags = st.tags; inheritedBpm = st.bpm; }
-                }
-
+                let inheritedTags = [], inheritedBpm = 120;
+                if (inheritedStyleId) { const st = this.cache.styles.find(s => s.id === inheritedStyleId); if(st) { inheritedTags = st.tags; inheritedBpm = st.bpm; } }
                 const modal = document.getElementById('generic-modal');
                 const content = document.getElementById('modal-content');
                 document.getElementById('modal-title').textContent = "New Song";
-                
-                content.innerHTML = `
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Song Title</label>
-                            <input type="text" id="m-title" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none">
-                        </div>
-                    </div>
-                `;
-                
+                content.innerHTML = `<div class="space-y-4"><div><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Song Title</label><input type="text" id="m-title" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white focus:border-indigo-500 outline-none"></div></div>`;
                 document.getElementById('modal-confirm-btn').onclick = async () => {
                     const title = document.getElementById('m-title').value;
                     if(title) {
                         const existingSongs = this.cache.songs.filter(s => s.albumId === albumId);
-                        await this.db.put('songs', { 
-                            id: generateID(), 
-                            albumId, 
-                            title, 
-                            order: existingSongs.length + 1, 
-                            lyrics: '', 
-                            customTags: inheritedTags, // Copy on create
-                            bpm: inheritedBpm,
-                            createdAt: Date.now() 
-                        });
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.render();
+                        await this.db.put('songs', { id: generateID(), albumId, title, order: existingSongs.length + 1, lyrics: '', notes: '', customTags: inheritedTags, bpm: inheritedBpm, createdAt: Date.now() });
+                        await this.refreshCache(); this.closeModal(); this.render();
                     }
                 };
                 modal.classList.remove('hidden');
             }
 
-            closeModal() {
-                document.getElementById('generic-modal').classList.add('hidden');
-            }
+            closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
 
             async moveSong(songId, dir) {
                 const song = this.cache.songs.find(s => s.id === songId);
@@ -742,14 +799,9 @@
                 const idx = siblings.findIndex(s => s.id === songId);
                 if (idx + dir >= 0 && idx + dir < siblings.length) {
                     const swapSong = siblings[idx + dir];
-                    // Swap orders
-                    const temp = song.order;
-                    song.order = swapSong.order;
-                    swapSong.order = temp;
-                    await this.db.put('songs', song);
-                    await this.db.put('songs', swapSong);
-                    await this.refreshCache();
-                    this.render();
+                    const temp = song.order; song.order = swapSong.order; swapSong.order = temp;
+                    await this.db.put('songs', song); await this.db.put('songs', swapSong);
+                    await this.refreshCache(); this.render();
                 }
             }
 
@@ -757,7 +809,6 @@
                 const s = this.cache.songs.find(x => x.id === this.state.songId);
                 if(s) {
                     await this.db.put('songs', s);
-                    // Feedback
                     const btn = document.getElementById('save-btn');
                     btn.textContent = 'Saved!';
                     setTimeout(() => btn.textContent = 'Save Changes', 2000);
@@ -767,41 +818,24 @@
             applyPresetStyle(styleId) {
                 const song = this.cache.songs.find(s => s.id === this.state.songId);
                 const style = this.cache.styles.find(s => s.id === styleId);
-                if (song && style) {
-                    song.customTags = [...style.tags];
-                    song.bpm = style.bpm;
-                    // Re-render only workstation to update builder
-                    this.render(); 
-                }
+                if (song && style) { song.customTags = [...style.tags]; song.bpm = style.bpm; this.render(); }
             }
 
             insertLyricTag(tag) {
                 const ta = document.getElementById('lyrics-editor');
-                const start = ta.selectionStart;
-                const end = ta.selectionEnd;
-                const txt = ta.value;
+                const start = ta.selectionStart; const end = ta.selectionEnd; const txt = ta.value;
                 ta.value = txt.substring(0, start) + (start > 0 && txt[start-1] !== '\n' ? '\n' : '') + tag + '\n' + txt.substring(end);
                 ta.focus();
-                // trigger update
                 const song = this.cache.songs.find(s => s.id === this.state.songId);
                 if(song) song.lyrics = ta.value;
             }
 
             // Style Manager Logic
-            editStyle(id) {
-                const style = this.cache.styles.find(s => s.id === id);
-                this.renderStyleEditor(style);
-            }
-            
-            createStyle() {
-                this.renderStyleEditor(null);
-            }
-
+            editStyle(id) { const style = this.cache.styles.find(s => s.id === id); this.renderStyleEditor(style); }
+            createStyle() { this.renderStyleEditor(null); }
             renderStyleEditor(style) {
                 const container = document.getElementById('style-editor-area');
-                const isNew = !style;
                 const tempData = style ? { ...style } : { id: generateID(), name: 'New Style', tags: [], bpm: 120 };
-
                 container.innerHTML = `
                     <div class="h-16 border-b border-slate-800 flex items-center px-6 justify-between bg-slate-950">
                         <input type="text" id="se-name" value="${tempData.name}" class="bg-transparent text-lg font-bold text-white border-b border-slate-700 focus:border-indigo-500 outline-none w-1/2">
@@ -809,42 +843,22 @@
                     </div>
                     <div class="flex-1 overflow-hidden flex flex-col p-4" id="se-builder"></div>
                 `;
-                
-                // Store temp ref for saving
                 this.tempStyle = tempData;
-                
-                this.renderTagBuilder(document.getElementById('se-builder'), tempData.tags, tempData.bpm, (tags, bpm) => {
-                    this.tempStyle.tags = tags;
-                    this.tempStyle.bpm = bpm;
-                });
-                
+                this.renderTagBuilder(document.getElementById('se-builder'), tempData.tags, tempData.bpm, (tags, bpm) => { this.tempStyle.tags = tags; this.tempStyle.bpm = bpm; });
                 document.getElementById('se-name').addEventListener('input', (e) => this.tempStyle.name = e.target.value);
             }
-
-            async saveStyleFromEditor(id) {
-                await this.db.put('styles', this.tempStyle);
-                await this.refreshCache();
-                this.render(); // Re-render style manager list
-            }
+            async saveStyleFromEditor(id) { await this.db.put('styles', this.tempStyle); await this.refreshCache(); this.render(); }
 
             // Clipboard
-            safeCopy(text) {
-                const el = document.getElementById('fallback-clipboard');
-                el.value = text; el.select(); document.execCommand('copy');
-            }
+            safeCopy(text) { const el = document.getElementById('fallback-clipboard'); el.value = text; el.select(); document.execCommand('copy'); }
             copyPrompt() {
                 const song = this.cache.songs.find(s => s.id === this.state.songId);
-                const tags = song.customTags || [];
-                const bpm = song.bpm ? `${song.bpm} bpm` : '';
+                const tags = song.customTags || []; const bpm = song.bpm ? `${song.bpm} bpm` : '';
                 this.safeCopy([...tags, bpm].join(', '));
                 const btn = document.getElementById('copy-prompt-btn');
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i> Copy Prompt', 2000);
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!'; setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i> Copy Prompt', 2000);
             }
-            copyLyrics() {
-                const song = this.cache.songs.find(s => s.id === this.state.songId);
-                this.safeCopy(song.lyrics);
-            }
+            copyLyrics() { const song = this.cache.songs.find(s => s.id === this.state.songId); this.safeCopy(song.lyrics); }
         }
 
         const app = new App();
