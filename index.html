@@ -212,11 +212,8 @@
                         });
                     } catch (e) {
                         console.error("Firebase Init Error", e);
-                        const msgEl = document.getElementById('auth-error-msg');
-                        if (msgEl) {
-                            msgEl.textContent = "Init Error: " + e.message;
-                            msgEl.classList.remove('hidden');
-                        }
+                        document.getElementById('auth-error-msg').textContent = "Init Error: " + e.message;
+                        document.getElementById('auth-error-msg').classList.remove('hidden');
                     }
                 }
 
@@ -225,10 +222,8 @@
                     try { await signInWithPopup(this.auth, new GoogleAuthProvider()); } 
                     catch (e) { 
                         const msg = document.getElementById('auth-error-msg');
-                        if (msg) {
-                            msg.textContent = "Login Failed: " + e.message;
-                            msg.classList.remove('hidden');
-                        }
+                        msg.textContent = "Login Failed: " + e.message;
+                        msg.classList.remove('hidden');
                         this.app.showAuthStep('login');
                     }
                 }
@@ -297,28 +292,16 @@
 
                 // Auth
                 showAuthStep(s) {
-                    const authScreen = document.getElementById('auth-screen');
-                    const loading = document.getElementById('step-loading');
-                    const login = document.getElementById('step-login');
-                    
-                    if (authScreen && loading && login) {
-                        authScreen.classList.remove('hidden');
-                        loading.classList.toggle('hidden', s !== 'loading');
-                        login.classList.toggle('hidden', s !== 'login');
-                    }
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                    document.getElementById('step-loading').classList.toggle('hidden', s !== 'loading');
+                    document.getElementById('step-login').classList.toggle('hidden', s !== 'login');
                 }
                 async onLoginSuccess(user) {
-                    const authScreen = document.getElementById('auth-screen');
-                    const appContainer = document.getElementById('app-container');
-                    const userEmail = document.getElementById('user-email');
-
-                    if (authScreen && appContainer && userEmail) {
-                        authScreen.classList.add('hidden');
-                        appContainer.classList.remove('hidden');
-                        userEmail.textContent = user.email;
-                        await this.refreshCache();
-                        this.navigate('artists');
-                    }
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                    document.getElementById('user-email').textContent = user.email;
+                    await this.refreshCache();
+                    this.navigate('artists');
                 }
                 signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
                 signOut() { this.db.logout(); }
@@ -347,10 +330,10 @@
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                     const map = { artists: 'nav-artists', artist: 'nav-artists', album: 'nav-artists', workstation: 'nav-artists', library: 'nav-library', styles: 'nav-styles', settings: 'nav-settings' };
                     const id = Object.keys(map).find(k => this.state.view.includes(k));
-                    if(id) document.getElementById(map[id])?.classList.add('active');
+                    if(id) document.getElementById(map[id]).classList.add('active');
                     
                     const ctx = document.getElementById('sidebar-context');
-                    if(this.state.artistId && ctx) {
+                    if(this.state.artistId) {
                         ctx.classList.remove('hidden');
                         const art = this.cache.artists.find(a => a.id === this.state.artistId);
                         const alb = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
@@ -358,7 +341,7 @@
                         document.getElementById('ctx-artist').textContent = art ? art.name : '';
                         document.getElementById('ctx-album').textContent = alb ? alb.title : '';
                         document.getElementById('ctx-song').textContent = sng ? sng.title : '';
-                    } else if (ctx) ctx.classList.add('hidden');
+                    } else ctx.classList.add('hidden');
                 }
 
                 render() {
