@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v6.6</title>
+    <title>Suno Engineer's Companion v6.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
             <div class="p-5 border-b border-slate-800">
                 <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
-                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.6</span>
+                    <i class="fa-solid fa-wave-square"></i> Sonic Shift (v6.7) <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.7</span>
                 </h1>
             </div>
             
@@ -96,7 +96,7 @@
             <div class="mb-8">
                 <i class="fa-solid fa-wave-square text-5xl text-indigo-500 mb-4"></i>
                 <h1 class="text-3xl font-bold text-white mb-2">Sonic Shift</h1>
-                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music v6.6</p>
+                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music v6.7</p>
             </div>
 
             <!-- Login Button -->
@@ -382,7 +382,10 @@
                     this.saveStyleFromEditor = this.saveStyleFromEditor.bind(this);
                     this.handleImport = this.handleImport.bind(this);
                     this.downloadBackup = this.downloadBackup.bind(this);
-                    
+                    this.saveCurrentStyleToLibrary = this.saveCurrentStyleToLibrary.bind(this);
+                    this.openImportModal = this.openImportModal.bind(this);
+                    this.processImport = this.processImport.bind(this);
+
                     this.db.init(); 
                 }
 
@@ -494,7 +497,12 @@
                     let activeTags = song.customTags || [], activeBpm = song.bpm || 120, currentRating = song.rating || 0, currentMixTags = song.mixTags || [];
                     const isLyrics = this.state.wsTab === 'lyrics';
                     const audioUrl = song.audioBlob ? URL.createObjectURL(song.audioBlob) : null;
-                    container.innerHTML = `<div class="flex h-full fade-in"><div class="flex-1 flex flex-col border-r border-slate-800 min-w-[50%]"><div class="border-b border-slate-800 bg-slate-950 px-4 py-2 shrink-0"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-4 text-sm"><button onclick="app.navigate('album-detail', {albumId: '${album.id}'})" class="text-slate-500 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button><div class="flex gap-4 ml-2"><button onclick="app.setWsTab('lyrics')" class="tab-btn pb-3 ${isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Lyrics</button><button onclick="app.setWsTab('notes')" class="tab-btn pb-3 ${!isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Production Report</button></div></div><div class="flex gap-1 ${!isLyrics ? 'invisible' : ''}">${['Intro','Verse','Chorus','Bridge','Outro'].map(t => `<button onclick="app.insertLyricTag('[${t}]')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] rounded border border-slate-700 text-slate-300 transition-colors">[${t}]</button>`).join('')}</div></div><div class="flex items-center gap-3 bg-slate-900 rounded p-2 border border-slate-800">${audioUrl ? `<audio controls src="${audioUrl}" class="flex-1"></audio><button onclick="app.triggerAudioUpload('${song.id}')" class="text-[10px] text-slate-500 hover:text-white whitespace-nowrap"><i class="fa-solid fa-rotate mr-1"></i> Replace</button>` : `<button onclick="app.triggerAudioUpload('${song.id}')" class="w-full text-center py-1 text-xs text-indigo-400 hover:text-white border border-dashed border-indigo-900/50 hover:border-indigo-500 rounded transition-colors"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> Upload Audio File (MP3/WAV)</button>`}</div></div><div class="flex-1 bg-slate-900 relative"><textarea id="lyrics-editor" class="absolute inset-0 w-full h-full bg-slate-900 p-6 text-slate-200 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors ${!isLyrics ? 'hidden' : ''}" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea><div id="prod-report" class="absolute inset-0 w-full h-full bg-slate-900 p-6 overflow-y-auto ${isLyrics ? 'hidden' : ''}"><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Final Rating</label><div class="flex gap-1 text-2xl text-slate-600 cursor-pointer" id="rating-stars">${[1,2,3,4,5].map(i => `<span class="${i <= currentRating ? 'text-yellow-500' : 'hover:text-yellow-400'}" onclick="app.setRating(${i})">★</span>`).join('')}</div></div><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Mix Issues</label><div class="flex flex-wrap gap-2">${MIX_TAGS.map(tag => { const isActive = currentMixTags.includes(tag); return `<button onclick="app.toggleMixTag('${tag}')" class="text-xs px-3 py-1.5 rounded border transition-all ${isActive ? 'bg-red-900/40 border-red-500 text-red-200' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}">${tag}</button>`; }).join('')}</div></div><div class="flex-1 h-full min-h-[200px]"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Notes</label><textarea id="notes-editor" class="w-full h-64 bg-slate-800/50 border border-slate-700 rounded p-4 text-indigo-100 font-mono text-sm resize-none focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Log details...">${song.notes || ''}</textarea></div></div></div><div class="p-3 border-t border-slate-800 bg-slate-950 flex justify-between"><button onclick="app.saveWorkstation()" id="save-btn" class="text-xs font-bold text-indigo-400 hover:text-white transition-colors">Save Changes</button><div class="flex gap-3"><button onclick="app.deleteSong('${song.id}')" class="text-xs text-red-900 hover:text-red-500"><i class="fa-solid fa-trash"></i> Delete Song</button><button onclick="app.copyLyrics()" class="text-xs text-slate-500 hover:text-white"><i class="fa-regular fa-copy"></i> Copy Lyrics</button></div></div></div><div class="w-[450px] flex flex-col bg-slate-900"><div class="p-4 bg-slate-950 border-b border-slate-800 shrink-0"><div class="flex justify-between items-end mb-2"><label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Active Prompt</label><span class="text-[10px] text-slate-500 italic">Right-click tags to annotate</span></div><div id="active-prompt-display" class="bg-slate-900 border border-slate-800 rounded p-3 text-sm text-indigo-300 font-medium mb-3 min-h-[3rem]"></div><div class="flex gap-2"><button onclick="app.copyPrompt()" id="copy-prompt-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded text-xs font-bold shadow-lg transition-colors"><i class="fa-regular fa-copy mr-1"></i> Copy Prompt</button><select id="style-preset-select" onchange="app.applyPresetStyle(this.value)" class="bg-slate-800 text-xs text-white border border-slate-700 rounded px-2 outline-none w-1/3"><option value="">-- Load Preset --</option>${this.cache.styles.map(st => `<option value="${st.id}">${st.name}</option>`).join('')}</select></div></div><div class="flex-1 overflow-hidden flex flex-col" id="style-builder-container"></div></div></div>`;
+                    container.innerHTML = `<div class="flex h-full fade-in"><div class="flex-1 flex flex-col border-r border-slate-800 min-w-[50%]"><div class="border-b border-slate-800 bg-slate-950 px-4 py-2 shrink-0"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-4 text-sm"><button onclick="app.navigate('album-detail', {albumId: '${album.id}'})" class="text-slate-500 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button><div class="flex gap-4 ml-2"><button onclick="app.setWsTab('lyrics')" class="tab-btn pb-3 ${isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Lyrics</button><button onclick="app.setWsTab('notes')" class="tab-btn pb-3 ${!isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Production Report</button></div></div><div class="flex gap-1 ${!isLyrics ? 'invisible' : ''}">${['Intro','Verse','Chorus','Bridge','Outro'].map(t => `<button onclick="app.insertLyricTag('[${t}]')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] rounded border border-slate-700 text-slate-300 transition-colors">[${t}]</button>`).join('')}</div></div><div class="flex items-center gap-3 bg-slate-900 rounded p-2 border border-slate-800">${audioUrl ? `<audio controls src="${audioUrl}" class="flex-1"></audio><button onclick="app.triggerAudioUpload('${song.id}')" class="text-[10px] text-slate-500 hover:text-white whitespace-nowrap"><i class="fa-solid fa-rotate mr-1"></i> Replace</button>` : `<button onclick="app.triggerAudioUpload('${song.id}')" class="w-full text-center py-1 text-xs text-indigo-400 hover:text-white border border-dashed border-indigo-900/50 hover:border-indigo-500 rounded transition-colors"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> Upload Audio File (MP3/WAV)</button>`}</div></div><div class="flex-1 bg-slate-900 relative"><textarea id="lyrics-editor" class="absolute inset-0 w-full h-full bg-slate-900 p-6 text-slate-200 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors ${!isLyrics ? 'hidden' : ''}" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea><div id="prod-report" class="absolute inset-0 w-full h-full bg-slate-900 p-6 overflow-y-auto ${isLyrics ? 'hidden' : ''}"><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Final Rating</label><div class="flex gap-1 text-2xl text-slate-600 cursor-pointer" id="rating-stars">${[1,2,3,4,5].map(i => `<span class="${i <= currentRating ? 'text-yellow-500' : 'hover:text-yellow-400'}" onclick="app.setRating(${i})">★</span>`).join('')}</div></div><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Mix Issues</label><div class="flex flex-wrap gap-2">${MIX_TAGS.map(tag => { const isActive = currentMixTags.includes(tag); return `<button onclick="app.toggleMixTag('${tag}')" class="text-xs px-3 py-1.5 rounded border transition-all ${isActive ? 'bg-red-900/40 border-red-500 text-red-200' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}">${tag}</button>`; }).join('')}</div></div><div class="flex-1 h-full min-h-[200px]"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Notes</label><textarea id="notes-editor" class="w-full h-64 bg-slate-800/50 border border-slate-700 rounded p-4 text-indigo-100 font-mono text-sm resize-none focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Log details...">${song.notes || ''}</textarea></div></div></div><div class="p-3 border-t border-slate-800 bg-slate-950 flex justify-between"><button onclick="app.saveWorkstation()" id="save-btn" class="text-xs font-bold text-indigo-400 hover:text-white transition-colors">Save Changes</button><div class="flex gap-3"><button onclick="app.deleteSong('${song.id}')" class="text-xs text-red-900 hover:text-red-500"><i class="fa-solid fa-trash"></i> Delete Song</button><button onclick="app.copyLyrics()" class="text-xs text-slate-500 hover:text-white"><i class="fa-regular fa-copy"></i> Copy Lyrics</button></div></div></div><div class="w-[450px] flex flex-col bg-slate-900"><div class="p-4 bg-slate-950 border-b border-slate-800 shrink-0"><div class="flex justify-between items-end mb-2"><label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Active Prompt</label><span class="text-[10px] text-slate-500 italic">Right-click tags to annotate</span></div><div id="active-prompt-display" class="bg-slate-900 border border-slate-800 rounded p-3 text-sm text-indigo-300 font-medium mb-3 min-h-[3rem]"></div><div class="flex gap-2"><button onclick="app.copyPrompt()" id="copy-prompt-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded text-xs font-bold shadow-lg transition-colors"><i class="fa-regular fa-copy mr-1"></i> Copy Prompt</button><select id="style-preset-select" onchange="app.applyPresetStyle(this.value)" class="bg-slate-800 text-xs text-white border border-slate-700 rounded px-2 outline-none w-1/3"><option value="">-- Load Preset --</option>${this.cache.styles.map(st => `<option value="${st.id}">${st.name}</option>`).join('')}</select></div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="app.saveCurrentStyleToLibrary()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded text-xs font-bold shadow transition-colors"><i class="fa-solid fa-bookmark mr-1"></i> Save as Style</button>
+                        <button onclick="app.openImportModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded text-xs font-bold shadow transition-colors"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Magic Import</button>
+                    </div>
+                    </div><div class="flex-1 overflow-hidden flex flex-col" id="style-builder-container"></div></div></div>`;
                     this.renderTagBuilder(document.getElementById('style-builder-container'), activeTags, activeBpm, (tags, bpm) => { song.customTags = tags; song.bpm = bpm; this.updatePromptDisplay(tags, bpm); });
                     const lEditor = document.getElementById('lyrics-editor'); if(lEditor) lEditor.addEventListener('input', (e) => { song.lyrics = e.target.value; });
                     const nEditor = document.getElementById('notes-editor'); if(nEditor) nEditor.addEventListener('input', (e) => { song.notes = e.target.value; });
@@ -527,6 +535,88 @@
                 async downloadBackup() { const json = await this.db.exportAll(); const blob = new Blob([json], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'backup.json'; a.click(); }
                 handleImport(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (e) => { const text = e.target.result; const success = await this.db.importData(text); if(success) { alert('Data imported successfully!'); await this.refreshCache(); } else { alert('Failed to import data. Check file format.'); } }; reader.readAsText(file); }
                 
+                // New Methods for v6.7 features
+                openImportModal() {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Magic Import Tags';
+                    document.getElementById('modal-content').innerHTML = `
+                        <textarea id="import-text" class="w-full h-40 bg-slate-800 border border-slate-700 rounded p-3 text-white text-xs font-mono" placeholder='Paste JSON from Suno (e.g. {"genre": "...", "style_tags": "..."}) or a comma-separated list of tags here...'></textarea>
+                    `;
+                    modal.classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').onclick = () => {
+                        const text = document.getElementById('import-text').value;
+                        this.processImport(text);
+                        this.closeModal();
+                    };
+                }
+
+                processImport(input) {
+                    let tags = [];
+                    let remainingInput = input;
+                    // Extract JSON objects
+                    const jsonRegex = /\{[^}]+\}/g;
+                    const jsonMatches = input.match(jsonRegex);
+                    if (jsonMatches) {
+                        jsonMatches.forEach(jsonStr => {
+                            try {
+                                const obj = JSON.parse(jsonStr);
+                                Object.values(obj).forEach(val => {
+                                    if (typeof val === 'string') {
+                                        tags.push(...val.split(',').map(s => s.trim()));
+                                    }
+                                });
+                                remainingInput = remainingInput.replace(jsonStr, '');
+                            } catch (e) { console.log("JSON parse error", e); }
+                        });
+                    }
+                    // Process remaining text
+                    const rawTags = remainingInput.split(/[,\n]/).map(s => s.trim()).filter(s => s && !s.match(/^[{}]/));
+                    tags.push(...rawTags);
+                    
+                    // Update current song
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (song) {
+                        // Merge unique
+                        const existing = new Set(song.customTags || []);
+                        tags.forEach(t => existing.add(t));
+                        song.customTags = [...existing];
+                        this.db.put('songs', song).then(() => {
+                            this.render(); // Re-render workstation
+                        });
+                    }
+                }
+
+                saveCurrentStyleToLibrary() {
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (!song) return;
+                    
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Save Style to Library';
+                    document.getElementById('modal-content').innerHTML = `
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Style Name</label>
+                        <input type="text" id="new-style-name" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white" placeholder="e.g., Atmospheric Techno">
+                    `;
+                    modal.classList.remove('hidden');
+                    
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const name = document.getElementById('new-style-name').value.trim();
+                        if (!name) return alert("Name required");
+                        
+                        const style = {
+                            id: generateID(),
+                            name: name,
+                            tags: song.customTags || [],
+                            bpm: song.bpm || 120,
+                            createdAt: Date.now()
+                        };
+                        
+                        await this.db.put('styles', style);
+                        await this.refreshCache();
+                        this.closeModal();
+                        alert("Style saved!");
+                    };
+                }
+
                 // Helper Methods
                 renderTagBuilder(container, initialTags, initialBpm, onChange) {
                     let activeCat = Object.keys(TAG_LIBRARY)[0]; let tags = [...initialTags]; let bpm = initialBpm;
