@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v7.0</title>
+    <title>Suno Engineer's Companion v7.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
             <div class="w-8 h-8 bg-sky-500 rounded flex items-center justify-center text-white font-bold"><i class="fa-solid fa-wave-square"></i></div>
             <div>
                 <h1 class="font-bold text-sm text-white tracking-tight leading-tight">Sonic Shift</h1>
-                <div class="text-[10px] text-zinc-500 font-mono">ENGINEER v7.0</div>
+                <div class="text-[10px] text-zinc-500 font-mono">ENGINEER v7.1</div>
             </div>
         </div>
         
@@ -212,8 +212,11 @@
                         });
                     } catch (e) {
                         console.error("Firebase Init Error", e);
-                        document.getElementById('auth-error-msg').textContent = "Init Error: " + e.message;
-                        document.getElementById('auth-error-msg').classList.remove('hidden');
+                        const msgEl = document.getElementById('auth-error-msg');
+                        if (msgEl) {
+                            msgEl.textContent = "Init Error: " + e.message;
+                            msgEl.classList.remove('hidden');
+                        }
                     }
                 }
 
@@ -222,8 +225,10 @@
                     try { await signInWithPopup(this.auth, new GoogleAuthProvider()); } 
                     catch (e) { 
                         const msg = document.getElementById('auth-error-msg');
-                        msg.textContent = "Login Failed: " + e.message;
-                        msg.classList.remove('hidden');
+                        if (msg) {
+                            msg.textContent = "Login Failed: " + e.message;
+                            msg.classList.remove('hidden');
+                        }
                         this.app.showAuthStep('login');
                     }
                 }
@@ -292,16 +297,28 @@
 
                 // Auth
                 showAuthStep(s) {
-                    document.getElementById('auth-screen').classList.remove('hidden');
-                    document.getElementById('step-loading').classList.toggle('hidden', s !== 'loading');
-                    document.getElementById('step-login').classList.toggle('hidden', s !== 'login');
+                    const authScreen = document.getElementById('auth-screen');
+                    const loading = document.getElementById('step-loading');
+                    const login = document.getElementById('step-login');
+                    
+                    if (authScreen && loading && login) {
+                        authScreen.classList.remove('hidden');
+                        loading.classList.toggle('hidden', s !== 'loading');
+                        login.classList.toggle('hidden', s !== 'login');
+                    }
                 }
                 async onLoginSuccess(user) {
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app-container').classList.remove('hidden');
-                    document.getElementById('user-email').textContent = user.email;
-                    await this.refreshCache();
-                    this.navigate('artists');
+                    const authScreen = document.getElementById('auth-screen');
+                    const appContainer = document.getElementById('app-container');
+                    const userEmail = document.getElementById('user-email');
+
+                    if (authScreen && appContainer && userEmail) {
+                        authScreen.classList.add('hidden');
+                        appContainer.classList.remove('hidden');
+                        userEmail.textContent = user.email;
+                        await this.refreshCache();
+                        this.navigate('artists');
+                    }
                 }
                 signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
                 signOut() { this.db.logout(); }
@@ -330,10 +347,10 @@
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                     const map = { artists: 'nav-artists', artist: 'nav-artists', album: 'nav-artists', workstation: 'nav-artists', library: 'nav-library', styles: 'nav-styles', settings: 'nav-settings' };
                     const id = Object.keys(map).find(k => this.state.view.includes(k));
-                    if(id) document.getElementById(map[id]).classList.add('active');
+                    if(id) document.getElementById(map[id])?.classList.add('active');
                     
                     const ctx = document.getElementById('sidebar-context');
-                    if(this.state.artistId) {
+                    if(this.state.artistId && ctx) {
                         ctx.classList.remove('hidden');
                         const art = this.cache.artists.find(a => a.id === this.state.artistId);
                         const alb = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
@@ -341,7 +358,7 @@
                         document.getElementById('ctx-artist').textContent = art ? art.name : '';
                         document.getElementById('ctx-album').textContent = alb ? alb.title : '';
                         document.getElementById('ctx-song').textContent = sng ? sng.title : '';
-                    } else ctx.classList.add('hidden');
+                    } else if (ctx) ctx.classList.add('hidden');
                 }
 
                 render() {
