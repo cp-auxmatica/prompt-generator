@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v6.3</title>
+    <title>Suno Engineer's Companion v6.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
             <div class="p-5 border-b border-slate-800">
                 <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
-                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.3</span>
+                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.4</span>
                 </h1>
             </div>
             
@@ -158,7 +158,7 @@
                     this.user = null;
                     this.idb = null;
                     
-                    // USER PROVIDED CONFIG
+                    // Explicit Firebase Configuration provided by user
                     this.config = {
                         apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo",
                         authDomain: "ai-audio-engineer.firebaseapp.com",
@@ -199,6 +199,10 @@
                 }
 
                 async loginGoogle() {
+                    if (!this.auth) {
+                        console.error("Auth not initialized");
+                        return;
+                    }
                     const provider = new GoogleAuthProvider();
                     try {
                         await signInWithPopup(this.auth, provider);
@@ -213,8 +217,10 @@
                 }
 
                 async logout() {
-                    await signOut(this.auth);
-                    window.location.reload();
+                    if (this.auth) {
+                        await signOut(this.auth);
+                        window.location.reload();
+                    }
                 }
 
                 // IDB for huge files
@@ -229,27 +235,35 @@
 
                 // Firestore Helpers
                 async getCollection(name) {
+                    // Remove readyPromise wait, rely on user being set
+                    if (!this.user) throw new Error("Not authenticated");
                     return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name);
                 }
                 async getDoc(name, id) {
+                    if (!this.user) throw new Error("Not authenticated");
                     return doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, name, id);
                 }
 
                 // CRUD
                 async getAll(storeName) {
                     if (!this.user) return [];
-                    const col = await this.getCollection(storeName);
-                    const snap = await getDocs(col);
-                    const items = snap.docs.map(d => d.data());
-                    
-                    if (storeName === 'songs' || storeName === 'albums') {
-                        // Merge blobs
-                        return await Promise.all(items.map(async (item) => {
-                            const blob = await this.getBlob(item.id);
-                            return blob ? { ...item, ...blob } : item;
-                        }));
+                    try {
+                        const col = await this.getCollection(storeName);
+                        const snap = await getDocs(col);
+                        const items = snap.docs.map(d => d.data());
+                        
+                        if (storeName === 'songs' || storeName === 'albums') {
+                            // Merge blobs
+                            return await Promise.all(items.map(async (item) => {
+                                const blob = await this.getBlob(item.id);
+                                return blob ? { ...item, ...blob } : item;
+                            }));
+                        }
+                        return items;
+                    } catch (e) {
+                        console.error("Fetch Error", e);
+                        return [];
                     }
-                    return items;
                 }
 
                 async put(storeName, item) {
@@ -364,6 +378,9 @@
                 signOut() { this.db.logout(); }
 
                 async refreshCache() {
+                    // Only fetch if user is logged in to avoid permission errors
+                    if (!this.db.user) return;
+                    
                     this.cache.artists = await this.db.getAll('artists');
                     this.cache.albums = await this.db.getAll('albums');
                     this.cache.songs = await this.db.getAll('songs');
