@@ -310,14 +310,12 @@
             // --- 3. Main App ---
             class App {
                 constructor() {
-                    // Make App global immediately
                     window.app = this;
-                    
                     this.db = new DB(this);
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                     
-                    // Bindings - Only present methods
+                    // Correctly bound methods
                     this.navigate = this.navigate.bind(this);
                     this.signIn = this.signIn.bind(this);
                     this.signOut = this.signOut.bind(this);
@@ -330,7 +328,7 @@
                     this.handleImport = this.handleImport.bind(this);
                     this.downloadBackup = this.downloadBackup.bind(this);
                     
-                    this.db.init(); // Start DB init which triggers Auth UI logic
+                    this.db.init(); 
                 }
 
                 // --- Auth UI Logic ---
