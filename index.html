@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v6.1</title>
+    <title>Suno Engineer's Companion v6.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
             <div class="p-5 border-b border-slate-800">
                 <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
-                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.1</span>
+                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.2</span>
                 </h1>
             </div>
             
@@ -157,7 +157,7 @@
                     this.user = null;
                     this.idb = null;
                     
-                    // USER PROVIDED CONFIG
+                    // USER PROVIDED CONFIG - Hardcoded for Cloud-First
                     this.config = {
                         apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo",
                         authDomain: "ai-audio-engineer.firebaseapp.com",
@@ -310,11 +310,14 @@
             // --- 3. Main App ---
             class App {
                 constructor() {
+                    // Make App global immediately
+                    window.app = this;
+                    
                     this.db = new DB(this);
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                     
-                    // Bindings
+                    // Bindings - Only present methods
                     this.navigate = this.navigate.bind(this);
                     this.signIn = this.signIn.bind(this);
                     this.signOut = this.signOut.bind(this);
@@ -324,8 +327,9 @@
                     this.editStyle = this.editStyle.bind(this);
                     this.createStyle = this.createStyle.bind(this);
                     this.saveStyleFromEditor = this.saveStyleFromEditor.bind(this);
+                    this.handleImport = this.handleImport.bind(this);
+                    this.downloadBackup = this.downloadBackup.bind(this);
                     
-                    window.app = this;
                     this.db.init(); // Start DB init which triggers Auth UI logic
                 }
 
