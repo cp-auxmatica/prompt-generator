@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v6.4</title>
+    <title>Suno Engineer's Companion v6.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
             <div class="p-5 border-b border-slate-800">
                 <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
-                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.4</span>
+                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.5</span>
                 </h1>
             </div>
             
@@ -96,7 +96,7 @@
             <div class="mb-8">
                 <i class="fa-solid fa-wave-square text-5xl text-indigo-500 mb-4"></i>
                 <h1 class="text-3xl font-bold text-white mb-2">Sonic Shift</h1>
-                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music - v6.4</p>
+                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music v6.5</p>
             </div>
 
             <!-- Login Button -->
@@ -341,18 +341,16 @@
             // --- 3. Main App ---
             class App {
                 constructor() {
+                    // Make App global immediately
                     window.app = this;
+                    
                     this.db = new DB(this);
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                     
-                    // Bindings - removed problematic ones
-                    this.navigate = this.navigate.bind(this);
-                    this.signIn = this.signIn.bind(this);
-                    this.signOut = this.signOut.bind(this);
-                    this.editStyle = this.editStyle.bind(this);
-                    this.createStyle = this.createStyle.bind(this);
-                    this.saveStyleFromEditor = this.saveStyleFromEditor.bind(this);
+                    // Bindings - removed problematic bindings
+                    // Removed: this.handleImport = this.handleImport.bind(this);
+                    // Removed: this.downloadBackup = this.downloadBackup.bind(this);
                     
                     this.db.init(); 
                 }
@@ -447,7 +445,7 @@
                     const artist = this.cache.artists.find(a => a.id === this.state.artistId); if (!artist) return this.navigate('artists');
                     const albums = this.cache.albums.filter(a => a.artistId === artist.id).sort((a,b) => b.year - a.year);
                     const styleName = this.getStyleName(artist.defaultStyleId);
-                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="h-48 bg-gradient-to-r from-slate-900 to-indigo-950 border-b border-slate-800 p-8 flex flex-col justify-end relative shrink-0"><button onclick="app.navigate('artists')" class="absolute top-6 left-6 text-slate-400 hover:text-white mb-4 flex items-center gap-2 text-sm font-medium transition-colors"><i class="fa-solid fa-arrow-left"></i> Back to Artists</button><h1 class="text-4xl font-bold text-white mb-2">${artist.name}</h1><div class="flex items-center gap-6 text-sm text-slate-300"><span class="bg-slate-800/50 px-2 py-1 rounded border border-slate-700">${artist.genre || 'No Genre'}</span><span class="flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-400"></i> Base Style: ${styleName}</span></div></div><div class="flex-1 flex min-h-0"><div class="flex-1 overflow-y-auto p-8 bg-slate-900 border-r border-slate-800"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white">Discography</h3><button onclick="app.modalAddAlbum('${artist.id}')" class="text-sm bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded border border-slate-700 transition-colors"><i class="fa-solid fa-plus mr-1"></i> Add Album</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${albums.map(al => { let imgUrl = al.artworkBlob ? URL.createObjectURL(al.artworkBlob) : null; return `<div onclick="app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-slate-950 border border-slate-800 p-4 rounded-lg hover:border-indigo-500/50 cursor-pointer group transition-all relative"><div class="aspect-square bg-slate-900 rounded mb-3 flex items-center justify-center text-slate-700 group-hover:text-slate-600 overflow-hidden">${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-music text-4xl"></i>`}</div><div class="font-bold text-white truncate">${al.title}</div><div class="text-xs text-slate-500">${al.year} • ${this.getSongCount(al.id)} Songs</div></div>`; }).join('')}</div></div><div class="w-[400px] flex flex-col bg-slate-950/50"><div class="p-4 border-b border-slate-800 bg-slate-950"><h3 class="text-sm font-bold text-slate-400 uppercase tracking-wide">Engineer's Log: Artist Profile</h3></div><div class="flex-1 p-4"><textarea id="artist-notes" class="w-full h-full bg-slate-900/50 border border-slate-800 rounded p-4 text-sm text-slate-300 font-mono resize-none outline-none focus:border-indigo-500 transition-colors" placeholder="Track vocal chain settings...">${artist.notes || ''}</textarea></div><div class="p-4 border-t border-slate-800"><button onclick="app.saveArtistNotes('${artist.id}')" id="save-artist-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold py-2 rounded transition-colors">Save Notes</button></div></div></div></div>`;
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="h-48 bg-gradient-to-r from-slate-900 to-indigo-950 border-b border-slate-800 p-8 flex flex-col justify-end relative shrink-0"><button onclick="app.navigate('artists')" class="absolute top-6 left-6 text-slate-400 hover:text-white mb-4 flex items-center gap-2 text-sm font-medium transition-colors"><i class="fa-solid fa-arrow-left"></i> Back to Artists</button><h1 class="text-4xl font-bold text-white mb-2">${artist.name}</h1><div class="flex items-center gap-6 text-sm text-slate-300"><span class="bg-slate-800/50 px-2 py-1 rounded border border-slate-700">${artist.genre || 'No Genre'}</span><span class="flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-400"></i> Base Style: ${styleName}</span></div></div><div class="flex-1 flex min-h-0"><div class="flex-1 overflow-y-auto p-8 bg-slate-900 border-r border-slate-800"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white">Discography</h3><button onclick="app.modalAddAlbum('${artist.id}')" class="text-sm bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded border border-slate-700 transition-colors"><i class="fa-solid fa-plus mr-1"></i> Add Album</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${albums.map(al => { let imgUrl = al.artworkBlob ? URL.createObjectURL(al.artworkBlob) : null; return `<div onclick="app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-slate-950 border border-slate-800 p-4 rounded-lg hover:border-indigo-500/50 cursor-pointer group transition-all relative"><div class="aspect-square bg-slate-900 rounded mb-3 flex items-center justify-center text-slate-700 group-hover:text-slate-600 overflow-hidden">${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-music text-4xl"></i>`}</div><div class="font-bold text-white truncate">${al.title}</div><div class="text-xs text-slate-500">${al.year} • ${this.getSongCount(al.id)} Songs</div></div>`; }).join('')}</div></div><div class="w-[400px] flex flex-col bg-slate-900/50"><div class="p-4 border-b border-slate-800 bg-slate-950"><h3 class="text-sm font-bold text-slate-400 uppercase tracking-wide">Engineer's Log: Artist Profile</h3></div><div class="flex-1 p-4"><textarea id="artist-notes" class="w-full h-full bg-slate-900/50 border border-slate-800 rounded p-4 text-sm text-slate-300 font-mono resize-none outline-none focus:border-indigo-500 transition-colors" placeholder="Track vocal chain settings...">${artist.notes || ''}</textarea></div><div class="p-4 border-t border-slate-800"><button onclick="app.saveArtistNotes('${artist.id}')" id="save-artist-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold py-2 rounded transition-colors">Save Notes</button></div></div></div></div>`;
                 }
 
                 renderAlbumDetail(container) {
