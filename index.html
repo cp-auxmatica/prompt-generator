@@ -95,8 +95,8 @@
         <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 text-center fade-in">
             <div class="mb-8">
                 <i class="fa-solid fa-wave-square text-5xl text-indigo-500 mb-4"></i>
-                <h1 class="text-3xl font-bold text-white mb-2">Sonic Shift</h1>
-                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music v6.5</p>
+                <h1 class="text-3xl font-bold text-white mb-2">Sonic Shiftv6.5</h1>
+                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music</p>
             </div>
 
             <!-- Login Button -->
@@ -348,9 +348,7 @@
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                     
-                    // Bindings - removed problematic bindings
-                    // Removed: this.handleImport = this.handleImport.bind(this);
-                    // Removed: this.downloadBackup = this.downloadBackup.bind(this);
+                    // Removed invalid bindings
                     
                     this.db.init(); 
                 }
