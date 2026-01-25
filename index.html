@@ -96,7 +96,7 @@
             <div class="mb-8">
                 <i class="fa-solid fa-wave-square text-5xl text-indigo-500 mb-4"></i>
                 <h1 class="text-3xl font-bold text-white mb-2">Sonic Shift</h1>
-                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music</p>
+                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music - v6.4</p>
             </div>
 
             <!-- Login Button -->
@@ -346,16 +346,10 @@
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
                     
-                    // Bindings - REMOVED problematic bindings
-                    // this.handleImport = this.handleImport.bind(this);
-                    // this.downloadBackup = this.downloadBackup.bind(this);
-                    
+                    // Bindings - removed problematic ones
                     this.navigate = this.navigate.bind(this);
                     this.signIn = this.signIn.bind(this);
                     this.signOut = this.signOut.bind(this);
-                    this.modalAddArtist = this.modalAddArtist.bind(this);
-                    this.modalAddAlbum = this.modalAddAlbum.bind(this);
-                    this.modalAddSong = this.modalAddSong.bind(this);
                     this.editStyle = this.editStyle.bind(this);
                     this.createStyle = this.createStyle.bind(this);
                     this.saveStyleFromEditor = this.saveStyleFromEditor.bind(this);
@@ -539,6 +533,149 @@
                     document.getElementById('se-name').addEventListener('input', (e) => this.tempStyle.name = e.target.value);
                 }
                 async saveStyleFromEditor(id) { await this.db.put('styles', this.tempStyle); await this.refreshCache(); this.render(); }
+
+                // --- ADDING MISSING METHODS TO FIX BIND ERRORS ---
+                
+                modalAddArtist() {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Create New Artist';
+                    document.getElementById('modal-content').innerHTML = `
+                        <input type="text" id="new-artist-name" placeholder="Artist Name" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white mb-3">
+                        <input type="text" id="new-artist-genre" placeholder="Genre (optional)" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white">
+                    `;
+                    modal.classList.remove('hidden');
+                    
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const name = document.getElementById('new-artist-name').value.trim();
+                        if (!name) return alert('Name required');
+                        
+                        const artist = {
+                            id: generateID(),
+                            name,
+                            genre: document.getElementById('new-artist-genre').value.trim(),
+                            defaultStyleId: null,
+                            notes: '',
+                            createdAt: Date.now()
+                        };
+                        
+                        await this.db.put('artists', artist);
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('artist-detail', { artistId: artist.id });
+                    };
+                }
+
+                modalAddAlbum(artistId) {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Create New Album';
+                    document.getElementById('modal-content').innerHTML = `
+                        <input type="text" id="new-album-title" placeholder="Album Title" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white mb-3">
+                        <input type="number" id="new-album-year" placeholder="Year" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white">
+                    `;
+                    modal.classList.remove('hidden');
+                    
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const title = document.getElementById('new-album-title').value.trim();
+                        if (!title) return alert('Title required');
+                        
+                        const album = {
+                            id: generateID(),
+                            artistId,
+                            title,
+                            year: parseInt(document.getElementById('new-album-year').value) || new Date().getFullYear(),
+                            defaultStyleId: null,
+                            notes: '',
+                            createdAt: Date.now()
+                        };
+                        
+                        await this.db.put('albums', album);
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('album-detail', { albumId: album.id });
+                    };
+                }
+
+                modalAddSong(albumId) {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Create New Song';
+                    document.getElementById('modal-content').innerHTML = `
+                        <input type="text" id="new-song-title" placeholder="Song Title" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white">
+                    `;
+                    modal.classList.remove('hidden');
+                    
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const title = document.getElementById('new-song-title').value.trim();
+                        if (!title) return alert('Title required');
+                        
+                        const songs = this.cache.songs.filter(s => s.albumId === albumId);
+                        const maxOrder = songs.length > 0 ? Math.max(...songs.map(s => s.order || 0)) : 0;
+                        
+                        const song = {
+                            id: generateID(),
+                            albumId,
+                            title,
+                            lyrics: '',
+                            customTags: [],
+                            bpm: 120,
+                            rating: 0,
+                            mixTags: [],
+                            notes: '',
+                            order: maxOrder + 1,
+                            createdAt: Date.now()
+                        };
+                        
+                        await this.db.put('songs', song);
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('workstation', { songId: song.id });
+                    };
+                }
+
+                closeModal() {
+                    document.getElementById('generic-modal').classList.add('hidden');
+                }
+
+                async saveWorkstation() {
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (!song) return;
+                    
+                    await this.db.put('songs', song);
+                    const btn = document.getElementById('save-btn');
+                    btn.textContent = 'Saved!';
+                    setTimeout(() => btn.textContent = 'Save Changes', 2000);
+                }
+
+                applyPresetStyle(styleId) {
+                    if (!styleId) return;
+                    const style = this.cache.styles.find(s => s.id === styleId);
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (style && song) {
+                        song.customTags = [...style.tags];
+                        song.bpm = style.bpm;
+                        this.render();
+                    }
+                }
+
+                async moveSong(songId, direction) {
+                    const song = this.cache.songs.find(s => s.id === songId);
+                    if (!song) return;
+                    
+                    const songs = this.cache.songs.filter(s => s.albumId === song.albumId).sort((a, b) => a.order - b.order);
+                    const idx = songs.findIndex(s => s.id === songId);
+                    const newIdx = idx + direction;
+                    
+                    if (newIdx < 0 || newIdx >= songs.length) return;
+                    
+                    // Swap orders
+                    const temp = songs[idx].order;
+                    songs[idx].order = songs[newIdx].order;
+                    songs[newIdx].order = temp;
+                    
+                    await this.db.put('songs', songs[idx]);
+                    await this.db.put('songs', songs[newIdx]);
+                    await this.refreshCache();
+                    this.render();
+                }
             }
 
             const app = new App();
