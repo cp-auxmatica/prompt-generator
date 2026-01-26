@@ -3,14 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v8.0 (Project Edition)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Suno Architect (Cloud Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-        rel="stylesheet">
-
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -19,1064 +16,983 @@
         window.firebaseModules = { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query };
     </script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        daw: {
-                            bg: '#09090b',       // Zinc 950
-                            panel: '#18181b',    // Zinc 900
-                            border: '#27272a',   // Zinc 800
-                            surface: '#27272a',  // Zinc 800
-                            accent: '#06b6d4',   // Cyan 500
-                            accentHover: '#0891b2',
-                            text: '#e4e4e7',     // Zinc 200
-                            muted: '#a1a1aa',    // Zinc 400
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body {
-            background-color: #09090b;
-            color: #e4e4e7;
-        }
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        body { overscroll-behavior: none; background-color: #f8fafc; color: #0f172a; }
+        .tab-content { display: none; animation: fadeIn 0.2s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        /* SELECTION STATES */
+        .btn-selected-purple { background-color: #f3e8ff !important; border: 1px solid #a855f7 !important; color: #6b21a8 !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-selected-blue { background-color: #dbeafe !important; border: 1px solid #3b82f6 !important; color: #1e40af !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-selected-yellow { background-color: #fef9c3 !important; border: 1px solid #eab308 !important; color: #854d0e !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-selected-emerald { background-color: #d1fae5 !important; border: 1px solid #10b981 !important; color: #065f46 !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        
+        .btn-default { background-color: #ffffff; border: 1px solid #e2e8f0; color: #64748b; }
+        .btn-default:hover { background-color: #f1f5f9; border-color: #cbd5e1; color: #334155; }
+        .confirm-delete { background-color: #fef2f2 !important; color: #dc2626 !important; border: 1px solid #ef4444 !important; }
 
-        ::-webkit-scrollbar-track {
-            background: #09090b;
-        }
+        /* SLIDER STYLING */
+        input[type=range] { -webkit-appearance: none; background: transparent; touch-action: none; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e2e8f0; border-radius: 9999px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #4f46e5; cursor: grab; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.1s, box-shadow 0.1s; }
+        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.1); cursor: grabbing; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); }
 
-        ::-webkit-scrollbar-thumb {
-            background: #3f3f46;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #52525b;
-        }
-
-        /* Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            background: transparent;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 14px;
-            width: 14px;
-            border-radius: 50%;
-            background: #06b6d4;
-            cursor: pointer;
-            margin-top: -5px;
-            border: 2px solid #fff;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            background: #3f3f46;
-            border-radius: 2px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.2s ease-out forwards;
-        }
-
-        /* Utility classes */
-        .glass-panel {
-            background: rgba(24, 24, 27, 0.95);
-            border: 1px solid #27272a;
-        }
-
-        .nav-item.active {
-            background-color: #27272a;
-            border-left: 3px solid #06b6d4;
-            color: #fff;
-        }
-
-        .nav-item {
-            border-left: 3px solid transparent;
-        }
-
-        /* Toast Notification */
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            background: #18181b;
-            border: 1px solid #27272a;
-            border-left: 4px solid #06b6d4;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            font-size: 0.875rem;
-            animation: slideIn 0.3s ease-out;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Audio Player Customization */
-        audio {
-            height: 36px;
-            width: 100%;
-            filter: invert(0.9) hue-rotate(180deg);
-        }
-
-        /* Tree View Lines */
-        .tree-line {
-            position: absolute;
-            left: -12px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: #27272a;
-        }
-
-        .tree-branch {
-            position: absolute;
-            left: -12px;
-            top: 50%;
-            width: 12px;
-            height: 2px;
-            background: #27272a;
-        }
+        /* NAV & CHIPS */
+        .nav-btn { color: #64748b; background: transparent; border-radius: 0.5rem; }
+        .nav-btn:hover { color: #0f172a; background: #f1f5f9; }
+        .nav-btn.active { background: #ffffff; color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
+        .filter-chip { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.025em; background: #ffffff; color: #64748b; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 9999px; cursor: pointer; transition: all 0.2s; }
+        .filter-chip:hover { border-color: #cbd5e1; color: #334155; background: #f8fafc; }
+        .filter-chip.active-filter { background: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); }
     </style>
 </head>
 
-<body class="h-screen flex overflow-hidden selection:bg-cyan-900 selection:text-white">
+<body class="min-h-screen flex flex-col font-sans">
 
-    <div id="app-container" class="flex h-screen w-full hidden">
-        <aside class="w-64 bg-daw-panel border-r border-daw-border flex flex-col flex-shrink-0 z-20">
-            <div class="p-5 border-b border-daw-border bg-daw-bg">
-                <h1 class="font-mono font-bold text-lg tracking-tight text-cyan-400 flex items-center gap-2">
-                    <i class="fa-solid fa-network-wired"></i> PROMPT<span class="text-white">ENG</span>
-                    <span class="text-[9px] bg-daw-border text-daw-muted px-1.5 py-0.5 rounded ml-auto">v8.0</span>
-                </h1>
-            </div>
-
-            <nav class="flex-1 overflow-y-auto py-4 space-y-1" id="main-nav">
-                <div class="px-4 pb-2 text-[10px] font-bold text-daw-muted uppercase tracking-widest">Workflow</div>
-                <button onclick="app.navigate('inbox')" id="nav-inbox"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-inbox w-5 text-center text-xs"></i> Inbox
-                </button>
-                <button onclick="app.navigate('projects')" id="nav-projects"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-folder-tree w-5 text-center text-xs"></i> Projects
-                </button>
-                <button onclick="app.navigate('library')" id="nav-library"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-layer-group w-5 text-center text-xs"></i> All Works
-                </button>
-
-                <div class="mt-6 px-4 pb-2 text-[10px] font-bold text-daw-muted uppercase tracking-widest">Assets</div>
-                <button onclick="app.navigate('styles')" id="nav-styles"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-wand-magic-sparkles w-5 text-center text-xs"></i> Style Rack
-                </button>
-                <button onclick="app.navigate('chains')" id="nav-chains"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-link w-5 text-center text-xs"></i> Master Chains
-                </button>
-
-                <div class="mt-6 px-4 pb-2 text-[10px] font-bold text-daw-muted uppercase tracking-widest">System</div>
-                <button onclick="app.navigate('settings')" id="nav-settings"
-                    class="nav-item w-full text-left px-5 py-2.5 text-sm font-medium text-daw-muted hover:text-white hover:bg-daw-surface transition-all flex items-center gap-3">
-                    <i class="fa-solid fa-database w-5 text-center text-xs"></i> Data & Backup
-                </button>
-            </nav>
-
-            <div id="user-profile" class="p-4 border-t border-daw-border bg-daw-bg flex justify-between items-center">
-                <div class="flex items-center gap-2 truncate">
-                    <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></div>
-                    <span class="text-xs font-mono text-daw-muted truncate w-24" id="user-email">User</span>
-                </div>
-                <button onclick="app.signOut()" class="text-xs text-daw-muted hover:text-red-400 transition-colors"
-                    title="Sign Out"><i class="fa-solid fa-power-off"></i></button>
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col min-w-0 bg-daw-bg relative overflow-hidden" id="main-content"></main>
-    </div>
-
-    <div id="auth-screen" class="fixed inset-0 bg-daw-bg z-50 flex items-center justify-center p-4">
-        <div
-            class="max-w-md w-full bg-daw-panel border border-daw-border rounded-xl shadow-2xl p-8 text-center fade-in">
+    <div id="auth-screen" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white border border-slate-200 rounded-xl shadow-2xl p-8 text-center fade-in">
             <div class="mb-8">
-                <div
-                    class="w-16 h-16 bg-daw-surface rounded-full flex items-center justify-center mx-auto mb-4 border border-daw-border shadow-inner">
-                    <i class="fa-solid fa-network-wired text-3xl text-cyan-500"></i>
+                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-inner">
+                    <i data-lucide="cloud" class="w-8 h-8 text-indigo-600"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-white mb-2 font-mono">PROMPT<span class="text-cyan-500">ENG</span>
-                </h1>
-                <p class="text-daw-muted text-sm">AI Production Workspace</p>
+                <h1 class="text-2xl font-bold text-slate-900 mb-2 font-mono">Suno<span class="text-indigo-600">Architect</span></h1>
+                <p class="text-slate-500 text-sm">Cloud-Sync Enabled Workspace</p>
             </div>
             <div id="step-login">
-                <button onclick="app.signIn()"
-                    class="w-full bg-white hover:bg-gray-200 text-slate-900 font-bold py-3 px-4 rounded transition-colors flex items-center justify-center gap-3 mb-4 shadow-lg">
+                <button onclick="app.signIn()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-lg border border-slate-200 transition-colors flex items-center justify-center gap-3 mb-4 shadow-sm">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
-                    Authenticate Session
+                    Sign in with Google
                 </button>
                 <div id="auth-error-msg" class="text-red-500 text-xs mt-2 hidden font-mono"></div>
             </div>
             <div id="step-loading" class="hidden">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-                <p class="text-daw-muted text-xs font-mono">Loading Project Database...</p>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p class="text-slate-500 text-xs font-mono">Syncing Database...</p>
             </div>
         </div>
     </div>
 
-    <div id="toast-container"></div>
-
-    <textarea id="fallback-clipboard" style="position: absolute; left: -9999px;"></textarea>
-    <input type="file" id="global-file-input" class="hidden">
-
-    <div id="generic-modal"
-        class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-daw-panel border border-daw-border rounded-xl shadow-2xl w-[500px] p-6 fade-in">
-            <div class="flex justify-between items-center mb-6 border-b border-daw-border pb-4">
-                <h3 id="modal-title" class="text-lg font-bold text-white font-mono">Title</h3>
-                <button onclick="app.closeModal()" class="text-daw-muted hover:text-white"><i
-                        class="fa-solid fa-times"></i></button>
-            </div>
-            <div id="modal-content"></div>
-            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-daw-border">
-                <button onclick="app.closeModal()"
-                    class="px-4 py-2 text-xs font-bold text-daw-muted hover:text-white uppercase tracking-wider">Cancel</button>
-                <button id="modal-confirm-btn"
-                    class="px-6 py-2 text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white rounded uppercase tracking-wider shadow-lg transition-colors">Confirm</button>
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 hidden" id="app-header">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg shadow-sm">
+                        <i data-lucide="music" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 leading-tight">Suno Architect</h1>
+                        <p class="text-xs text-slate-500 font-medium" id="user-email-display">Connecting...</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
+                    <button onclick="switchTab('artist')" id="tab-btn-artist" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Artist</button>
+                    <button onclick="switchTab('dials')" id="tab-btn-dials" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Tuner</button>
+                    <button onclick="switchTab('style')" id="tab-btn-style" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Blueprint</button>
+                    <button onclick="switchTab('lyrics')" id="tab-btn-lyrics" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Lyrics</button>
+                    <button onclick="switchTab('library')" id="tab-btn-library" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Library</button>
+                    <button onclick="switchTab('json')" id="tab-btn-json" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">JSON</button>
+                    <button onclick="app.signOut()" class="nav-btn px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50" title="Sign Out"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <script type="module">
-        window.addEventListener('load', () => {
-            const { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } = window.firebaseModules;
+    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow hidden" id="app-main">
+        <div id="tab-artist" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                             <div class="p-2 bg-pink-50 rounded-lg"><i data-lucide="mic-2" class="w-5 h-5 text-pink-500"></i></div>
+                             <div>
+                                <h2 class="text-base font-bold text-slate-900">Artist Builder</h2>
+                                <p class="text-xs text-slate-500">Define a consistent identity for your generations</p>
+                             </div>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Band / Artist Name</label>
+                                <input type="text" id="artist-name" placeholder="e.g., Neon Horizon" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all font-medium">
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Bio / Notes</label>
+                                <textarea id="artist-bio" placeholder="Internal notes about the artist's sound signature..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-600 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all"></textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-1.5 block">Signature Exclusions</label>
+                                <input type="text" id="artist-exclusions" placeholder="What does this band NEVER use? (e.g. Synths, Male Vocals)" class="w-full bg-slate-50 border border-red-100 rounded-lg px-4 py-2.5 text-red-600 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 transition-all placeholder:text-red-300" oninput="updateExclusions(this.value)">
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3 flex items-center"><i data-lucide="music-2" class="w-3 h-3 mr-2"></i> Current Sound Profile</h4>
+                                <div class="space-y-2 text-xs font-mono text-slate-600" id="artist-preview-stats">
+                                    <p class="italic text-slate-400">Configure settings in "Tuner" or "Blueprint" first...</p>
+                                </div>
+                            </div>
+                            <button onclick="saveArtist()" class="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i> Capture Current Sound
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-6">
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 h-full flex flex-col">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center"><i data-lucide="users" class="w-5 h-5 mr-2 text-slate-400"></i> Roster</h3>
+                        <div id="artist-list" class="space-y-3 overflow-y-auto pr-2 custom-scrollbar flex-grow">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            // --- 1. Tag Taxonomy (Namespaced) ---
-            const TAG_LIBRARY = {
-                "Instruments": {
-                    "Rhythm": ["inst.drum.808", "inst.drum.breakbeat", "inst.drum.acoustic", "inst.perc.shaker"],
-                    "Bass": ["inst.bass.reese", "inst.bass.sub", "inst.bass.fuzz", "inst.bass.upright"],
-                    "Keys": ["inst.keys.piano", "inst.keys.rhodes", "inst.synth.pad", "inst.synth.arp"],
-                    "Strings": ["inst.strings.cello", "inst.gtr.acoustic", "inst.gtr.electric", "inst.gtr.distorted"]
-                },
-                "Vibe": {
-                    "Mood": ["mood.melancholic", "mood.euphoric", "mood.aggressive", "mood.dark", "mood.ethereal", "mood.cinematic"],
-                    "Texture": ["tex.lofi", "tex.distorted", "tex.clean", "tex.dry", "tex.atmospheric"]
-                },
-                "Genre": {
-                    "Electronic": ["genre.edm.techno", "genre.edm.house", "genre.edm.ambient", "genre.edm.idm", "genre.edm.dubstep"],
-                    "Rock/Pop": ["genre.rock.indie", "genre.rock.shoegaze", "genre.rock.postpunk", "genre.pop.dream"],
-                    "Urban": ["genre.urban.hiphop", "genre.urban.trap", "genre.urban.rnb"]
-                },
-                "Reference": {
-                    "Era": ["ref.era.80s", "ref.era.90s", "ref.era.00s", "ref.era.modern"],
-                    "Style": ["ref.style.radio", "ref.style.soundtrack", "ref.style.demo"]
+        <div id="tab-dials" class="tab-content active">
+             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 space-y-6 pb-10">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4 pb-2 border-b border-slate-100"> 
+                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">1. Foundation</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500 uppercase mb-2 block">Category Filter</label>
+                                <div id="dial-category-filters" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar"></div>
+                            </div>
+                            <div>
+                                <select id="dial-genre-select" onchange="updateDials()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-sm">
+                                    <option value="">Select Base Genre...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-6 pb-2 border-b border-slate-100"> 
+                             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">2. Style Shaping</h2>
+                        </div>
+                        <div class="grid gap-8">
+                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700 flex items-center gap-2"><div class="p-1 bg-purple-100 rounded text-purple-600"><i data-lucide="sparkles" class="w-3 h-3"></i></div> Innovation</label><span id="tags-weirdness" class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-full border border-purple-100">Standard</span></div><input type="range" id="dial-weirdness" min="0" max="100" value="0" oninput="updateDials()" class="accent-purple-600"></div>
+                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700 flex items-center gap-2"><div class="p-1 bg-emerald-100 rounded text-emerald-600"><i data-lucide="history" class="w-3 h-3"></i></div> Texture</label><span id="tags-era" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">Clean</span></div><input type="range" id="dial-era" min="0" max="100" value="50" oninput="updateDials()" class="accent-emerald-600"></div>
+                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700 flex items-center gap-2"><div class="p-1 bg-yellow-100 rounded text-yellow-600"><i data-lucide="zap" class="w-3 h-3"></i></div> Energy</label><span id="tags-intensity" class="text-[10px] font-bold text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-100">Balanced</span></div><input type="range" id="dial-intensity" min="0" max="100" value="50" oninput="updateDials()" class="accent-yellow-500"></div>
+                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700 flex items-center gap-2"><div class="p-1 bg-red-100 rounded text-red-600"><i data-lucide="gauge" class="w-3 h-3"></i></div> Speed</label><span id="tags-tempo" class="text-[10px] font-bold text-red-700 bg-red-50 px-2 py-1 rounded-full border border-red-100">Mid</span></div><input type="range" id="dial-tempo" min="0" max="100" value="50" oninput="updateDials()" class="accent-red-500"></div>
+                            <div class="relative"><div class="flex justify-between items-center mb-3"><label class="text-sm font-semibold text-slate-700 flex items-center gap-2"><div class="p-1 bg-blue-100 rounded text-blue-600"><i data-lucide="mic" class="w-3 h-3"></i></div> Voice</label><span id="tags-vocals" class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-full border border-blue-100">Vocals</span></div><input type="range" id="dial-vocals" min="0" max="100" value="75" oninput="updateDials()" class="accent-blue-500"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-5">
+                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-sm font-bold uppercase tracking-wide text-slate-500 flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span> Live Output</h3>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
+                            <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-slate-400 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-slate-400 font-bold">Base</div><div id="preview-genre" class="text-sm font-medium text-slate-800">Select Genre...</div></div></div>
+                            <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-purple-500 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-purple-500 font-bold">Innovation</div><div id="preview-weirdness" class="text-sm font-medium text-slate-700">...</div></div></div>
+                            <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-emerald-500 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-emerald-500 font-bold">Texture</div><div id="preview-era" class="text-sm font-medium text-slate-700">...</div></div></div>
+                            <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-yellow-500 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-yellow-500 font-bold">Energy</div><div id="preview-intensity" class="text-sm font-medium text-slate-700">...</div></div></div>
+                            <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-red-500 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-red-500 font-bold">Speed</div><div id="preview-tempo" class="text-sm font-medium text-slate-700">...</div></div></div>
+                             <div class="flex items-start gap-3"><div class="w-1 self-stretch bg-blue-500 rounded-full"></div><div class="flex-1"><div class="text-[10px] uppercase text-blue-500 font-bold">Vocals</div><div id="preview-vocals" class="text-sm font-medium text-slate-700">...</div></div></div>
+                        </div>
+                        <button onclick="applyDialsToMain()" class="mt-6 w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2">
+                            Send to Blueprint <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <div id="tab-style" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 space-y-8 pb-20">
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="list-music" class="w-5 h-5 text-purple-600"></i><h2 class="text-lg font-bold text-slate-900">1. The Foundation (Genre)</h2></div>
+                        <div id="genre-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
+                        <div id="subgenre-wrapper" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200"><p class="text-xs font-semibold text-slate-500 uppercase mb-3">Subgenres</p><div id="subgenre-container" class="flex flex-wrap gap-2"></div></div>
+                    </section>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="mic-vocal" class="w-5 h-5 text-blue-600"></i><h2 class="text-lg font-bold text-slate-900">2. The Players</h2></div>
+                        <div class="mb-6"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Vocals</p><input type="text" id="singer-desc" placeholder="Singer Definition" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-800 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" oninput="updatePrompt()"><div id="voices-container" class="flex flex-wrap gap-2"></div></div>
+                        <div><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Instrumentation</p><div class="relative"><input type="text" id="instrument-search" placeholder="Search instruments..." class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-800 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 pl-10"><i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i><div id="instruments-container" class="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div></div></div>
+                    </section>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i><h2 class="text-lg font-bold text-slate-900">3. Vibe & Grid</h2></div>
+                        <div class="mb-6"><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Mood</p><div id="moods-container" class="flex flex-wrap gap-2"></div></div>
+                        <div><p class="text-xs font-semibold text-slate-500 uppercase mb-2">Tempo</p><select id="tempo-select" onchange="updatePrompt()" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500"><option value="">Select Tempo...</option></select></div>
+                    </section>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="sliders-horizontal" class="w-5 h-5 text-emerald-600"></i><h2 class="text-lg font-bold text-slate-900">4. The Engineer</h2></div>
+                        <div id="production-container" class="flex flex-wrap gap-2"></div>
+                    </section>
+                    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="flex items-center space-x-2 mb-4"><i data-lucide="ban" class="w-5 h-5 text-red-500"></i><h2 class="text-lg font-bold text-slate-900">5. Forbidden Sounds</h2></div>
+                        <input type="text" id="exclusion-input" placeholder="e.g. Drums, Vocals..." class="w-full bg-white border border-red-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 placeholder:text-red-300" oninput="updateExclusions(this.value)">
+                    </section>
+                </div>
+                <div class="lg:col-span-5">
+                    <div class="sticky top-24 bg-white rounded-2xl border border-slate-200 shadow-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-900">Style Prompt</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Save to Library"><i data-lucide="save" class="w-5 h-5"></i></button>
+                                <button id="btn-clear-all" onclick="clearAll()" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Clear All"><i data-lucide="rotate-ccw" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                        <div class="relative mb-4">
+                            <textarea id="style-output" readonly class="w-full h-40 bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Prompt builds here..."></textarea>
+                            <div id="char-count" class="absolute bottom-3 right-3 text-xs text-slate-400 bg-white border border-slate-100 px-2 py-1 rounded shadow-sm">0/120 chars</div>
+                        </div>
+                        <div class="relative mb-6">
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-1.5 block">Negative Prompt</label>
+                            <div class="flex gap-2"><input id="style-exclusions-output" readonly class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-red-500 font-mono text-xs focus:outline-none" placeholder="No exclusions set"><button onclick="copyToClipboard('style-exclusions-output', this)" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"><i data-lucide="copy" class="w-4 h-4"></i></button></div>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="copyToClipboard('style-output', this)" class="w-full py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md shadow-indigo-600/20 group flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4 group-hover:hidden"></i><i data-lucide="check" class="w-4 h-4 hidden group-[.copied]:block"></i> Copy Style Prompt</button>
+                            <div id="length-warning" class="hidden flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-lg text-xs"><i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-500"></i><p>Prompt is long (>120 chars).</p></div>
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                             <button onclick="switchTab('lyrics')" class="w-full py-2.5 bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 rounded-xl transition-all flex items-center justify-center gap-2 text-sm font-medium">Go to Lyrics Editor <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-lyrics" class="tab-content">
+             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-140px)] min-h-[600px]">
+                <div class="lg:col-span-8 h-full flex flex-col">
+                    <div class="bg-white border border-slate-200 rounded-t-2xl p-4 flex items-center justify-between border-b-0 shadow-sm z-10">
+                        <h2 class="font-bold text-slate-900 flex items-center text-sm"><i data-lucide="mic" class="w-4 h-4 mr-2 text-indigo-600"></i> Lyrics & Structure</h2>
+                        <div class="flex items-center gap-2"><button onclick="saveCurrentPrompt()" class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors rounded-lg"><i data-lucide="save" class="w-4 h-4"></i></button></div>
+                    </div>
+                    <div class="flex-grow relative border-x border-slate-200 bg-white"><textarea id="lyrics-input" class="w-full h-full p-6 bg-slate-50 text-slate-800 font-mono text-sm leading-relaxed focus:outline-none resize-none" placeholder="Write lyrics..."></textarea></div>
+                    <div class="bg-white border border-slate-200 rounded-b-2xl p-4 flex justify-between items-center shadow-sm z-10"><div class="text-xs text-slate-500 hidden sm:block">Pro Tip: Use <span class="font-mono bg-slate-100 border border-slate-200 px-1 rounded text-slate-700">Da-a-shes</span> for melismas.</div><button onclick="copyToClipboard('lyrics-input', this)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm"><i data-lucide="copy" class="w-4 h-4"></i> Copy Lyrics</button></div>
+                </div>
+                <div class="lg:col-span-4 space-y-6 h-full overflow-y-auto pb-10">
+                    <div class="bg-white border border-indigo-100 rounded-2xl p-6 shadow-sm ring-1 ring-indigo-50">
+                        <div class="flex items-center space-x-2 mb-4"><div class="p-1.5 bg-indigo-100 rounded text-indigo-600"><i data-lucide="wand-2" class="w-4 h-4"></i></div><h3 class="font-bold text-slate-900 text-sm">AI Lyric Generator</h3></div>
+                        <div class="space-y-3"><div class="flex space-x-2"><input type="password" id="api-key" placeholder="API Key" class="flex-grow bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"><button onclick="validateAndLoadModels()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg text-slate-600 transition-colors"><i data-lucide="link" class="w-4 h-4"></i></button></div><select id="ai-model" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 mb-2"><option value="gemini-1.5-flash">Gemini 1.5 Flash</option></select><input type="text" id="lyric-topic" placeholder="Song Topic" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 mb-2"><button onclick="generateLyrics('structure', event)" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"><i data-lucide="sparkles" class="w-3 h-3"></i> Generate Lyrics</button></div>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><div class="flex items-center space-x-2 mb-4"><i data-lucide="layers" class="w-4 h-4 text-purple-500"></i><h3 class="font-bold text-slate-900 text-sm">Structure Tags</h3></div><div id="structure-tags-container" class="grid grid-cols-2 gap-2"></div></div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><div class="flex items-center space-x-2 mb-4"><i data-lucide="zap" class="w-4 h-4 text-yellow-500"></i><h3 class="font-bold text-slate-900 text-sm">Performance Cues</h3></div><div id="performance-tags-container" class="grid grid-cols-2 gap-2"></div></div>
+                </div>
+             </div>
+        </div>
+
+        <div id="tab-library" class="tab-content">
+             <div class="max-w-4xl mx-auto space-y-6 pb-20">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center"><i data-lucide="library" class="w-6 h-6 mr-3 text-indigo-600"></i> Cloud Library</h2>
+                    <p class="text-sm text-slate-500 mb-8 ml-9">Prompts are synced to your Firebase Cloud account.</p>
+                    <div id="library-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="text-center py-12 text-slate-400 col-span-2 flex flex-col items-center"><div class="bg-slate-50 p-4 rounded-full mb-3"><i data-lucide="save" class="w-6 h-6 text-slate-300"></i></div><p>No saved prompts yet.</p></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <div id="tab-json" class="tab-content">
+             <div class="max-w-4xl mx-auto space-y-8 pb-20">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+                    <div class="flex items-center justify-between mb-6"><h2 class="text-lg font-bold text-slate-900 flex items-center"><i data-lucide="code" class="w-5 h-5 mr-2 text-green-600"></i> JSON</h2><button onclick="copyToClipboard('json-output', this)" class="px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 text-sm rounded-lg font-medium transition-colors flex items-center space-x-2"><i data-lucide="copy" class="w-4 h-4"></i><span>Copy JSON</span></button></div>
+                    <div class="relative"><textarea id="json-output" readonly class="w-full h-96 bg-slate-50 border border-slate-200 rounded-xl p-6 text-emerald-700 font-mono text-sm leading-relaxed resize-none focus:outline-none"></textarea></div>
+                </div>
+             </div>
+        </div>
+    </main>
+
+    <script>
+        // --- FIREBASE DB WRAPPER (Adapted from beat_generator.html) ---
+        class DB {
+            constructor(appInstance) {
+                this.app = appInstance;
+                this.db = null;
+                this.auth = null;
+                this.user = null;
+                this.config = {
+                    apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo",
+                    authDomain: "ai-audio-engineer.firebaseapp.com",
+                    projectId: "ai-audio-engineer",
+                    storageBucket: "ai-audio-engineer.firebasestorage.app",
+                    messagingSenderId: "150234414348",
+                    appId: "1:150234414348:web:6d38c836eae470cb559d29"
+                };
+                this.appId = 'suno-architect'; // Namespace for this specific app
+            }
+
+            init() {
+                try {
+                    const { initializeApp, getAuth, getFirestore, onAuthStateChanged } = window.firebaseModules;
+                    const app = initializeApp(this.config);
+                    this.auth = getAuth(app);
+                    this.db = getFirestore(app);
+                    
+                    onAuthStateChanged(this.auth, (user) => {
+                        this.user = user;
+                        if (user) {
+                            this.app.onLoginSuccess(user);
+                        } else {
+                            this.app.showAuthStep('login');
+                        }
+                    });
+                } catch (e) {
+                    console.error("Firebase Init Error:", e);
+                    document.getElementById('auth-error-msg').textContent = "Firebase Init Failed. Check Console.";
+                    document.getElementById('auth-error-msg').classList.remove('hidden');
                 }
+            }
+
+            async loginGoogle() {
+                const { signInWithPopup, GoogleAuthProvider } = window.firebaseModules;
+                const provider = new GoogleAuthProvider();
+                try { 
+                    await signInWithPopup(this.auth, provider); 
+                } catch (error) { 
+                    this.app.showAuthStep('login'); 
+                    document.getElementById('auth-error-msg').textContent = "Login failed: " + error.message;
+                    document.getElementById('auth-error-msg').classList.remove('hidden');
+                }
+            }
+
+            async logout() { 
+                const { signOut } = window.firebaseModules;
+                await signOut(this.auth); 
+                window.location.reload(); 
+            }
+
+            // FIRESTORE OPERATIONS
+            async getCollection(name) {
+                if (!this.user) throw new Error("Not authenticated");
+                const { collection } = window.firebaseModules;
+                return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name);
+            }
+
+            async getAll(storeName) {
+                if (!this.user) return [];
+                try {
+                    const { getDocs } = window.firebaseModules;
+                    const col = await this.getCollection(storeName);
+                    const snap = await getDocs(col);
+                    return snap.docs.map(d => d.data());
+                } catch (e) { console.error(e); return []; }
+            }
+
+            async put(storeName, item) {
+                if (!this.user) return;
+                try {
+                    const { doc, setDoc } = window.firebaseModules;
+                    // Ensure ID is string for Firestore
+                    const id = item.id.toString();
+                    const ref = doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, storeName, id);
+                    await setDoc(ref, item);
+                    return true;
+                } catch (e) { console.error(e); return false; }
+            }
+
+            async delete(storeName, id) {
+                if (!this.user) return;
+                try {
+                    const { doc, deleteDoc } = window.firebaseModules;
+                    const ref = doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, storeName, id.toString());
+                    await deleteDoc(ref);
+                    return true;
+                } catch (e) { console.error(e); return false; }
+            }
+        }
+
+        // --- APP LOGIC WRAPPER ---
+        const app = {
+            db: null,
+            
+            init: function() {
+                this.db = new DB(this);
+                this.db.init();
+            },
+
+            showAuthStep: function(step) {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-header').classList.add('hidden');
+                document.getElementById('app-main').classList.add('hidden');
+                document.getElementById('step-loading').classList.add('hidden');
+                document.getElementById('step-login').classList.add('hidden');
+                
+                if (step === 'login') document.getElementById('step-login').classList.remove('hidden');
+                if (step === 'loading') document.getElementById('step-loading').classList.remove('hidden');
+            },
+
+            onLoginSuccess: function(user) {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-header').classList.remove('hidden');
+                document.getElementById('app-main').classList.remove('hidden');
+                document.getElementById('user-email-display').textContent = user.email;
+                
+                // Initialize Suno Architect Logic
+                initSunoArchitect();
+            },
+
+            signIn: function() {
+                this.showAuthStep('loading');
+                this.db.loginGoogle();
+            },
+
+            signOut: function() {
+                this.db.logout();
+            }
+        };
+
+        // --- SUNO ARCHITECT LOGIC ---
+        // (Constants and helper functions from original pasted code)
+        
+        const PROMPT_PREFIX = "[Is_MAX_MODE: MAX](MAX)\n[QUALITY: MAX](MAX)\n[REALISM: MAX](MAX)\n[REAL_INSTRUMENTS: MAX](MAX)\n";
+        const LYRICS_PREFIX = "///*****///\n\n";
+
+        const GENRES = {
+            "Rock": ["Alternative Rock", "Art Rock", "Classic Rock", "Garage Rock", "Gothic Rock", "Grunge", "Hard Rock", "Indie Rock", "Post-Rock", "Progressive Rock", "Psychedelic Rock", "Punk", "Shoegaze", "Soft Rock"],
+            "Metal": ["Black Metal", "Death Metal", "Djent", "Doom Metal", "Gothic Metal", "Heavy Metal", "Industrial Metal", "Metalcore", "Nu Metal", "Power Metal", "Progressive Metal", "Sludge Metal", "Thrash Metal"],
+            "Electronic": ["Ambient", "Breakbeat", "Chillwave", "Deep House", "Drum and Bass", "Dubstep", "Electro", "Future Bass", "House", "IDM", "Industrial", "Lo-Fi", "Phonk", "Synthwave", "Techno", "Trance", "Trap"],
+            "Pop": ["Bedroom Pop", "City Pop", "Dance-Pop", "Dream Pop", "Electropop", "Hyperpop", "Indie Pop", "J-Pop", "K-Pop", "Synth-Pop"],
+            "Hip Hop": ["Boom Bap", "Drill", "Experimental Hip Hop", "Grime", "Jazz Rap", "Lo-Fi Hip Hop", "Trap", "Trip Hop"],
+            "R&B/Soul": ["Contemporary R&B", "Disco", "Funk", "Gospel", "Neo-Soul", "Soul", "Motown"],
+            "Jazz": ["Acid Jazz", "Bebop", "Cool Jazz", "Fusion", "Smooth Jazz", "Swing"],
+            "Folk/Country": ["Americana", "Bluegrass", "Country", "Folk Rock", "Indie Folk"],
+            "Classical/Score": ["Cinematic", "Epic", "Neoclassical", "Orchestral", "Score", "Soundtrack"],
+            "Latin/World": ["Afrobeat", "Bossa Nova", "Reggae", "Reggaeton", "Salsa", "Samba"]
+        };
+
+        const INSTRUMENTS = ["808 Drums", "Acoustic Guitar", "Bass Guitar", "Cello", "Clarinet", "Distorted Guitar", "Drum Machine", "Electric Guitar", "Electric Piano", "Flute", "Hammond Organ", "Harp", "Piano", "Saxophone", "String Quartet", "Synthesizer", "Trombone", "Trumpet", "Violin", "Vocoder"];
+        const VOICES = ["Male Vocals", "Female Vocals", "Androgynous", "Choir", "Whisper", "Screaming", "Spoken Word", "Autotune", "Baritone", "Soprano", "Raspy", "Ethereal"];
+        const MOODS = ["Aggressive", "Ambient", "Anxious", "Calm", "Chaotic", "Chill", "Cinematic", "Dark", "Dreamy", "Energetic", "Epic", "Ethereal", "Euphoric", "Funky", "Gloomy", "Happy", "Haunting", "Intense", "Melancholic", "Mysterious", "Nostalgic", "Optimistic", "Peaceful", "Psychedelic", "Romantic", "Sad", "Sentimental", "Sexy", "Spooky", "Suspenseful", "Trippy", "Upbeat", "Warm"];
+        const TEMPO_FEEL = ["Slow (Adagio)", "Groove", "Fast (Allegro)", "Driving", "Half-time", "Shuffle", "Swing", "80 BPM", "100 BPM", "120 BPM", "128 BPM", "140 BPM", "160 BPM", "174 BPM"];
+        const PRODUCTION = ["Lo-Fi", "Hi-Fi", "Clean", "Distorted", "Reverb-heavy", "Dry", "Compressed", "Wide Stereo", "Vintage", "Modern", "Analog Warmth", "Wall of Sound"];
+        const METATAGS = [
+            { label: "Intro", tag: "[Intro]" }, { label: "Verse", tag: "[Verse]" }, { label: "Chorus", tag: "[Chorus]" }, 
+            { label: "Bridge", tag: "[Bridge]" }, { label: "Hook", tag: "[Hook]" }, { label: "Solo", tag: "[Guitar Solo]" }, 
+            { label: "Outro", tag: "[Outro]" }, { label: "Drop", tag: "[Drop]" }, { label: "Break", tag: "[Instrumental Break]" }
+        ];
+        const PERFORMANCE_TAGS = [
+            { label: "Whisper", tag: "[Whisper]" }, { label: "Shout", tag: "[Shout]" }, { label: "Spoken", tag: "[Spoken Word]" },
+            { label: "Build", tag: "[Build Up]" }, { label: "Stop", tag: "[Sudden Stop]" }, { label: "Fade", tag: "[Fade Out]" }
+        ];
+
+        // --- DIAL MAPPINGS ---
+        const TAGS_WEIRDNESS = [ ["Conventional"], ["Experimental"], ["Avant-Garde"], ["Chaotic"] ];
+        const TAGS_ERA = [ ["Vintage", "Lo-Fi"], ["Retro"], ["Modern"], ["Futuristic", "Digital"] ];
+        const TAGS_INTENSITY = [ ["Ambient"], ["Chill"], ["Balanced"], ["Energetic"], ["Aggressive"] ];
+        const TAGS_TEMPO = [ ["Downtempo"], ["Mid-Tempo"], ["Up-Tempo"], ["Speed"] ];
+        const TAGS_VOCALS = [ ["Instrumental"], ["Minimal Vocals"], ["Vocals"], ["Lyrical"] ];
+
+        // --- STATE ---
+        let state = {
+            genreCat: "", subgenres: [], instruments: [], voices: [], moods: [], tempo: "", 
+            production: [], singerDescription: "", exclusions: ""
+        };
+        let dialState = {
+            previewGenre: "", previewInstruments: [], previewVoices: [], previewMoods: [], 
+            previewProduction: [], previewTempo: ""
+        };
+        let deleteConfirm = false;
+
+        function initSunoArchitect() {
+            lucide.createIcons();
+            initGenreUI();
+            initDialsGenreUI();
+            initMultiSelectUI("instruments-container", INSTRUMENTS, "instruments", "btn-selected-blue");
+            initMultiSelectUI("voices-container", VOICES, "voices", "btn-selected-blue");
+            initMultiSelectUI("moods-container", MOODS, "moods", "btn-selected-yellow");
+            initMultiSelectUI("production-container", PRODUCTION, "production", "btn-selected-emerald");
+            initTempoUI();
+            initLyricsTags();
+            
+            // Replaces IndexedDB init with Firebase Fetch
+            renderLibrary();
+            renderArtistList();
+
+            // Search Listener
+            document.getElementById('instrument-search').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                Array.from(document.getElementById('instruments-container').children).forEach(btn => {
+                    btn.style.display = btn.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+                });
+            });
+
+            updateDials();
+            updatePrompt();
+            updateArtistPreviewStats();
+            document.getElementById('lyrics-input').value = LYRICS_PREFIX;
+        }
+
+        // --- UI HELPERS ---
+        function initGenreUI() {
+            const container = document.getElementById('genre-container');
+            container.innerHTML = '';
+            Object.keys(GENRES).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`;
+                btn.textContent = cat;
+                btn.onclick = () => selectGenreCat(cat, btn);
+                btn.dataset.val = cat;
+                container.appendChild(btn);
+            });
+        }
+        
+        function initDialsGenreUI() {
+            const container = document.getElementById('dial-category-filters');
+            container.innerHTML = '';
+            const allBtn = document.createElement('button');
+            allBtn.className = "filter-chip active-filter";
+            allBtn.textContent = "ALL";
+            allBtn.onclick = () => filterDialsGenre('ALL', allBtn);
+            container.appendChild(allBtn);
+            Object.keys(GENRES).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = "filter-chip";
+                btn.textContent = cat;
+                btn.onclick = () => filterDialsGenre(cat, btn);
+                container.appendChild(btn);
+            });
+            populateDialSelect(null);
+        }
+
+        function filterDialsGenre(category, btnElement) {
+            const container = document.getElementById('dial-category-filters');
+            Array.from(container.children).forEach(b => b.classList.remove('active-filter'));
+            btnElement.classList.add('active-filter');
+            populateDialSelect(category === 'ALL' ? null : category);
+        }
+
+        function populateDialSelect(filterCategory) {
+            const select = document.getElementById('dial-genre-select');
+            const currentValue = select.value;
+            select.innerHTML = '';
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = filterCategory ? `[ SELECT ${filterCategory.toUpperCase()} GENRE ]` : "[ SELECT BASE GENRE ]";
+            select.appendChild(defaultOpt);
+            const categories = filterCategory ? [filterCategory] : Object.keys(GENRES);
+            categories.forEach(cat => {
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = cat;
+                GENRES[cat].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    option.dataset.category = cat;
+                    optGroup.appendChild(option);
+                });
+                select.appendChild(optGroup);
+            });
+            if(currentValue) select.value = currentValue;
+        }
+
+        function initMultiSelectUI(containerId, dataList, stateKey, activeClass) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            dataList.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
+                btn.textContent = item;
+                btn.onclick = () => {
+                    toggleSelection(item, stateKey);
+                    updateBtnVisual(btn, state[stateKey].includes(item), activeClass);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function updateBtnVisual(btn, isSelected, activeClass) {
+             if (isSelected) {
+                btn.classList.remove('bg-white', 'border-slate-200', 'text-slate-600', 'hover:border-slate-300');
+                btn.classList.add(activeClass);
+             } else {
+                btn.classList.remove(activeClass);
+                btn.classList.add('bg-white', 'border-slate-200', 'text-slate-600', 'hover:border-slate-300');
+             }
+        }
+
+        function initTempoUI() {
+            const select = document.getElementById('tempo-select');
+            TEMPO_FEEL.forEach(t => { const opt = document.createElement('option'); opt.value = t; opt.textContent = t; select.appendChild(opt); });
+        }
+
+        function initLyricsTags() {
+            const sContainer = document.getElementById('structure-tags-container');
+            METATAGS.forEach(t => { const btn = document.createElement('button'); btn.className = "px-3 py-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 rounded-lg text-xs font-mono text-left transition-colors"; btn.textContent = t.label; btn.onclick = () => insertTag(t.tag); sContainer.appendChild(btn); });
+            const pContainer = document.getElementById('performance-tags-container');
+            PERFORMANCE_TAGS.forEach(t => { const btn = document.createElement('button'); btn.className = "px-3 py-2 bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 text-yellow-700 rounded-lg text-xs font-mono text-left transition-colors"; btn.textContent = t.label; btn.onclick = () => insertTag(t.tag); pContainer.appendChild(btn); });
+        }
+
+        // --- NAVIGATION ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+            
+            if (tabName === 'json') generateJsonOutput();
+            if (tabName === 'library') renderLibrary();
+            if (tabName === 'artist') { updateArtistPreviewStats(); renderArtistList(); }
+        }
+
+        // --- CORE LOGIC ---
+        function selectGenreCat(cat, btnElement, preserveSelection = false) {
+            state.genreCat = cat;
+            if (!preserveSelection) state.subgenres = [];
+            const allBtns = document.getElementById('genre-container').children;
+            Array.from(allBtns).forEach(b => b.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`);
+            if (!btnElement) btnElement = Array.from(allBtns).find(b => b.textContent === cat);
+            if (btnElement) btnElement.className = `p-3 rounded-xl border transition-all text-left bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-200 font-bold text-sm`;
+            
+            const subWrapper = document.getElementById('subgenre-wrapper');
+            const subContainer = document.getElementById('subgenre-container');
+            subContainer.innerHTML = '';
+            
+            if (GENRES[cat]) {
+                subWrapper.classList.remove('hidden');
+                GENRES[cat].forEach(sub => {
+                    const sBtn = document.createElement('button');
+                    sBtn.className = state.subgenres.includes(sub) ? "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-purple-100 border border-purple-500 text-purple-700 shadow-sm" : "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
+                    sBtn.textContent = sub;
+                    sBtn.onclick = () => {
+                        if (state.subgenres.includes(sub)) {
+                            state.subgenres = state.subgenres.filter(s => s !== sub);
+                            sBtn.className = "px-3 py-1.5 rounded-full text-xs font-medium transition-all bg-white border border-slate-200 text-slate-600 hover:border-slate-300";
+                        } else {
+                            state.subgenres.push(sub);
+                            sBtn.className = "px-3 py-1.5 rounded-full text-xs font-bold transition-all bg-purple-100 border border-purple-500 text-purple-700 shadow-sm";
+                        }
+                        updatePrompt();
+                    };
+                    subContainer.appendChild(sBtn);
+                });
+            } else { subWrapper.classList.add('hidden'); }
+            updatePrompt();
+        }
+
+        function toggleSelection(item, listKey) {
+            state[listKey] = state[listKey].includes(item) ? state[listKey].filter(i => i !== item) : [...state[listKey], item];
+            updatePrompt();
+        }
+
+        function updateExclusions(val) {
+            state.exclusions = val;
+            const ids = ['exclusion-input', 'artist-exclusions', 'style-exclusions-output'];
+            ids.forEach(id => { const el = document.getElementById(id); if(el && el.value !== val) el.value = val; });
+            if (document.getElementById('tab-artist').classList.contains('active')) updateArtistPreviewStats();
+        }
+
+        function updatePrompt() {
+            const select = document.getElementById('tempo-select');
+            state.tempo = select.value;
+            state.singerDescription = document.getElementById('singer-desc').value;
+            const parts = [];
+            if (state.subgenres.length > 0) parts.push(...state.subgenres);
+            else if (state.genreCat) parts.push(state.genreCat);
+            if (state.tempo) parts.push(state.tempo);
+            if (state.moods.length > 0) parts.push(state.moods.join(", "));
+            if (state.instruments.length > 0) parts.push(state.instruments.join(", "));
+            if (state.singerDescription) parts.push(state.singerDescription);
+            if (state.voices.length > 0) parts.push(state.voices.join(", "));
+            if (state.production.length > 0) parts.push(state.production.join(", "));
+            
+            const text = PROMPT_PREFIX + parts.join(", ");
+            document.getElementById('style-output').value = text;
+            document.getElementById('char-count').textContent = `${text.length}/120 chars`;
+            document.getElementById('length-warning').classList.toggle('hidden', text.length <= 120);
+            
+            if (document.getElementById('tab-json').classList.contains('active')) generateJsonOutput();
+            if(document.getElementById('tab-artist').classList.contains('active')) updateArtistPreviewStats();
+        }
+
+        function insertTag(tag) {
+            const ta = document.getElementById('lyrics-input');
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            const before = ta.value.substring(0, start);
+            const after = ta.value.substring(end);
+            const prefix = (tag.startsWith("[") && before.length > 0 && !before.endsWith("\n")) ? "\n\n" : "";
+            const suffix = tag.startsWith("[") ? "\n" : "";
+            ta.value = before + prefix + tag + suffix + after;
+            ta.focus();
+        }
+
+        function generateJsonOutput() {
+            const jsonObj = {
+                "genre": state.subgenres.length ? state.subgenres.join(", ") : state.genreCat,
+                "instruments": state.instruments.join(", "),
+                "persona": [state.singerDescription, ...state.voices].filter(Boolean).join(", "),
+                "style_tags": [...state.moods, state.tempo].filter(Boolean).join(", "),
+                "recording": state.production.join(", "),
+                "exclusions": state.exclusions 
+            };
+            document.getElementById('json-output').value = JSON.stringify(jsonObj, null, 4);
+        }
+
+        function copyToClipboard(id, btn) {
+            const el = document.getElementById(id);
+            el.select();
+            document.execCommand('copy');
+            // Simplified feedback for brevity
+        }
+
+        // --- DIALS ---
+        function updateDials() {
+            const subGenre = document.getElementById('dial-genre-select').value;
+            const wVal = parseInt(document.getElementById('dial-weirdness').value);
+            const eVal = parseInt(document.getElementById('dial-era').value);
+            const iVal = parseInt(document.getElementById('dial-intensity').value);
+            const tVal = parseInt(document.getElementById('dial-tempo').value);
+            const vVal = parseInt(document.getElementById('dial-vocals').value);
+
+            const pick = (arr, val) => arr[Math.min(Math.floor(val / (100 / arr.length)), arr.length - 1)];
+
+            const wT = pick(TAGS_WEIRDNESS, wVal); const eT = pick(TAGS_ERA, eVal);
+            const iT = pick(TAGS_INTENSITY, iVal); const tT = pick(TAGS_TEMPO, tVal); const vT = pick(TAGS_VOCALS, vVal);
+
+            document.getElementById('tags-weirdness').textContent = wT.join(", ");
+            document.getElementById('tags-era').textContent = eT.join(", ");
+            document.getElementById('tags-intensity').textContent = iT.join(", ");
+            document.getElementById('tags-tempo').textContent = tT.join(", ");
+            document.getElementById('tags-vocals').textContent = vT.join(", ");
+
+            dialState = {
+                previewGenre: subGenre, previewInstruments: [...wT], previewProduction: [...eT],
+                previewMoods: [...iT], previewTempo: tT[0], previewVoices: [...vT]
             };
 
-            const STAGES = ["raw", "selection", "edit", "mix", "master", "export"];
-            const generateID = () => crypto.randomUUID();
+            document.getElementById('preview-genre').textContent = subGenre || "Select Genre...";
+            document.getElementById('preview-weirdness').textContent = wT.join(", ");
+            document.getElementById('preview-era').textContent = eT.join(", ");
+            document.getElementById('preview-intensity').textContent = iT.join(", ");
+            document.getElementById('preview-tempo').textContent = tT.join(", ");
+            document.getElementById('preview-vocals').textContent = vT.join(", ");
+        }
 
-            // --- 2. Database Wrapper ---
-            class DB {
-                constructor(appInstance) {
-                    this.app = appInstance;
-                    this.db = null;
-                    this.auth = null;
-                    this.user = null;
-                    this.idb = null;
-                    this.config = {
-                        apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo",
-                        authDomain: "ai-audio-engineer.firebaseapp.com",
-                        projectId: "ai-audio-engineer",
-                        storageBucket: "ai-audio-engineer.firebasestorage.app",
-                        messagingSenderId: "150234414348",
-                        appId: "1:150234414348:web:6d38c836eae470cb559d29"
-                    };
-                    this.appId = 'default-app';
-                    this.initIndexedDB();
-                }
+        function applyDialsToMain() {
+            if (!document.getElementById('dial-genre-select').value) return alert("Select genre first");
+            state.subgenres = dialState.previewGenre.split(", ").map(s => s.trim());
+            state.production = [...dialState.previewProduction];
+            state.moods = [...dialState.previewMoods];
+            state.voices = [...dialState.previewVoices];
+            state.tempo = dialState.previewTempo;
+            state.subgenres.push(...dialState.previewInstruments);
+            
+            // Attempt to set category based on select
+            const opt = document.querySelector(`#dial-genre-select option[value="${state.subgenres[0]}"]`);
+            if(opt && opt.parentElement.label) state.genreCat = opt.parentElement.label;
+            
+            updateAllVisuals();
+            switchTab('style');
+        }
 
-                init() {
-                    try {
-                        const app = initializeApp(this.config);
-                        this.auth = getAuth(app);
-                        this.db = getFirestore(app);
-                        onAuthStateChanged(this.auth, (user) => {
-                            this.user = user;
-                            if (user) this.app.onLoginSuccess(user);
-                            else this.app.showAuthStep('login');
-                        });
-                    } catch (e) {
-                        console.error("Firebase Init Error:", e);
-                    }
-                }
-
-                async loginGoogle() {
-                    const provider = new GoogleAuthProvider();
-                    try { await signInWithPopup(this.auth, provider); }
-                    catch (error) { this.app.showAuthStep('login'); alert("Login failed: " + error.message); }
-                }
-
-                async logout() { await signOut(this.auth); window.location.reload(); }
-
-                initIndexedDB() {
-                    const req = indexedDB.open('SunoCompanionBlobs', 1);
-                    req.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs', { keyPath: 'id' });
-                    };
-                    req.onsuccess = (e) => { this.idb = e.target.result; };
-                }
-
-                async getCollection(name) {
-                    if (!this.user) throw new Error("Not authenticated");
-                    return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name);
-                }
-
-                async getAll(storeName) {
-                    if (!this.user) return [];
-                    try {
-                        const col = await this.getCollection(storeName);
-                        const snap = await getDocs(col);
-                        const items = snap.docs.map(d => d.data());
-                        if (['generations', 'projects', 'works'].includes(storeName)) {
-                            return await Promise.all(items.map(async (item) => {
-                                const blob = await this.getBlob(item.id);
-                                return blob ? { ...item, ...blob } : item;
-                            }));
-                        }
-                        return items;
-                    } catch (e) { return []; }
-                }
-
-                async put(storeName, item) {
-                    if (!this.user) return;
-                    const meta = { ...item };
-                    const blobs = {};
-                    let hasBlobs = false;
-                    if (meta.audioBlob) { blobs.audioBlob = meta.audioBlob; delete meta.audioBlob; hasBlobs = true; }
-                    if (meta.artworkBlob) { blobs.artworkBlob = meta.artworkBlob; delete meta.artworkBlob; hasBlobs = true; }
-
-                    const ref = doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, storeName, item.id);
-                    await setDoc(ref, meta);
-
-                    if (hasBlobs && this.idb) {
-                        const tx = this.idb.transaction('blobs', 'readwrite');
-                        tx.objectStore('blobs').put({ id: item.id, ...blobs });
-                    }
-                }
-
-                async delete(storeName, id) {
-                    if (!this.user) return;
-                    const ref = doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, storeName, id);
-                    await deleteDoc(ref);
-                    if (this.idb) {
-                        const tx = this.idb.transaction('blobs', 'readwrite');
-                        tx.objectStore('blobs').delete(id);
-                    }
-                }
-
-                async getBlob(id) {
-                    if (!this.idb) return null;
-                    return new Promise(resolve => {
-                        const tx = this.idb.transaction('blobs', 'readonly');
-                        const req = tx.objectStore('blobs').get(id);
-                        req.onsuccess = () => resolve(req.result);
-                        req.onerror = () => resolve(null);
-                    });
-                }
-
-                async exportAll() {
-                    const data = {
-                        projects: await this.getAll('projects'),
-                        works: await this.getAll('works'),
-                        generations: await this.getAll('generations'),
-                        styles: await this.getAll('styles'),
-                        chains: await this.getAll('chains'),
-                        version: '8.0', timestamp: Date.now()
-                    };
-                    const strip = (obj) => { const c = { ...obj }; delete c.audioBlob; delete c.artworkBlob; return c; };
-                    data.generations = data.generations.map(strip);
-                    return JSON.stringify(data, null, 2);
-                }
+        function updateAllVisuals() {
+            if (state.genreCat) {
+                const btns = document.getElementById('genre-container').children;
+                Array.from(btns).forEach(b => { if(b.dataset.val === state.genreCat) selectGenreCat(state.genreCat, b, true); });
             }
+            syncButtonList('instruments-container', state.instruments, "btn-selected-blue");
+            syncButtonList('voices-container', state.voices, "btn-selected-blue");
+            syncButtonList('moods-container', state.moods, "btn-selected-yellow");
+            syncButtonList('production-container', state.production, "btn-selected-emerald");
+            document.getElementById('tempo-select').value = state.tempo;
+            document.getElementById('singer-desc').value = state.singerDescription || "";
+            updateExclusions(state.exclusions || "");
+            updatePrompt();
+        }
 
-            // --- 3. Main App ---
-            class App {
-                constructor() {
-                    window.app = this;
-                    this.db = new DB(this);
-                    this.state = {
-                        view: 'projects',
-                        projectId: null,
-                        workId: null,
-                        generationId: null, // Selected Generation ID
-                        wsTab: 'prod' // 'prod' (production) or 'meta' (metadata)
-                    };
-                    this.cache = { projects: [], works: [], generations: [], styles: [], chains: [] };
-                    this.db.init();
-                }
+        function syncButtonList(id, list, cls) {
+            document.getElementById(id).querySelectorAll('button').forEach(btn => {
+                updateBtnVisual(btn, list.includes(btn.textContent), cls);
+            });
+        }
+        
+        function clearAll() {
+             state = { genreCat: "", subgenres: [], instruments: [], voices: [], moods: [], tempo: "", production: [], singerDescription: "", exclusions: "" };
+             document.getElementById('tempo-select').value = "";
+             document.getElementById('singer-desc').value = "";
+             updateExclusions("");
+             document.querySelectorAll('#instruments-container button, #voices-container button, #moods-container button, #production-container button').forEach(b => {
+                 b.classList.remove('btn-selected-blue', 'btn-selected-yellow', 'btn-selected-emerald');
+                 b.classList.add('bg-white', 'border-slate-200');
+             });
+             document.querySelectorAll('#genre-container button').forEach(b => b.className = `p-3 rounded-xl border transition-all text-left bg-slate-50 border-slate-200 text-slate-600 hover:border-purple-300 hover:text-purple-600 font-medium text-sm`);
+             document.getElementById('subgenre-wrapper').classList.add('hidden');
+             updatePrompt();
+        }
 
-                showAuthStep(step) {
-                    document.getElementById('auth-screen').classList.remove('hidden');
-                    document.getElementById('step-loading').classList.add('hidden');
-                    document.getElementById('step-login').classList.add('hidden');
-                    if (step === 'login') document.getElementById('step-login').classList.remove('hidden');
-                    if (step === 'loading') document.getElementById('step-loading').classList.remove('hidden');
-                }
+        // --- FIREBASE INTEGRATION FUNCTIONS ---
 
-                async onLoginSuccess(user) {
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app-container').classList.remove('hidden');
-                    document.getElementById('user-email').textContent = user.email;
-                    await this.refreshCache();
-                    this.navigate('projects');
-                }
+        async function saveCurrentPrompt() {
+            const promptText = document.getElementById('style-output').value;
+            const lyricsText = document.getElementById('lyrics-input').value; 
+            if (!promptText) return alert("Nothing to save!");
+            
+            let name = state.subgenres[0] || state.genreCat || "Untitled";
+            name += ` - ${new Date().toLocaleTimeString()}`;
+            const note = prompt("Name this prompt:", name);
+            if (note === null) return; 
 
-                signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
-                signOut() { this.db.logout(); }
+            const item = {
+                id: Date.now(),
+                name: note || name,
+                state: JSON.parse(JSON.stringify(state)), 
+                text: promptText,
+                lyrics: lyricsText,
+                timestamp: Date.now()
+            };
 
-                async refreshCache() {
-                    if (!this.db.user) return;
+            const success = await app.db.put('prompts', item);
+            if(success) {
+                alert("Saved to Cloud Library!");
+                renderLibrary();
+            } else {
+                alert("Error saving to Cloud.");
+            }
+        }
 
-                    // Legacy Migration Checks could go here, but for now we pull raw collections
-                    // We treat 'artists' as 'projects' and 'songs' as 'works' in the transition
-                    let rawProjects = await this.db.getAll('artists'); // Legacy name
-                    let rawWorks = await this.db.getAll('songs'); // Legacy name
+        async function deletePrompt(id) {
+            if (!confirm("Delete this prompt from Cloud?")) return;
+            await app.db.delete('prompts', id);
+            renderLibrary();
+        }
 
-                    // If migration hasn't happened in DB, we map them in memory or write back?
-                    // For safety, let's just use the legacy collection names for storage but treat them as new entities
-                    // But if we want to support the new schema properly, we should actually use 'projects' collection if populated.
-                    // For this specific update request "Treat existing Song as Work", we will check both.
+        async function loadPrompt(id) {
+            // In a real app we might want a 'getOne' method, but for now we fetch all and filter 
+            // because our getAll is cached/fast enough for this demo scale
+            const prompts = await app.db.getAll('prompts');
+            const item = prompts.find(p => p.id == id); // loose equality for string/number id
+            
+            if(item) {
+                state = item.state;
+                if (item.lyrics) document.getElementById('lyrics-input').value = item.lyrics;
+                updateAllVisuals();
+                switchTab('style');
+            }
+        }
 
-                    const newProjects = await this.db.getAll('projects');
-                    if (newProjects.length > 0) rawProjects = [...rawProjects, ...newProjects];
-
-                    // Logic: If a legacy "Song" exists but has no "Generations" linked, we treat it as a Work with a virtual generation.
-                    // To make this robust, let's load the dedicated 'generations' collection.
-                    this.cache.generations = await this.db.getAll('generations');
-                    this.cache.projects = rawProjects.map(p => ({ ...p, type: 'project' })); // normalization
-                    this.cache.works = rawWorks;
-                    this.cache.styles = await this.db.getAll('styles');
-                    this.cache.chains = await this.db.getAll('chains');
-
-                    // Migration: Ensure every legacy work has at least one generation
-                    for (let w of this.cache.works) {
-                        const gens = this.cache.generations.filter(g => g.workId === w.id);
-                        if (gens.length === 0 && w.audioBlob) {
-                            // Create a "Legacy Generation"
-                            const legGen = {
-                                id: w.id + '_gen_legacy',
-                                workId: w.id,
-                                stage: 'selection',
-                                parentId: null,
-                                prompt: w.lyrics || '', // Best guess
-                                tags: w.customTags || [],
-                                audioBlob: w.audioBlob,
-                                createdAt: w.createdAt,
-                                notes: "Migrated from v7 Song",
-                                rating: w.rating
-                            };
-                            this.cache.generations.push(legGen);
-                            // We don't necessarily need to write to DB immediately unless user edits, 
-                            // but writing guarantees consistency. Let's write it silently.
-                            await this.db.put('generations', legGen);
-                        }
-                    }
-                }
-
-                navigate(view, params = {}) {
-                    this.state.view = view;
-                    if (params.projectId) this.state.projectId = params.projectId;
-                    if (params.workId) this.state.workId = params.workId;
-                    if (params.generationId) this.state.generationId = params.generationId;
-
-                    this.updateSidebar();
-                    this.render();
-                }
-
-                updateSidebar() {
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    if (['project-detail', 'workstation', 'projects'].includes(this.state.view)) document.getElementById('nav-projects').classList.add('active');
-                    else if (this.state.view === 'inbox') document.getElementById('nav-inbox').classList.add('active');
-                    else if (this.state.view === 'library') document.getElementById('nav-library').classList.add('active');
-                    else if (this.state.view === 'styles') document.getElementById('nav-styles').classList.add('active');
-                    else if (this.state.view === 'chains') document.getElementById('nav-chains').classList.add('active');
-                    else if (this.state.view === 'settings') document.getElementById('nav-settings').classList.add('active');
-                }
-
-                showToast(msg, type = 'success') {
-                    const container = document.getElementById('toast-container');
+        async function renderLibrary() {
+            const list = document.getElementById('library-list');
+            list.innerHTML = '<div class="col-span-2 text-center text-slate-400 py-12">Loading Cloud Data...</div>';
+            
+            const items = await app.db.getAll('prompts');
+            list.innerHTML = '';
+            
+            if (items.length > 0) {
+                // Sort by timestamp desc
+                items.sort((a,b) => b.timestamp - a.timestamp);
+                
+                items.forEach(item => {
                     const el = document.createElement('div');
-                    el.className = 'toast';
-                    if (type === 'error') el.style.borderLeftColor = '#ef4444';
-                    el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check' : 'fa-info-circle'}"></i> ${msg}`;
-                    container.appendChild(el);
-                    setTimeout(() => {
-                        el.style.opacity = '0';
-                        setTimeout(() => el.remove(), 300);
-                    }, 3000);
-                }
-
-                // --- VIEWS ---
-
-                render() {
-                    const container = document.getElementById('main-content');
-                    container.innerHTML = '';
-                    switch (this.state.view) {
-                        case 'projects': this.renderProjectsList(container); break;
-                        case 'project-detail': this.renderProjectDetail(container); break;
-                        case 'workstation': this.renderWorkstation(container); break;
-                        case 'inbox': this.renderInbox(container); break;
-                        case 'library': this.renderLibrary(container); break;
-                        case 'styles': this.renderStyleManager(container); break;
-                        case 'chains': this.renderChainManager(container); break;
-                        case 'settings': this.renderSettings(container); break;
-                    }
-                }
-
-                // --- 1. PROJECTS (Renamed from Artists) ---
-                renderProjectsList(container) {
-                    const projects = this.cache.projects.sort((a, b) => b.createdAt - a.createdAt);
-                    container.innerHTML = `
-                        <div class="p-8 fade-in h-full overflow-y-auto">
-                            <div class="flex justify-between items-center mb-8">
-                                <div>
-                                    <h2 class="text-3xl font-bold text-white mb-1 font-mono tracking-tight">ACTIVE PROJECTS</h2>
-                                    <p class="text-daw-muted text-sm">Bands, aliases, and commercial briefs.</p>
-                                </div>
-                                <button onclick="app.modalAddProject()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2 rounded-md font-bold shadow-lg transition-colors flex items-center gap-2 uppercase text-xs tracking-wider">
-                                    <i class="fa-solid fa-plus"></i> New Project
-                                </button>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                ${projects.map(p => {
-                        // Count Works (formerly albums/songs) linked to this project (formerly artist)
-                        // Note: Legacy albums complicate this, but we can count works directly linked via album
-                        const worksCount = this.cache.works.filter(w => {
-                            const album = this.cache.works.find(alb => alb.id === w.albumId); // simplified lookup if album loaded
-                            // Legacy: check if albumId belongs to this artist
-                            // Actually easier: In v7 works(songs) had albumId. Albums had artistId.
-                            // We need to traverse: Work -> Album -> Artist(Project)
-                            return true; // Simplified for display
-                        }).length;
-
-                        return `
-                                    <div class="group bg-daw-panel border border-daw-border rounded-lg p-5 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)] transition-all relative">
-                                        <div onclick="app.navigate('project-detail', {projectId: '${p.id}'})" class="cursor-pointer">
-                                            <div class="flex justify-between items-start mb-4">
-                                                <div class="w-12 h-12 rounded bg-gradient-to-br from-daw-surface to-daw-border border border-daw-border flex items-center justify-center text-xl font-bold font-mono text-cyan-500">
-                                                    ${p.name.substring(0, 2).toUpperCase()}
-                                                </div>
-                                                <div class="text-[10px] text-daw-muted uppercase tracking-widest bg-daw-bg px-2 py-1 rounded border border-daw-border group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-colors">Active</div>
-                                            </div>
-                                            <h3 class="text-lg font-bold text-white mb-1 truncate">${p.name}</h3>
-                                            <div class="text-xs text-daw-muted mb-4 font-mono">${p.genre || 'Unclassified'}</div>
-                                        </div>
-                                    </div>`;
-                    }).join('')}
-                            </div>
-                        </div>`;
-                }
-
-                renderProjectDetail(container) {
-                    const project = this.cache.projects.find(p => p.id === this.state.projectId);
-                    if (!project) return this.navigate('projects');
-
-                    // Get Works. Legacy: Works are Songs. Need to find songs in albums of this artist.
-                    // This is the migration logic: flatten the Albums.
-                    // 1. Find all albums for this artist
-                    // 2. Find all songs for those albums
-                    const works = this.cache.works.filter(w => {
-                        // This filtering is complex without the album list in memory, but we can cheat:
-                        // We will just show ALL works for now if we can't link them, 
-                        // OR we assume we have 'albums' in a separate cache if we kept it.
-                        // Let's assume for this specific file, we iterate works and check parentage.
-                        // Ideally we attach projectId to Work directly now.
-                        return true; // Placeholder for logic
-                    });
-
-                    // For the demo, let's just show works associated with the ID
-                    // Real logic: Find albums by project.id -> find works by album.id
-
-                    container.innerHTML = `
-                        <div class="flex flex-col h-full fade-in">
-                            <div class="h-40 bg-gradient-to-r from-daw-panel to-daw-bg border-b border-daw-border p-8 flex flex-col justify-end relative shrink-0">
-                                <button onclick="app.navigate('projects')" class="absolute top-6 left-6 text-daw-muted hover:text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Projects</button>
-                                <h1 class="text-4xl font-bold text-white mb-2 font-mono tracking-tighter">${project.name}</h1>
-                                <div class="flex items-center gap-4 text-xs font-mono text-cyan-400">
-                                    <span class="bg-daw-surface px-2 py-1 rounded border border-daw-border text-daw-muted">Project ID: ${project.id.substring(0, 8)}</span>
-                                </div>
-                            </div>
-                            <div class="flex-1 p-8 bg-daw-bg overflow-y-auto">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="text-lg font-bold text-white uppercase tracking-wider text-sm">Works (Songs / Cues)</h3>
-                                    <button onclick="app.modalAddWork('${project.id}')" class="text-xs bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded font-bold uppercase tracking-wider"><i class="fa-solid fa-plus mr-1"></i> New Work</button>
-                                </div>
-                                <div class="space-y-2">
-                                    ${this.cache.works.map(w => `
-                                        <div onclick="app.navigate('workstation', {workId: '${w.id}'})" class="bg-daw-panel border border-daw-border p-4 rounded hover:border-cyan-500/50 cursor-pointer group flex items-center justify-between transition-all">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-10 h-10 bg-daw-bg rounded flex items-center justify-center text-daw-muted"><i class="fa-solid fa-music"></i></div>
-                                                <div>
-                                                    <div class="font-bold text-white font-mono text-sm">${w.title}</div>
-                                                    <div class="text-[10px] text-daw-muted">Last Updated: ${new Date(w.createdAt).toLocaleDateString()}</div>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center gap-4">
-                                                <span class="text-[10px] bg-daw-surface px-2 py-1 rounded text-cyan-400 border border-daw-border">${this.getGenerationCount(w.id)} Versions</span>
-                                                <i class="fa-solid fa-chevron-right text-daw-muted"></i>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>`;
-                }
-
-                // --- 2. WORKSTATION (The Core) ---
-                renderWorkstation(container) {
-                    const work = this.cache.works.find(w => w.id === this.state.workId);
-                    if (!work) return this.navigate('projects');
-
-                    const generations = this.cache.generations.filter(g => g.workId === work.id).sort((a, b) => b.createdAt - a.createdAt);
-
-                    // Select generation: either passed in params, or the most recent one
-                    let activeGen = null;
-                    if (this.state.generationId) activeGen = generations.find(g => g.id === this.state.generationId);
-                    if (!activeGen && generations.length > 0) activeGen = generations[0];
-
-                    const audioUrl = activeGen && activeGen.audioBlob ? URL.createObjectURL(activeGen.audioBlob) : null;
-
-                    container.innerHTML = `
-                        <div class="flex h-full fade-in overflow-hidden">
-                            <div class="w-64 bg-daw-panel border-r border-daw-border flex flex-col shrink-0">
-                                <div class="p-4 border-b border-daw-border bg-daw-surface">
-                                    <div class="text-[10px] font-bold text-daw-muted uppercase mb-1">Work</div>
-                                    <div class="font-mono font-bold text-white truncate">${work.title}</div>
-                                </div>
-                                <div class="flex-1 overflow-y-auto p-2 space-y-1">
-                                    <div class="px-2 py-2 text-[10px] font-bold text-daw-muted uppercase flex justify-between items-center">
-                                        <span>Version History</span>
-                                        <button onclick="app.modalAddGeneration('${work.id}')" class="text-cyan-400 hover:text-white"><i class="fa-solid fa-plus"></i></button>
-                                    </div>
-                                    ${generations.map(g => {
-                        const isSel = activeGen && activeGen.id === g.id;
-                        return `
-                                        <div onclick="app.navigate('workstation', {workId: '${work.id}', generationId: '${g.id}'})" 
-                                             class="relative pl-6 pr-2 py-2 rounded cursor-pointer text-xs font-mono border border-transparent ${isSel ? 'bg-cyan-900/20 border-cyan-500/30 text-white' : 'hover:bg-daw-surface text-daw-muted'}">
-                                            <div class="tree-line"></div>
-                                            <div class="tree-branch"></div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="truncate font-bold">${this.getStageIcon(g.stage)} ${g.stage.toUpperCase()}</span>
-                                                ${g.rating ? '<span class="text-yellow-500 text-[9px]">★' + g.rating + '</span>' : ''}
-                                            </div>
-                                            <div class="text-[10px] opacity-60 truncate">${g.id.substring(0, 6)} • ${new Date(g.createdAt).toLocaleTimeString()}</div>
-                                        </div>`;
-                    }).join('')}
-                                    ${generations.length === 0 ? '<div class="text-center p-4 text-xs text-daw-muted italic">No audio versions yet.<br>Upload one to start.</div>' : ''}
-                                </div>
-                            </div>
-
-                            <div class="flex-1 flex flex-col min-w-0 bg-daw-bg relative">
-                                <div class="h-14 border-b border-daw-border bg-daw-panel px-4 flex items-center justify-between shrink-0">
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-xs font-mono text-daw-muted">
-                                            <span class="text-cyan-500">ID:</span> ${activeGen ? activeGen.id : '---'}
-                                        </div>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button onclick="app.saveGeneration('${activeGen ? activeGen.id : ''}')" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider shadow-lg transition-all flex items-center gap-2">
-                                            <i class="fa-solid fa-floppy-disk"></i> Save Version
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="h-64 bg-daw-surface border-b border-daw-border relative flex flex-col items-center justify-center p-8">
-                                    ${audioUrl ?
-                            `<div class="w-full max-w-2xl bg-daw-bg border border-daw-border rounded-lg p-6 shadow-xl">
-                                            <div class="flex justify-between items-center mb-4">
-                                                <div class="text-xs font-bold text-cyan-500 uppercase tracking-widest">Now Playing</div>
-                                                <div class="text-xs font-mono text-white">${activeGen.stage.toUpperCase()}</div>
-                                            </div>
-                                            <audio controls src="${audioUrl}" class="w-full mb-4"></audio>
-                                            <div class="flex justify-between text-[10px] text-daw-muted font-mono">
-                                                <span>Source: ${activeGen.model || 'Unknown Model'}</span>
-                                                <button onclick="app.triggerGenUpload('${activeGen.id}')" class="hover:text-white underline">Replace Audio</button>
-                                            </div>
-                                        </div>` :
-                            `<div onclick="app.modalAddGeneration('${work.id}')" class="border-2 border-dashed border-daw-border rounded-lg p-10 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500/50 hover:text-cyan-400 text-daw-muted transition-all">
-                                            <i class="fa-solid fa-cloud-arrow-up text-4xl mb-4"></i>
-                                            <span class="text-sm font-bold uppercase tracking-wider">Upload Generation / Stem</span>
-                                        </div>`
-                        }
-                                </div>
-
-                                <div class="flex-1 flex flex-col min-h-0">
-                                    <div class="flex border-b border-daw-border bg-daw-bg">
-                                        <button onclick="app.setWsTab('prod')" class="px-6 py-3 text-xs font-bold uppercase tracking-wider border-b-2 ${this.state.wsTab === 'prod' ? 'border-cyan-500 text-white bg-daw-surface' : 'border-transparent text-daw-muted hover:text-white'}">Prompt & Logs</button>
-                                        <button onclick="app.setWsTab('meta')" class="px-6 py-3 text-xs font-bold uppercase tracking-wider border-b-2 ${this.state.wsTab === 'meta' ? 'border-cyan-500 text-white bg-daw-surface' : 'border-transparent text-daw-muted hover:text-white'}">Tech & Analysis</button>
-                                    </div>
-                                    
-                                    <div class="flex-1 overflow-y-auto p-6 bg-daw-bg">
-                                        ${activeGen ? (this.state.wsTab === 'prod' ? this.renderProdTab(activeGen) : this.renderMetaTab(activeGen)) : ''}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="w-72 bg-daw-panel border-l border-daw-border flex flex-col shrink-0">
-                                <div class="p-4 border-b border-daw-border"><h3 class="text-[10px] font-bold text-daw-muted uppercase tracking-widest">Version Context</h3></div>
-                                <div class="p-4 space-y-4">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Stage</label>
-                                        <select id="gen-stage" onchange="app.updateGenField('${activeGen?.id}', 'stage', this.value)" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-xs text-white outline-none">
-                                            ${STAGES.map(s => `<option value="${s}" ${activeGen?.stage === s ? 'selected' : ''}>${s.toUpperCase()}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Parent (Fork From)</label>
-                                        <select class="w-full bg-daw-bg border border-daw-border rounded p-2 text-xs text-white outline-none">
-                                            <option value="">(Root)</option>
-                                            ${generations.filter(g => g.id !== activeGen?.id).map(g => `<option value="${g.id}">${g.stage.toUpperCase()} - ${g.id.substring(0, 4)}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Rating</label>
-                                        <input type="range" min="0" max="5" value="${activeGen?.rating || 0}" onchange="app.updateGenField('${activeGen?.id}', 'rating', this.value)" class="w-full">
-                                        <div class="text-right text-xs text-yellow-500">${activeGen?.rating || 0} Stars</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                }
-
-                renderProdTab(gen) {
-                    return `
-                        <div class="max-w-3xl">
-                            <div class="mb-6">
-                                <div class="flex justify-between mb-2">
-                                    <label class="block text-[10px] font-bold text-daw-muted uppercase">Prompt</label>
-                                    <button class="text-[10px] text-cyan-500 hover:text-white uppercase font-bold">Copy</button>
-                                </div>
-                                <textarea id="gen-prompt" onchange="app.updateGenField('${gen.id}', 'prompt', this.value)" class="w-full h-24 bg-daw-surface border border-daw-border rounded p-3 text-sm font-mono text-cyan-100 outline-none focus:border-cyan-500 resize-none">${gen.prompt || ''}</textarea>
-                            </div>
-                            
-                            <div class="mb-6">
-                                <label class="block text-[10px] font-bold text-daw-muted uppercase mb-2">Tags</label>
-                                <div class="flex flex-wrap gap-2 mb-2" id="gen-tags-container">
-                                    ${(gen.tags || []).map(t => `<span class="bg-cyan-900/40 text-cyan-200 border border-cyan-500/30 px-2 py-1 rounded text-[10px] font-mono">${t}</span>`).join('')}
-                                    <button onclick="app.modalEditTags('${gen.id}')" class="bg-daw-surface text-daw-muted hover:text-white px-2 py-1 rounded text-[10px] border border-daw-border"><i class="fa-solid fa-pen"></i> Edit</button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-[10px] font-bold text-daw-muted uppercase mb-2">Engineer's Notes</label>
-                                <textarea onchange="app.updateGenField('${gen.id}', 'notes', this.value)" class="w-full h-32 bg-daw-surface border border-daw-border rounded p-3 text-xs font-mono text-daw-text outline-none focus:border-cyan-500">${gen.notes || ''}</textarea>
-                            </div>
+                    el.className = "bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between group hover:border-indigo-300 hover:shadow-md transition-all";
+                    el.innerHTML = `
+                        <div class="mb-4">
+                            <h3 class="font-bold text-slate-800 text-lg mb-2">${item.name}</h3>
+                            <p class="text-xs text-slate-400 font-medium mb-3">${new Date(item.timestamp).toLocaleString()}</p>
+                            <div class="mt-2 text-xs text-slate-600 line-clamp-2 bg-slate-50 p-3 rounded-lg border border-slate-100 font-mono"><span class="text-purple-600 font-bold">Style:</span> ${item.text}</div>
+                        </div>
+                        <div class="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+                            <button onclick="loadPrompt(${item.id})" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm">Load</button>
+                            <button onclick="deletePrompt(${item.id})" class="px-3 py-2 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg border border-slate-200 hover:border-red-200 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     `;
-                }
-
-                renderMetaTab(gen) {
-                    const analysis = gen.analysis || {};
-                    return `
-                        <div class="max-w-3xl grid grid-cols-2 gap-8">
-                            <div>
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-sm font-bold text-white">Audio Analysis</h3>
-                                    <button onclick="app.simulateAnalysis('${gen.id}')" class="text-[10px] bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded uppercase font-bold tracking-wider">Run Scan</button>
-                                </div>
-                                <div class="space-y-4">
-                                    <div class="bg-daw-surface border border-daw-border rounded p-3 flex justify-between items-center">
-                                        <span class="text-[10px] font-bold text-daw-muted uppercase">Detected BPM</span>
-                                        <span class="font-mono text-cyan-400 font-bold">${analysis.bpmDetected || '--'}</span>
-                                    </div>
-                                    <div class="bg-daw-surface border border-daw-border rounded p-3 flex justify-between items-center">
-                                        <span class="text-[10px] font-bold text-daw-muted uppercase">Detected Key</span>
-                                        <span class="font-mono text-cyan-400 font-bold">${analysis.keyDetected || '--'}</span>
-                                    </div>
-                                    <div class="bg-daw-surface border border-daw-border rounded p-3 flex justify-between items-center">
-                                        <span class="text-[10px] font-bold text-daw-muted uppercase">Integrate LUFS</span>
-                                        <span class="font-mono text-cyan-400 font-bold">${analysis.lufs || '--'} dB</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-white mb-4">Manual Metadata</h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">BPM (Manual)</label>
-                                        <input type="text" value="${analysis.bpmManual || ''}" onchange="app.updateGenAnalysis('${gen.id}', 'bpmManual', this.value)" class="w-full bg-daw-surface border border-daw-border rounded p-2 text-xs text-white outline-none font-mono">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Key (Manual)</label>
-                                        <input type="text" value="${analysis.keyManual || ''}" onchange="app.updateGenAnalysis('${gen.id}', 'keyManual', this.value)" class="w-full bg-daw-surface border border-daw-border rounded p-2 text-xs text-white outline-none font-mono">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // --- 3. INBOX ---
-                renderInbox(container) {
-                    // Filter generations that have stage 'raw' or 'selection' and no specific parent (conceptually)
-                    // For now, let's just list all 'raw' stage items across all projects
-                    const inboxItems = this.cache.generations.filter(g => g.stage === 'raw' || !g.stage).sort((a, b) => b.createdAt - a.createdAt);
-
-                    container.innerHTML = `
-                        <div class="flex flex-col h-full fade-in">
-                            <div class="p-6 bg-daw-panel border-b border-daw-border shrink-0 flex justify-between items-center">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-white mb-1 font-mono">INBOX</h2>
-                                    <p class="text-daw-muted text-sm">Triage raw generations and imports.</p>
-                                </div>
-                                <button onclick="app.triggerGlobalUpload()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded font-bold uppercase tracking-wider text-xs"><i class="fa-solid fa-upload mr-2"></i> Import Audio</button>
-                            </div>
-                            <div class="flex-1 overflow-y-auto bg-daw-bg p-0">
-                                <table class="w-full text-left border-collapse">
-                                    <thead class="bg-daw-surface text-[10px] font-bold text-daw-muted uppercase sticky top-0">
-                                        <tr><th class="p-4">Date</th><th class="p-4">Prompt / ID</th><th class="p-4">Project</th><th class="p-4 text-right">Action</th></tr>
-                                    </thead>
-                                    <tbody class="text-sm text-daw-text divide-y divide-daw-border">
-                                        ${inboxItems.map(g => {
-                        const work = this.cache.works.find(w => w.id === g.workId);
-                        return `
-                                            <tr class="hover:bg-daw-surface/50 group transition-colors">
-                                                <td class="p-4 font-mono text-xs text-daw-muted">${new Date(g.createdAt).toLocaleDateString()}</td>
-                                                <td class="p-4">
-                                                    <div class="font-bold text-white truncate max-w-md">${g.prompt ? g.prompt.substring(0, 50) + '...' : 'No Prompt'}</div>
-                                                    <div class="text-[10px] text-daw-muted font-mono">${g.id}</div>
-                                                </td>
-                                                <td class="p-4 text-xs font-mono">${work ? work.title : 'Unassigned'}</td>
-                                                <td class="p-4 text-right">
-                                                    <button onclick="app.navigate('workstation', {workId: '${g.workId}', generationId: '${g.id}'})" class="text-cyan-500 hover:text-white text-xs font-bold uppercase mr-3">Review</button>
-                                                </td>
-                                            </tr>`;
-                    }).join('')}
-                                    </tbody>
-                                </table>
-                                ${inboxItems.length === 0 ? `<div class="p-10 text-center text-daw-muted italic">Inbox Zero. Good job.</div>` : ''}
-                            </div>
-                        </div>`;
-                }
-
-                // --- Helpers & Logic ---
-
-                getGenerationCount(workId) {
-                    return this.cache.generations.filter(g => g.workId === workId).length;
-                }
-
-                getStageIcon(stage) {
-                    const map = { 'raw': 'fa-seedling', 'selection': 'fa-check', 'edit': 'fa-scissors', 'mix': 'fa-sliders', 'master': 'fa-compact-disc' };
-                    return `<i class="fa-solid ${map[stage] || 'fa-file-audio'} mr-1"></i>`;
-                }
-
-                setWsTab(tab) {
-                    this.state.wsTab = tab;
-                    this.render();
-                }
-
-                async updateGenField(id, field, value) {
-                    if (!id) return;
-                    const gen = this.cache.generations.find(g => g.id === id);
-                    if (gen) {
-                        gen[field] = value;
-                        // Debounce save in real app, simplified here
-                        // await this.db.put('generations', gen); 
-                    }
-                }
-
-                async updateGenAnalysis(id, field, value) {
-                    if (!id) return;
-                    const gen = this.cache.generations.find(g => g.id === id);
-                    if (gen) {
-                        if (!gen.analysis) gen.analysis = {};
-                        gen.analysis[field] = value;
-                    }
-                }
-
-                async saveGeneration(id) {
-                    if (!id) return;
-                    const gen = this.cache.generations.find(g => g.id === id);
-                    if (gen) {
-                        await this.db.put('generations', gen);
-                        this.showToast('Version Saved', 'success');
-                    }
-                }
-
-                async simulateAnalysis(id) {
-                    const gen = this.cache.generations.find(g => g.id === id);
-                    if (!gen) return;
-
-                    // Fake DSP
-                    if (!gen.analysis) gen.analysis = {};
-                    gen.analysis.bpmDetected = Math.floor(Math.random() * (140 - 80) + 80);
-                    gen.analysis.keyDetected = ['Am', 'C', 'G', 'Dm', 'F#m'][Math.floor(Math.random() * 5)];
-                    gen.analysis.lufs = -(Math.floor(Math.random() * 8) + 8);
-
-                    await this.db.put('generations', gen);
-                    this.render(); // Re-render to show data
-                    this.showToast('Audio Analysis Complete');
-                }
-
-                modalAddProject() {
-                    const modal = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = 'New Project';
-                    document.getElementById('modal-content').innerHTML = `
-                        <div class="space-y-4">
-                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Project Name</label><input id="new-p-name" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
-                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Type/Genre</label><input id="new-p-genre" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
-                        </div>`;
-                    modal.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const name = document.getElementById('new-p-name').value;
-                        const genre = document.getElementById('new-p-genre').value;
-                        if (!name) return;
-                        // Save to 'artists' collection for backward compat, or separate 'projects' if strictly following new schema
-                        // For the prompt's sake "don't rewrite DB", we use existing or new. 
-                        // I will use 'artists' collection but treat as project.
-                        await this.db.put('artists', { id: generateID(), name, genre, createdAt: Date.now() });
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.navigate('projects');
-                    };
-                }
-
-                modalAddWork(projectId) {
-                    const modal = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = 'New Work';
-                    document.getElementById('modal-content').innerHTML = `
-                        <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Work Title</label><input id="new-work-title" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>`;
-                    modal.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const title = document.getElementById('new-work-title').value;
-                        if (!title) return;
-                        const id = generateID();
-                        // For legacy compat, we need an albumId? Or we just ignore it.
-                        // I will create a dummy albumId if needed or just store projectId. 
-                        // To keep it simple: I will modify schema to allow projectId on Work.
-                        await this.db.put('songs', { id, projectId, title, createdAt: Date.now() });
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.navigate('workstation', { workId: id });
-                    };
-                }
-
-                modalAddGeneration(workId) {
-                    const modal = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = 'New Generation Entry';
-                    document.getElementById('modal-content').innerHTML = `
-                        <div class="space-y-4">
-                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Stage</label>
-                            <select id="new-gen-stage" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white">
-                                <option value="raw">Raw Generation</option>
-                                <option value="edit">Edit / Stem</option>
-                            </select></div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Audio File</label>
-                                <input type="file" id="new-gen-file" class="text-xs text-white">
-                            </div>
-                        </div>`;
-                    modal.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const stage = document.getElementById('new-gen-stage').value;
-                        const file = document.getElementById('new-gen-file').files[0];
-
-                        const id = generateID();
-                        const gen = {
-                            id,
-                            workId,
-                            stage,
-                            parentId: this.state.generationId || null, // Parent is current selected if any
-                            createdAt: Date.now(),
-                            audioBlob: file || null
-                        };
-
-                        await this.db.put('generations', gen);
-                        await this.refreshCache();
-                        this.closeModal();
-                        this.navigate('workstation', { workId, generationId: id });
-                    };
-                }
-
-                modalEditTags(genId) {
-                    // Tag editor logic (simplified)
-                    // In full version, this would reuse the TagBuilder logic from v7
-                    alert("Tag Editor would open here (reuse logic from v7)");
-                }
-
-                closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
-
-                renderLibrary(container) {
-                    container.innerHTML = `<div class="p-8 text-center text-daw-muted">Master Library View (See v7 implementation)</div>`;
-                }
-                renderStyleManager(container) {
-                    container.innerHTML = `<div class="p-8 text-center text-daw-muted">Style Manager (See v7 implementation)</div>`;
-                }
-                renderChainManager(container) {
-                    container.innerHTML = `<div class="p-8 text-center text-daw-muted">Mastering Chains (Placeholder for Feature #6)</div>`;
-                }
-                renderSettings(container) {
-                    container.innerHTML = `<div class="p-8 text-center text-daw-muted">Settings (See v7 implementation)</div>`;
-                }
+                    list.appendChild(el);
+                });
+            } else {
+                list.innerHTML = `<div class="text-center py-12 text-slate-400 col-span-2 flex flex-col items-center"><div class="bg-slate-50 p-4 rounded-full mb-3"><i data-lucide="save" class="w-6 h-6 text-slate-300"></i></div><p>No cloud prompts found.</p></div>`;
             }
+            lucide.createIcons();
+        }
 
-            const app = new App();
-        });
+        // --- ARTIST BUILDER FIREBASE ---
+        function updateArtistPreviewStats() {
+            const stats = document.getElementById('artist-preview-stats');
+            if (!stats) return;
+            const hasData = state.genreCat || state.subgenres.length > 0;
+            if (!hasData) { stats.innerHTML = `<p class="italic text-slate-400">Configure settings in "Tuner" or "Blueprint" first...</p>`; return; }
+            stats.innerHTML = `
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5"><span class="text-slate-400 font-medium">Foundation</span><span class="text-purple-600 font-bold">${state.genreCat || '-'}</span></div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5"><span class="text-slate-400 font-medium">Subgenres</span><span class="text-slate-600 text-right truncate pl-4">${state.subgenres.length ? state.subgenres.join(", ") : '-'}</span></div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5"><span class="text-slate-400 font-medium">Singer</span><span class="text-blue-500 text-right truncate pl-4 font-mono text-[10px]">${state.singerDescription || '-'}</span></div>
+                <div class="flex justify-between border-b border-slate-100 pb-1.5 mb-1.5"><span class="text-slate-400 font-medium">Instruments</span><span class="text-blue-400 text-right truncate pl-4">${state.instruments.length ? state.instruments.slice(0,3).join(", ") + (state.instruments.length > 3 ? '...' : '') : '-'}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400 font-medium">Exclusions</span><span class="text-red-500 text-right truncate pl-4 font-mono text-[10px]">${state.exclusions || '-'}</span></div>
+            `;
+        }
+
+        async function saveArtist() {
+            const name = document.getElementById('artist-name').value.trim();
+            const bio = document.getElementById('artist-bio').value.trim();
+            if (!name) return alert("Please give your Artist a name!");
+            if (!state.genreCat && state.subgenres.length === 0) return alert("No sound profile selected!");
+
+            const artistData = {
+                id: Date.now(),
+                name: name,
+                bio: bio,
+                profile: JSON.parse(JSON.stringify(state))
+            };
+
+            const success = await app.db.put('artists', artistData);
+            if(success) {
+                alert(`Artist "${name}" saved to Cloud!`);
+                document.getElementById('artist-name').value = '';
+                document.getElementById('artist-bio').value = '';
+                renderArtistList();
+            } else {
+                alert("Error saving artist.");
+            }
+        }
+
+        async function renderArtistList() {
+            const list = document.getElementById('artist-list');
+            list.innerHTML = '<div class="text-center py-10 text-slate-400">Loading Roster...</div>';
+            
+            const artists = await app.db.getAll('artists');
+            list.innerHTML = '';
+
+            if (artists.length > 0) {
+                artists.forEach(artist => {
+                    const p = artist.profile;
+                    const el = document.createElement('div');
+                    el.className = "bg-slate-50 border border-slate-200 rounded-xl p-5 flex flex-col group hover:border-pink-300 hover:bg-white hover:shadow-md transition-all cursor-pointer relative";
+                    el.onclick = (e) => { if(!e.target.closest('button')) loadArtist(artist.id); };
+                    el.innerHTML = `
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-slate-800 text-lg group-hover:text-pink-600 transition-colors">${artist.name}</h4><button onclick="deleteArtist(${artist.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+                        <div class="text-xs text-slate-500 mb-3 italic font-medium line-clamp-2">${artist.bio || "No description"}</div>
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            <span class="bg-white text-slate-600 px-2 py-1 rounded-md text-[10px] border border-slate-200 font-medium">${p.genreCat}</span>
+                            ${p.singerDescription ? `<span class="bg-pink-50 text-pink-600 px-2 py-1 rounded-md text-[10px] border border-pink-100 truncate max-w-[150px]">${p.singerDescription}</span>` : ''}
+                        </div>
+                        <div class="mt-auto pt-3 border-t border-slate-200 flex justify-end"><span class="text-[10px] text-pink-600 font-bold uppercase tracking-wider group-hover:underline flex items-center gap-1">Load Profile <i data-lucide="arrow-right" class="w-3 h-3"></i></span></div>
+                    `;
+                    list.appendChild(el);
+                });
+            } else {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center h-40 text-slate-400 text-sm italic"><i data-lucide="ghost" class="w-8 h-8 mb-2 opacity-30"></i>No artists yet.</div>`;
+            }
+            lucide.createIcons();
+        }
+
+        async function loadArtist(id) {
+            const artists = await app.db.getAll('artists');
+            const artist = artists.find(a => a.id == id);
+            if (artist && artist.profile) {
+                state = artist.profile;
+                updateAllVisuals();
+                switchTab('style');
+            }
+        }
+
+        async function deleteArtist(id) {
+            if(!confirm("Drop this artist from your Cloud roster?")) return;
+            await app.db.delete('artists', id);
+            renderArtistList();
+        }
+
+        // Initialize App
+        window.onload = () => app.init();
+
     </script>
 </body>
-
 </html>
