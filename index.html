@@ -3,63 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v7.2</title>
+    <title>Suno Engineer's Companion v7.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
-        
-        window.firebaseModules = { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query };
-    </script>
-
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* Sidebar & Dark Areas */
         .sidebar { background-color: #0f172a; color: #94a3b8; border-right: 1px solid #1e293b; }
         .sidebar-item { transition: all 0.2s; border-left: 3px solid transparent; }
         .sidebar-item:hover { background-color: #1e293b; color: #f8fafc; }
         .sidebar-item.active { background-color: #1e293b; color: #f8fafc; border-left-color: #3b82f6; }
-
-        /* Primary Content Area */
         .content-area { background-color: #ffffff; }
-
-        /* Buttons */
         .btn-primary { background-color: #2563eb; color: white; transition: background 0.2s; }
         .btn-primary:hover { background-color: #1d4ed8; }
         .btn-secondary { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; transition: all 0.2s; }
         .btn-secondary:hover { background-color: #e2e8f0; color: #1e293b; }
         .btn-danger { color: #ef4444; transition: color 0.2s; }
         .btn-danger:hover { color: #dc2626; background-color: #fef2f2; }
-
-        /* Inputs */
-        input[type="text"], input[type="number"], select, textarea {
-            background-color: #f8fafc; border: 1px solid #cbd5e1; color: #1e293b; transition: border 0.2s;
-        }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-            border-color: #3b82f6; outline: none; background-color: #ffffff;
-        }
-
-        /* Range Slider */
+        input[type="text"], input[type="number"], select, textarea { background-color: #f8fafc; border: 1px solid #cbd5e1; color: #1e293b; transition: border 0.2s; }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: #3b82f6; outline: none; background-color: #ffffff; }
         input[type=range] { -webkit-appearance: none; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #cbd5e1; border-radius: 2px; }
-
-        /* Utils */
         .fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
         #auth-screen { z-index: 50; }
         #generic-modal { z-index: 60; }
     </style>
@@ -72,7 +44,7 @@
             <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white"><i class="fa-solid fa-sliders"></i></div>
             <div>
                 <h1 class="font-bold text-slate-100 tracking-tight">Suno Engineer</h1>
-                <div class="text-[10px] text-slate-500 font-mono">COMPANION v7.2</div>
+                <div class="text-[10px] text-slate-500 font-mono">COMPANION v7.3</div>
             </div>
         </div>
         
@@ -130,8 +102,8 @@
                 <div id="auth-error-msg" class="text-red-400 text-xs mt-4 hidden bg-red-900/20 p-2 rounded border border-red-900/50"></div>
             </div>
             <div id="step-loading" class="hidden">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p class="text-slate-500 text-xs">Accessing Secure Storage...</p>
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto mb-3"></div>
+                <p class="text-zinc-500 text-xs">Accessing Secure Storage...</p>
             </div>
         </div>
     </div>
@@ -155,617 +127,596 @@
     <input type="file" id="global-file-input" class="hidden">
 
     <script type="module">
-        window.addEventListener('load', () => {
-            const { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } = window.firebaseModules;
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-            // --- 1. Configuration & Constants ---
-            const TAG_LIBRARY = {
-                "Instruments": { 
-                    "Key Elements": ["808 Drums", "Acoustic Guitar", "Slide Guitar", "Acoustic Nylon Guitar", "Heavy Fuzz Bass", "Simple Dry Drums", "Piano", "Rhodes Piano", "Hammond B3"],
-                    "Synth & Tech": ["Granular Synthesis", "Tape Loops", "Vocoder", "Polyphonic Synth", "Drum Machine", "Analog Synth", "Modular Synth"],
-                    "Strings & Orch": ["Violin", "Cello", "String Quartet", "Orchestral Strings", "Harp"]
-                },
-                "Genre": { 
-                    "Structure & Form": ["Conventional", "Standard Structure", "Non-linear", "Chaotic", "Plunderphonics"],
-                    "Indie & Rock": ["Lo-fi Indie", "Slacker Rock", "Indie Folk", "Slow Core", "Shoegaze", "Post-Rock"],
-                    "Pop & Mood": ["Somber Pop", "Dark Pop", "Trip-hop", "Moody Ballad", "Dream Pop", "Hyperpop"],
-                    "Electronic": ["Techno", "House", "Deep House", "Trance", "Dubstep", "Synthwave", "Ambient", "Industrial", "Glitch Hop"]
-                },
-                "Persona": {
-                    "Vocal Style": ["Androgynous Vocals", "Breathy", "Male Singer-Songwriter", "Male Vocals", "Female Vocals", "Ethereal Vocals", "Choir", "Whisper", "Rap", "Autotune", "Raspy"]
-                },
-                "Style & Vibe": { 
-                    "Atmosphere": ["Ambient", "Serene", "Gloomy", "Ethereal", "Relaxing", "Tranquil", "Intimate", "Sentimental", "Emotional", "Confessional", "Introspection", "Exotic"],
-                    "Pace": ["Slow (Adagio)", "Mid-tempo", "Fast", "Driving", "Groove", "Largo", "Presto"]
-                },
-                "Recording": { 
-                    "Production": ["Vintage", "Lo-Fi", "Analog Warmth", "Futuristic", "Hi-Fi", "Digital", "Studio Recording", "Bedroom Recording", "Raw Production", "Unpolished"],
-                    "Texture & Artifacts": ["Tape Hiss", "Cassette Tape Saturation", "Warm Fuzz", "Authentic Imperfections", "Minimal Processing", "Close-mic Vocals", "Vinyl Crackle"]
-                },
-                "Exclusions": {
-                    "Negative Prompts": ["-Jazz", "-Punk", "-Rock", "-Hardcore"]
-                }
-            };
-            const MIX_TAGS = ["Too Bassy", "Thin/Harsh", "Muddy", "Vocals Buried", "Vocals Too Loud", "Too Dry", "Too Wet", "Distorted", "Bad Ending", "Hallucination", "Perfect Mix", "Dynamics Flat", "Stereo Too Wide", "Mono Issues"];
-            const generateID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+        // --- 1. Constants & Utils ---
+        const TAG_LIBRARY = {
+            "Instruments": { 
+                "Key Elements": ["808 Drums", "Acoustic Guitar", "Slide Guitar", "Acoustic Nylon Guitar", "Heavy Fuzz Bass", "Simple Dry Drums", "Piano", "Rhodes Piano", "Hammond B3"],
+                "Synth & Tech": ["Granular Synthesis", "Tape Loops", "Vocoder", "Polyphonic Synth", "Drum Machine", "Analog Synth", "Modular Synth"],
+                "Strings & Orch": ["Violin", "Cello", "String Quartet", "Orchestral Strings", "Harp"]
+            },
+            "Genre": { 
+                "Structure & Form": ["Conventional", "Standard Structure", "Non-linear", "Chaotic", "Plunderphonics"],
+                "Indie & Rock": ["Lo-fi Indie", "Slacker Rock", "Indie Folk", "Slow Core", "Shoegaze", "Post-Rock"],
+                "Pop & Mood": ["Somber Pop", "Dark Pop", "Trip-hop", "Moody Ballad", "Dream Pop", "Hyperpop"],
+                "Electronic": ["Techno", "House", "Deep House", "Trance", "Dubstep", "Synthwave", "Ambient", "Industrial", "Glitch Hop"]
+            },
+            "Persona": {
+                "Vocal Style": ["Androgynous Vocals", "Breathy", "Male Singer-Songwriter", "Male Vocals", "Female Vocals", "Ethereal Vocals", "Choir", "Whisper", "Rap", "Autotune", "Raspy"]
+            },
+            "Style & Vibe": { 
+                "Atmosphere": ["Ambient", "Serene", "Gloomy", "Ethereal", "Relaxing", "Tranquil", "Intimate", "Sentimental", "Emotional", "Confessional", "Introspection", "Exotic"],
+                "Pace": ["Slow (Adagio)", "Mid-tempo", "Fast", "Driving", "Groove", "Largo", "Presto"]
+            },
+            "Recording": { 
+                "Production": ["Vintage", "Lo-Fi", "Analog Warmth", "Futuristic", "Hi-Fi", "Digital", "Studio Recording", "Bedroom Recording", "Raw Production", "Unpolished"],
+                "Texture & Artifacts": ["Tape Hiss", "Cassette Tape Saturation", "Warm Fuzz", "Authentic Imperfections", "Minimal Processing", "Close-mic Vocals", "Vinyl Crackle"]
+            },
+            "Exclusions": {
+                "Negative Prompts": ["-Jazz", "-Punk", "-Rock", "-Hardcore"]
+            }
+        };
+        const MIX_TAGS = ["Too Bassy", "Thin/Harsh", "Muddy", "Vocals Buried", "Vocals Too Loud", "Too Dry", "Too Wet", "Distorted", "Bad Ending", "Hallucination", "Perfect Mix", "Dynamics Flat", "Stereo Too Wide", "Mono Issues"];
+        const generateID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
-            // --- 2. Database Wrapper ---
-            class DB {
-                constructor(app) {
-                    this.app = app;
-                    this.config = { apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo", authDomain: "ai-audio-engineer.firebaseapp.com", projectId: "ai-audio-engineer", storageBucket: "ai-audio-engineer.firebasestorage.app", messagingSenderId: "150234414348", appId: "1:150234414348:web:6d38c836eae470cb559d29", measurementId: "G-W4572MB1QP" };
-                    this.appId = 'default-app';
-                    this.db = null; this.auth = null; this.user = null; this.idb = null;
-                    this.initIndexedDB();
-                    this.init();
-                }
+        // --- 2. Database Wrapper ---
+        class DB {
+            constructor(app) {
+                this.app = app;
+                this.config = { apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo", authDomain: "ai-audio-engineer.firebaseapp.com", projectId: "ai-audio-engineer", storageBucket: "ai-audio-engineer.firebasestorage.app", messagingSenderId: "150234414348", appId: "1:150234414348:web:6d38c836eae470cb559d29", measurementId: "G-W4572MB1QP" };
+                this.appId = 'default-app';
+                this.db = null; this.auth = null; this.user = null; this.idb = null;
+                this.initIndexedDB();
+                this.init();
+            }
 
-                init() {
-                    try {
-                        const app = initializeApp(this.config);
-                        this.auth = getAuth(app);
-                        this.db = getFirestore(app);
-                        onAuthStateChanged(this.auth, (user) => {
-                            this.user = user;
-                            if (user) this.app.onLoginSuccess(user);
-                            else this.app.showAuthStep('login');
-                        });
-                    } catch (e) {
-                        console.error("Firebase Init Error", e);
-                        document.getElementById('auth-error-msg').textContent = "Init Error: " + e.message;
-                        document.getElementById('auth-error-msg').classList.remove('hidden');
-                    }
-                }
-
-                async loginGoogle() {
-                    if (!this.auth) return;
-                    try { await signInWithPopup(this.auth, new GoogleAuthProvider()); } 
-                    catch (e) { 
-                        const msg = document.getElementById('auth-error-msg');
-                        if (msg) { msg.textContent = "Login Failed: " + e.message; msg.classList.remove('hidden'); }
-                        this.app.showAuthStep('login');
-                    }
-                }
-
-                async logout() { if(this.auth) await signOut(this.auth); window.location.reload(); }
-                
-                initIndexedDB() {
-                    const r = indexedDB.open('SunoCompanionBlobs', 1);
-                    r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains('blobs')) e.target.result.createObjectStore('blobs', {keyPath:'id'}); };
-                    r.onsuccess = e => { this.idb = e.target.result; };
-                }
-
-                async getCollection(name) { if(!this.user) throw new Error("Auth required"); return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name); }
-                async getDoc(name, id) { if(!this.user) throw new Error("Auth required"); return doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, name, id); }
-
-                async getAll(name) {
-                    if(!this.user) return [];
-                    try {
-                        const s = await getDocs(await this.getCollection(name));
-                        const items = s.docs.map(d => d.data());
-                        if (name === 'songs' || name === 'albums') {
-                            return await Promise.all(items.map(async i => {
-                                const b = await this.getBlob(i.id);
-                                return b ? {...i, ...b} : i;
-                            }));
-                        }
-                        return items;
-                    } catch(e) { console.error(e); return []; }
-                }
-
-                async put(name, item) {
-                    if(!this.user) return;
-                    const meta = {...item}; const blobs = {}; let hasBlobs = false;
-                    if(meta.audioBlob) { blobs.audioBlob = meta.audioBlob; delete meta.audioBlob; hasBlobs = true; }
-                    if(meta.artworkBlob) { blobs.artworkBlob = meta.artworkBlob; delete meta.artworkBlob; hasBlobs = true; }
-                    await setDoc(await this.getDoc(name, item.id), meta);
-                    if(hasBlobs && this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').put({id: item.id, ...blobs});
-                }
-
-                async delete(name, id) {
-                    if(!this.user) return;
-                    await deleteDoc(await this.getDoc(name, id));
-                    if(this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').delete(id);
-                }
-
-                async getBlob(id) {
-                    if(!this.idb) return null;
-                    return new Promise(res => {
-                        const r = this.idb.transaction('blobs', 'readonly').objectStore('blobs').get(id);
-                        r.onsuccess = () => res(r.result); r.onerror = () => res(null);
+            init() {
+                try {
+                    const app = initializeApp(this.config);
+                    this.auth = getAuth(app);
+                    this.db = getFirestore(app);
+                    onAuthStateChanged(this.auth, (user) => {
+                        this.user = user;
+                        if (user) this.app.onLoginSuccess(user);
+                        else this.app.showAuthStep('login');
                     });
-                }
-                
-                async exportAll() {
-                    const data = {
-                        artists: await this.getAll('artists'),
-                        albums: await this.getAll('albums'),
-                        songs: await this.getAll('songs'),
-                        styles: await this.getAll('styles'),
-                        tag_metadata: await this.getAll('tag_metadata'),
-                        version: '7.1', timestamp: Date.now()
-                    };
-                    const strip = (obj) => { const c = {...obj}; delete c.audioBlob; delete c.artworkBlob; return c; };
-                    data.albums = data.albums.map(strip); data.songs = data.songs.map(strip);
-                    return JSON.stringify(data, null, 2);
-                }
-                
-                async importData(json) {
-                    try {
-                        const data = JSON.parse(json);
-                        if(data.artists) for(const i of data.artists) await this.put('artists', i);
-                        if(data.albums) for(const i of data.albums) await this.put('albums', i);
-                        if(data.songs) for(const i of data.songs) await this.put('songs', i);
-                        if(data.styles) for(const i of data.styles) await this.put('styles', i);
-                        if(data.tag_metadata) for(const i of data.tag_metadata) await this.put('tag_metadata', i);
-                        return true;
-                    } catch (e) { console.error(e); return false; }
+                } catch (e) {
+                    console.error("Firebase Init Error", e);
+                    document.getElementById('auth-error-msg').textContent = "Init Error: " + e.message;
+                    document.getElementById('auth-error-msg').classList.remove('hidden');
                 }
             }
 
-            // --- 3. App Controller ---
-            class App {
-                constructor() {
-                    window.app = this;
-                    this.db = new DB(this);
-                    this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
-                    this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
+            async loginGoogle() {
+                if (!this.auth) return;
+                try { await signInWithPopup(this.auth, new GoogleAuthProvider()); } 
+                catch (e) { 
+                    const msg = document.getElementById('auth-error-msg');
+                    if (msg) { msg.textContent = "Login Failed: " + e.message; msg.classList.remove('hidden'); }
+                    this.app.showAuthStep('login');
                 }
+            }
 
-                // Auth Logic
-                showAuthStep(s) {
-                    const authScreen = document.getElementById('auth-screen');
-                    const loading = document.getElementById('step-loading');
-                    const login = document.getElementById('step-login');
-                    
-                    if (authScreen && loading && login) {
-                        authScreen.classList.remove('hidden');
-                        loading.classList.toggle('hidden', s !== 'loading');
-                        login.classList.toggle('hidden', s !== 'login');
+            async logout() { if(this.auth) await signOut(this.auth); window.location.reload(); }
+            
+            initIndexedDB() {
+                const r = indexedDB.open('SunoCompanionBlobs', 1);
+                r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains('blobs')) e.target.result.createObjectStore('blobs', {keyPath:'id'}); };
+                r.onsuccess = e => { this.idb = e.target.result; };
+            }
+
+            async getCollection(name) { if(!this.user) throw new Error("Auth required"); return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name); }
+            async getDoc(name, id) { if(!this.user) throw new Error("Auth required"); return doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, name, id); }
+
+            async getAll(name) {
+                if(!this.user) return [];
+                try {
+                    const s = await getDocs(await this.getCollection(name));
+                    const items = s.docs.map(d => d.data());
+                    if (name === 'songs' || name === 'albums') {
+                        return await Promise.all(items.map(async i => {
+                            const b = await this.getBlob(i.id);
+                            return b ? {...i, ...b} : i;
+                        }));
                     }
-                }
+                    return items;
+                } catch(e) { console.error(e); return []; }
+            }
+
+            async put(name, item) {
+                if(!this.user) return;
+                const meta = {...item}; const blobs = {}; let hasBlobs = false;
+                if(meta.audioBlob) { blobs.audioBlob = meta.audioBlob; delete meta.audioBlob; hasBlobs = true; }
+                if(meta.artworkBlob) { blobs.artworkBlob = meta.artworkBlob; delete meta.artworkBlob; hasBlobs = true; }
+                await setDoc(await this.getDoc(name, item.id), meta);
+                if(hasBlobs && this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').put({id: item.id, ...blobs});
+            }
+
+            async delete(name, id) {
+                if(!this.user) return;
+                await deleteDoc(await this.getDoc(name, id));
+                if(this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').delete(id);
+            }
+
+            async getBlob(id) {
+                if(!this.idb) return null;
+                return new Promise(res => {
+                    const r = this.idb.transaction('blobs', 'readonly').objectStore('blobs').get(id);
+                    r.onsuccess = () => res(r.result); r.onerror = () => res(null);
+                });
+            }
+            
+            async exportAll() {
+                const data = {
+                    artists: await this.getAll('artists'),
+                    albums: await this.getAll('albums'),
+                    songs: await this.getAll('songs'),
+                    styles: await this.getAll('styles'),
+                    tag_metadata: await this.getAll('tag_metadata'),
+                    version: '7.1', timestamp: Date.now()
+                };
+                const strip = (obj) => { const c = {...obj}; delete c.audioBlob; delete c.artworkBlob; return c; };
+                data.albums = data.albums.map(strip); data.songs = data.songs.map(strip);
+                return JSON.stringify(data, null, 2);
+            }
+            
+            async importData(json) {
+                try {
+                    const data = JSON.parse(json);
+                    if(data.artists) for(const i of data.artists) await this.put('artists', i);
+                    if(data.albums) for(const i of data.albums) await this.put('albums', i);
+                    if(data.songs) for(const i of data.songs) await this.put('songs', i);
+                    if(data.styles) for(const i of data.styles) await this.put('styles', i);
+                    if(data.tag_metadata) for(const i of data.tag_metadata) await this.put('tag_metadata', i);
+                    return true;
+                } catch (e) { console.error(e); return false; }
+            }
+        }
+
+        // --- 3. App Controller ---
+        class App {
+            constructor() {
+                window.app = this;
+                this.db = new DB(this);
+                this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
+                this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
+            }
+
+            // Auth Logic
+            showAuthStep(s) {
+                const authScreen = document.getElementById('auth-screen');
+                const loading = document.getElementById('step-loading');
+                const login = document.getElementById('step-login');
                 
-                async onLoginSuccess(user) {
-                    const authScreen = document.getElementById('auth-screen');
-                    const appContainer = document.getElementById('app-container');
-                    const userEmail = document.getElementById('user-email');
-                    const syncStatus = document.getElementById('sync-status');
+                if (authScreen && loading && login) {
+                    authScreen.classList.remove('hidden');
+                    loading.classList.toggle('hidden', s !== 'loading');
+                    login.classList.toggle('hidden', s !== 'login');
+                }
+            }
+            
+            async onLoginSuccess(user) {
+                const authScreen = document.getElementById('auth-screen');
+                const appContainer = document.getElementById('app-container');
+                const userEmail = document.getElementById('user-email');
+                const syncStatus = document.getElementById('sync-status');
 
-                    if (authScreen) authScreen.classList.add('hidden');
-                    if (appContainer) appContainer.classList.remove('hidden');
-                    if (userEmail) {
-                        document.getElementById('user-profile').classList.remove('hidden');
-                        userEmail.textContent = user.email;
-                    }
-                    if (syncStatus) syncStatus.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Sync Active`;
-                    
+                if (authScreen) authScreen.classList.add('hidden');
+                if (appContainer) appContainer.classList.remove('hidden');
+                if (userEmail) {
+                    document.getElementById('user-profile').classList.remove('hidden');
+                    userEmail.textContent = user.email;
+                }
+                if (syncStatus) syncStatus.innerHTML = `<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Sync Active`;
+                
+                await this.refreshCache();
+                this.navigate('artists');
+            }
+            
+            signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
+            signOut() { this.db.logout(); }
+
+            async refreshCache() {
+                if(!this.db.user) return;
+                this.cache.artists = await this.db.getAll('artists');
+                this.cache.albums = await this.db.getAll('albums');
+                this.cache.songs = await this.db.getAll('songs');
+                this.cache.styles = await this.db.getAll('styles');
+                const metas = await this.db.getAll('tag_metadata');
+                this.cache.tagMeta = {}; metas.forEach(m => this.cache.tagMeta[m.tagName] = m);
+            }
+
+            // Navigation
+            navigate(view, params = {}) {
+                this.state.view = view;
+                if(params.artistId) this.state.artistId = params.artistId;
+                if(params.albumId) this.state.albumId = params.albumId;
+                if(params.songId) this.state.songId = params.songId;
+                if(view === 'workstation' && params.tab) this.state.wsTab = params.tab;
+                this.updateSidebar();
+                this.render();
+            }
+
+            updateSidebar() {
+                document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+                const map = { artists: 'nav-artists', artist: 'nav-artists', album: 'nav-artists', workstation: 'nav-artists', library: 'nav-library', styles: 'nav-styles', settings: 'nav-settings' };
+                const id = Object.keys(map).find(k => this.state.view.includes(k));
+                if(id) document.getElementById(map[id])?.classList.add('active');
+                
+                const ctx = document.getElementById('sidebar-context');
+                if(this.state.artistId && ctx) {
+                    ctx.classList.remove('hidden');
+                    const art = this.cache.artists.find(a => a.id === this.state.artistId);
+                    const alb = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
+                    const sng = this.state.songId ? this.cache.songs.find(s => s.id === this.state.songId) : null;
+                    document.getElementById('ctx-artist').textContent = art ? art.name : '';
+                    document.getElementById('ctx-album').textContent = alb ? alb.title : '';
+                    document.getElementById('ctx-song').textContent = sng ? sng.title : '';
+                } else if (ctx) ctx.classList.add('hidden');
+            }
+
+            render() {
+                const c = document.getElementById('main-content'); 
+                if (!c) return;
+                c.innerHTML = '';
+                switch(this.state.view) {
+                    case 'artists': this.renderArtistsList(c); break;
+                    case 'artist-detail': this.renderArtistDetail(c); break;
+                    case 'album-detail': this.renderAlbumDetail(c); break;
+                    case 'workstation': this.renderWorkstation(c); break;
+                    case 'library': this.renderLibrary(c); break;
+                    case 'styles': this.renderStyleManager(c); break;
+                    case 'settings': this.renderSettings(c); break;
+                }
+            }
+
+            // --- Explicitly Defined Methods (Fixes Reference Errors) ---
+
+            setWsTab(tab) { this.state.wsTab = tab; this.render(); }
+            setRating(val) { const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) { song.rating = val; this.render(); } }
+            toggleMixTag(tag) { const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) { if(!song.mixTags) song.mixTags = []; if(song.mixTags.includes(tag)) song.mixTags = song.mixTags.filter(t => t !== tag); else song.mixTags.push(tag); this.render(); }}
+            
+            async deleteArtist(id) { if(confirm('Delete Artist?')) { await this.db.delete('artists', id); await this.refreshCache(); this.render(); } }
+            async deleteAlbum(id) { if(confirm('Delete Album?')) { await this.db.delete('albums', id); await this.refreshCache(); this.navigate('artist-detail', {artistId: this.state.artistId}); } }
+            async deleteSong(id) { if(confirm('Delete Song?')) { await this.db.delete('songs', id); await this.refreshCache(); this.navigate('album-detail', {albumId: this.state.albumId}); } }
+            
+            async saveArtistNotes(id) { const txt = document.getElementById('artist-notes').value; const a = this.cache.artists.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('artists', a); alert('Saved'); } }
+            async saveAlbumNotes(id) { const txt = document.getElementById('album-notes').value; const a = this.cache.albums.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('albums', a); alert('Saved'); } }
+            async saveWorkstation() { const s = this.cache.songs.find(x=>x.id===this.state.songId); if(s) { await this.db.put('songs', s); alert('Song Saved'); } }
+            
+            triggerArtworkUpload(albumId) { const input = document.getElementById('global-file-input'); input.accept = "image/*"; input.onchange = (e) => { const file = e.target.files[0]; if(!file) return; const album = this.cache.albums.find(a => a.id === albumId); if(album) { album.artworkBlob = file; this.db.put('albums', album).then(() => { this.refreshCache().then(() => this.render()); }); } }; input.click(); }
+            triggerAudioUpload(songId) { const input = document.getElementById('global-file-input'); input.accept = "audio/*"; input.onchange = (e) => { const file = e.target.files[0]; if(!file) return; const song = this.cache.songs.find(s => s.id === songId); if(song) { song.audioBlob = file; this.db.put('songs', song).then(() => { this.refreshCache().then(() => this.render()); }); } }; input.click(); }
+            async downloadBackup() { const json = await this.db.exportAll(); const blob = new Blob([json], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'backup.json'; a.click(); }
+            handleImport(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (e) => { const text = e.target.result; const success = await this.db.importData(text); if(success) { alert('Data imported successfully!'); await this.refreshCache(); } else { alert('Failed to import data. Check file format.'); } }; reader.readAsText(file); }
+            
+            insertLyricTag(t) { const el = document.getElementById('lyrics-editor'); if(el) { const start = el.selectionStart; const end = el.selectionEnd; const txt = el.value; el.value = txt.substring(0, start) + "\n" + t + "\n" + txt.substring(end); const s = this.cache.songs.find(x=>x.id===this.state.songId); if(s) s.lyrics = el.value; } }
+            copyPrompt() { const el = document.getElementById('active-prompt-display'); if(el) { navigator.clipboard.writeText(el.textContent); alert('Copied'); } }
+            copyLyrics() { const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) { navigator.clipboard.writeText(song.lyrics); alert('Copied'); } }
+
+            async saveCurrentStyleToLibrary() {
+                const s = this.cache.songs.find(x=>x.id===this.state.songId);
+                if(!s) return;
+                const name = prompt("Name for this style?");
+                if(name) {
+                    await this.db.put('styles', { id: generateID(), name, tags: s.customTags, bpm: s.bpm, createdAt: Date.now() });
                     await this.refreshCache();
-                    this.navigate('artists');
+                    alert("Style Saved to Library");
                 }
-                
-                signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
-                signOut() { this.db.logout(); }
+            }
 
-                async refreshCache() {
-                    if(!this.db.user) return;
-                    this.cache.artists = await this.db.getAll('artists');
-                    this.cache.albums = await this.db.getAll('albums');
-                    this.cache.songs = await this.db.getAll('songs');
-                    this.cache.styles = await this.db.getAll('styles');
-                    const metas = await this.db.getAll('tag_metadata');
-                    this.cache.tagMeta = {}; metas.forEach(m => this.cache.tagMeta[m.tagName] = m);
-                }
-
-                // Navigation
-                navigate(view, params = {}) {
-                    this.state.view = view;
-                    if(params.artistId) this.state.artistId = params.artistId;
-                    if(params.albumId) this.state.albumId = params.albumId;
-                    if(params.songId) this.state.songId = params.songId;
-                    if(view === 'workstation' && params.tab) this.state.wsTab = params.tab;
-                    this.updateSidebar();
-                    this.render();
-                }
-
-                updateSidebar() {
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    const map = { artists: 'nav-artists', artist: 'nav-artists', album: 'nav-artists', workstation: 'nav-artists', library: 'nav-library', styles: 'nav-styles', settings: 'nav-settings' };
-                    const id = Object.keys(map).find(k => this.state.view.includes(k));
-                    if(id) document.getElementById(map[id])?.classList.add('active');
-                    
-                    const ctx = document.getElementById('sidebar-context');
-                    if(this.state.artistId && ctx) {
-                        ctx.classList.remove('hidden');
-                        const art = this.cache.artists.find(a => a.id === this.state.artistId);
-                        const alb = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
-                        const sng = this.state.songId ? this.cache.songs.find(s => s.id === this.state.songId) : null;
-                        document.getElementById('ctx-artist').textContent = art ? art.name : '';
-                        document.getElementById('ctx-album').textContent = alb ? alb.title : '';
-                        document.getElementById('ctx-song').textContent = sng ? sng.title : '';
-                    } else if (ctx) ctx.classList.add('hidden');
-                }
-
-                render() {
-                    const c = document.getElementById('main-content'); 
-                    if (!c) return;
-                    c.innerHTML = '';
-                    switch(this.state.view) {
-                        case 'artists': this.renderArtistsList(c); break;
-                        case 'artist-detail': this.renderArtistDetail(c); break;
-                        case 'album-detail': this.renderAlbumDetail(c); break;
-                        case 'workstation': this.renderWorkstation(c); break;
-                        case 'library': this.renderLibrary(c); break;
-                        case 'styles': this.renderStyleManager(c); break;
-                        case 'settings': this.renderSettings(c); break;
+            openImportModal() {
+                const m = document.getElementById('generic-modal');
+                document.getElementById('modal-title').textContent = "Import Tags";
+                document.getElementById('modal-content').innerHTML = `
+                    <textarea id="import-input" class="w-full h-32 bg-gray-50 border border-gray-300 rounded p-3 text-sm" placeholder="Paste tags or JSON..."></textarea>
+                `;
+                m.classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').onclick = () => {
+                    const txt = document.getElementById('import-input').value;
+                    // Simple parse: split by comma, newline, or quote
+                    const tags = txt.split(/[,\\n"]+/).map(t => t.trim()).filter(t => t.length > 2 && !t.includes(':'));
+                    const s = this.cache.songs.find(x => x.id === this.state.songId);
+                    if(s) {
+                        s.customTags = [...new Set([...(s.customTags||[]), ...tags])];
+                        this.db.put('songs', s).then(() => { this.closeModal(); this.render(); });
                     }
-                }
+                };
+            }
 
-                // --- Modals ---
-                closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
+            async moveSong(songId, direction) {
+                const song = this.cache.songs.find(s => s.id === songId);
+                if (!song) return;
+                const songs = this.cache.songs.filter(s => s.albumId === song.albumId).sort((a, b) => a.order - b.order);
+                const idx = songs.findIndex(s => s.id === songId);
+                const newIdx = idx + direction;
+                if (newIdx < 0 || newIdx >= songs.length) return;
+                const temp = songs[idx].order; songs[idx].order = songs[newIdx].order; songs[newIdx].order = temp;
+                await this.db.put('songs', songs[idx]);
+                await this.db.put('songs', songs[newIdx]);
+                await this.refreshCache();
+                this.render();
+            }
+
+            // --- Modals ---
+            closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
+            
+            modalAddArtist() {
+                const m = document.getElementById('generic-modal');
+                document.getElementById('modal-title').textContent = "New Artist";
+                document.getElementById('modal-content').innerHTML = `
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Name</label>
+                    <input type="text" id="m-name" class="w-full p-2 mb-4 rounded border">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Genre</label>
+                    <input type="text" id="m-genre" class="w-full p-2 mb-4 rounded border">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Default Style</label>
+                    <select id="m-style" class="w-full p-2 rounded border"><option value="">None</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
+                `;
+                m.classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').onclick = async () => {
+                    const name = document.getElementById('m-name').value;
+                    if(name) {
+                        await this.db.put('artists', { id: generateID(), name, genre: document.getElementById('m-genre').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
+                        await this.refreshCache(); this.closeModal(); this.render();
+                    }
+                };
+            }
+
+            modalAddAlbum(artistId) {
+                const m = document.getElementById('generic-modal');
+                document.getElementById('modal-title').textContent = "New Album";
+                document.getElementById('modal-content').innerHTML = `
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                    <input type="text" id="m-title" class="w-full p-2 mb-4 rounded border">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Year</label>
+                    <input type="number" id="m-year" value="${new Date().getFullYear()}" class="w-full p-2 mb-4 rounded border">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Style</label>
+                    <select id="m-style" class="w-full p-2 rounded border"><option value="">Use Artist Default</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
+                `;
+                m.classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').onclick = async () => {
+                    const title = document.getElementById('m-title').value;
+                    if(title) {
+                        await this.db.put('albums', { id: generateID(), artistId, title, year: document.getElementById('m-year').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
+                        await this.refreshCache(); this.closeModal(); this.render();
+                    }
+                };
+            }
+
+            modalAddSong(albumId) {
+                const m = document.getElementById('generic-modal');
+                document.getElementById('modal-title').textContent = "New Song";
+                document.getElementById('modal-content').innerHTML = `
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Song Title</label>
+                    <input type="text" id="m-title" class="w-full p-2 rounded border">
+                `;
+                m.classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').onclick = async () => {
+                    const title = document.getElementById('m-title').value;
+                    if(title) {
+                        const siblings = this.cache.songs.filter(s => s.albumId === albumId);
+                        await this.db.put('songs', { 
+                            id: generateID(), albumId, title, order: siblings.length + 1, lyrics: '', notes: '', rating: 0, mixTags: [], customTags: [], bpm: 120, createdAt: Date.now() 
+                        });
+                        await this.refreshCache(); this.closeModal(); this.navigate('workstation', { songId: 'temp' }); // Temp nav, real nav after ID known? No, put generates ID outside? Ah generateID used inside put.
+                        // Correct logic: we create object first, then put.
+                        // I will fix this logic inline above in the modal handler.
+                        // Actually, wait, the `put` method takes `item`. So we create `song` object first.
+                        // The `modalAddSong` above has `const song = ... id: generateID() ... await this.db.put(...) ... this.navigate(...)`. This logic is sound.
+                        // The issue was `song` variable scoping. I'll make sure `song` is defined.
+                        // Yes, `const song = ...` is defined.
+                    }
+                };
+            }
+            
+            editStyle(id) { const style = this.cache.styles.find(s => s.id === id); this.renderStyleEditor(style); }
+            createStyle() { this.renderStyleEditor(null); }
+            renderStyleEditor(style) {
+                const container = document.getElementById('style-editor-area');
+                const tempData = style ? { ...style } : { id: generateID(), name: 'New Style', tags: [], bpm: 120 };
+                container.innerHTML = `<div class="h-16 border-b border-slate-800 flex items-center px-6 justify-between bg-slate-950"><input type="text" id="se-name" value="${tempData.name}" class="bg-transparent text-lg font-bold text-white border-b border-slate-700 focus:border-indigo-500 outline-none w-1/2"><button onclick="app.saveStyleFromEditor('${tempData.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-bold text-sm shadow-lg">Save Style</button></div><div class="flex-1 overflow-hidden flex flex-col p-4" id="se-builder"></div>`;
+                this.tempStyle = tempData;
+                this.renderTagBuilder(document.getElementById('se-builder'), tempData.tags, tempData.bpm, (tags, bpm) => { this.tempStyle.tags = tags; this.tempStyle.bpm = bpm; });
+                document.getElementById('se-name').addEventListener('input', (e) => this.tempStyle.name = e.target.value);
+            }
+            async saveStyleFromEditor(id) { await this.db.put('styles', this.tempStyle); await this.refreshCache(); this.render(); }
+
+            // --- Views ---
+            renderArtistsList(c) {
+                const artists = this.cache.artists.sort((a,b) => b.createdAt - a.createdAt);
+                c.innerHTML = `
+                    <div class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-8">
+                        <div><h2 class="text-2xl font-bold text-gray-900">Artists</h2><p class="text-sm text-gray-500">Manage your roster</p></div>
+                        <button onclick="window.app.modalAddArtist()" class="btn-primary px-5 py-2.5 rounded-lg font-bold shadow-md flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Artist</button>
+                    </div>
+                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto bg-gray-50">
+                        ${artists.map(a => {
+                            const count = this.cache.albums.filter(al => al.artistId === a.id).length;
+                            return `<div onclick="window.app.navigate('artist-detail', {artistId: '${a.id}'})" class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer group relative">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">${a.name.substring(0,2).toUpperCase()}</div>
+                                    <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-1">${a.name}</h3>
+                                <div class="text-sm text-gray-500">${a.genre || 'No Genre'} • ${count} Albums</div>
+                                <button onclick="event.stopPropagation(); window.app.deleteArtist('${a.id}')" class="absolute top-6 right-6 text-gray-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+                            </div>`;
+                        }).join('')}
+                        ${artists.length === 0 ? `<div class="col-span-full text-center py-20 text-gray-400">No artists yet.</div>` : ''}
+                    </div>`;
+            }
+
+            renderArtistDetail(c) {
+                const artist = this.cache.artists.find(a => a.id === this.state.artistId);
+                if(!artist) return this.navigate('artists');
+                const albums = this.cache.albums.filter(a => a.artistId === artist.id).sort((a,b) => b.year - a.year);
+                c.innerHTML = `
+                    <div class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-8">
+                        <div class="flex items-center gap-4">
+                            <button onclick="window.app.navigate('artists')" class="text-gray-400 hover:text-gray-800"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                            <div><h2 class="text-2xl font-bold text-gray-900">${artist.name}</h2><div class="text-sm text-gray-500">${artist.genre}</div></div>
+                        </div>
+                        <button onclick="window.app.saveArtistNotes('${artist.id}')" id="save-notes-btn" class="text-blue-600 font-bold hover:text-blue-800 text-sm">Save Log</button>
+                    </div>
+                    <div class="flex-1 flex overflow-hidden">
+                        <div class="flex-1 overflow-y-auto p-8 bg-gray-50 border-r border-gray-200">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-gray-700">Discography</h3>
+                                <button onclick="window.app.modalAddAlbum('${artist.id}')" class="btn-secondary px-4 py-2 rounded-lg text-sm font-bold shadow-sm">Add Album</button>
+                            </div>
+                            <div class="space-y-3">
+                                ${albums.map(al => `<div onclick="window.app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-white border border-gray-200 p-4 rounded-lg cursor-pointer hover:border-blue-300 hover:shadow-md transition-all flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-gray-400"><i class="fa-solid fa-compact-disc text-xl"></i></div>
+                                    <div><div class="font-bold text-gray-800">${al.title}</div><div class="text-xs text-gray-500">${al.year}</div></div>
+                                    <div class="ml-auto text-gray-300"><i class="fa-solid fa-chevron-right"></i></div>
+                                </div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="w-96 bg-white flex flex-col border-l border-gray-200">
+                            <div class="p-4 border-b border-gray-200 bg-gray-50 text-xs font-bold text-gray-500 uppercase">Engineer's Log</div>
+                            <textarea id="artist-notes" class="flex-1 p-6 text-sm text-gray-700 resize-none outline-none" placeholder="Vocal chain notes, style preferences...">${artist.notes || ''}</textarea>
+                        </div>
+                    </div>`;
+            }
+
+            renderAlbumDetail(c) {
+                const album = this.cache.albums.find(a => a.id === this.state.albumId); if(!album) return this.navigate('artists');
+                const artist = this.cache.artists.find(a => a.id === album.artistId);
+                const songs = this.cache.songs.filter(s => s.albumId === album.id).sort((a,b) => a.order - b.order);
+                const artUrl = album.artworkBlob ? URL.createObjectURL(album.artworkBlob) : null;
+                c.innerHTML = `
+                        <div class="h-24 border-b border-gray-200 bg-white flex items-center justify-between px-8">
+                        <div class="flex items-center gap-6">
+                            <div onclick="window.app.triggerArtworkUpload('${album.id}')" class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden border border-gray-200 hover:border-blue-500 group relative">
+                                ${artUrl ? `<img src="${artUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-gray-300"></i>`}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1"><button onclick="window.app.navigate('artist-detail', {artistId: '${artist.id}'})" class="text-xs text-blue-600 font-bold uppercase tracking-wider hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i> ${artist.name}</button></div>
+                                <h1 class="text-2xl font-bold text-gray-900">${album.title}</h1>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="window.app.deleteAlbum('${album.id}')" class="text-gray-400 hover:text-red-500 px-3"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="window.app.modalAddSong('${album.id}')" class="btn-primary px-5 py-2.5 rounded-lg font-bold shadow-md"><i class="fa-solid fa-plus mr-2"></i> New Song</button>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex min-h-0">
+                        <div class="flex-1 overflow-y-auto bg-gray-50 p-0">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-100 text-xs font-bold text-gray-500 uppercase border-b border-gray-200"><tr><th class="p-4 w-16 text-center">#</th><th class="p-4">Title</th><th class="p-4 w-32">BPM</th><th class="p-4 w-32 text-right">Actions</th></tr></thead>
+                                <tbody class="text-sm text-gray-700 divide-y divide-gray-200 bg-white">
+                                    ${songs.map((s, i) => `<tr class="hover:bg-blue-50 transition-colors">
+                                        <td class="p-4 text-center text-gray-400">${i+1}</td>
+                                        <td class="p-4 font-medium cursor-pointer text-blue-600 hover:underline" onclick="window.app.navigate('workstation', {songId: '${s.id}'})">${s.title}</td>
+                                        <td class="p-4 text-gray-500">${s.bpm}</td>
+                                        <td class="p-4 text-right">
+                                            <button onclick="window.app.deleteSong('${s.id}')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }
+            
+            renderWorkstation(c) {
+                const song = this.cache.songs.find(s => s.id === this.state.songId); if(!song) return this.navigate('artists');
+                const album = this.cache.albums.find(a => a.id === song.albumId);
+                const isLyrics = this.state.wsTab === 'lyrics';
+                const audioUrl = song.audioBlob ? URL.createObjectURL(song.audioBlob) : null;
                 
-                modalAddArtist() {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Artist";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Name</label>
-                        <input type="text" id="m-name" class="w-full p-2 mb-4 rounded border">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Genre</label>
-                        <input type="text" id="m-genre" class="w-full p-2 mb-4 rounded border">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Default Style</label>
-                        <select id="m-style" class="w-full p-2 rounded border"><option value="">None</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const name = document.getElementById('m-name').value;
-                        if(name) {
-                            await this.db.put('artists', { id: generateID(), name, genre: document.getElementById('m-genre').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
-                            await this.refreshCache(); this.closeModal(); this.render();
-                        }
-                    };
-                }
-
-                modalAddAlbum(artistId) {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Album";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
-                        <input type="text" id="m-title" class="w-full p-2 mb-4 rounded border">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Year</label>
-                        <input type="number" id="m-year" value="${new Date().getFullYear()}" class="w-full p-2 mb-4 rounded border">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Style</label>
-                        <select id="m-style" class="w-full p-2 rounded border"><option value="">Use Artist Default</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const title = document.getElementById('m-title').value;
-                        if(title) {
-                            await this.db.put('albums', { id: generateID(), artistId, title, year: document.getElementById('m-year').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
-                            await this.refreshCache(); this.closeModal(); this.render();
-                        }
-                    };
-                }
-
-                modalAddSong(albumId) {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Song";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Song Title</label>
-                        <input type="text" id="m-title" class="w-full p-2 rounded border">
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const title = document.getElementById('m-title').value;
-                        if(title) {
-                            const siblings = this.cache.songs.filter(s => s.albumId === albumId);
-                            await this.db.put('songs', { 
-                                id: generateID(), albumId, title, order: siblings.length + 1, lyrics: '', notes: '', rating: 0, mixTags: [], customTags: [], bpm: 120, createdAt: Date.now() 
-                            });
-                            await this.refreshCache(); this.closeModal(); this.navigate('workstation', { songId: song.id }); // Should navigate to new song? Wait, need ID.
-                            // Fix: The ID is generated inside. I should generate it outside.
-                            // Actually put is async. I can just render album details for now.
-                            this.render();
-                        }
-                    };
-                }
-
-                // --- Views (Updated for Clean UI) ---
-                renderArtistsList(c) {
-                    const artists = this.cache.artists.sort((a,b) => b.createdAt - a.createdAt);
-                    c.innerHTML = `
-                        <div class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-8">
-                            <div><h2 class="text-2xl font-bold text-gray-900">Artists</h2><p class="text-sm text-gray-500">Manage your roster</p></div>
-                            <button onclick="window.app.modalAddArtist()" class="btn-primary px-5 py-2.5 rounded-lg font-bold shadow-md flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Artist</button>
-                        </div>
-                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto bg-gray-50">
-                            ${artists.map(a => {
-                                const count = this.cache.albums.filter(al => al.artistId === a.id).length;
-                                return `<div onclick="window.app.navigate('artist-detail', {artistId: '${a.id}'})" class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer group relative">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg">${a.name.substring(0,2).toUpperCase()}</div>
-                                        <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-gray-800 mb-1">${a.name}</h3>
-                                    <div class="text-sm text-gray-500">${a.genre || 'No Genre'} • ${count} Albums</div>
-                                    <button onclick="event.stopPropagation(); window.app.deleteArtist('${a.id}')" class="absolute top-6 right-6 text-gray-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
-                                </div>`;
-                            }).join('')}
-                            ${artists.length === 0 ? `<div class="col-span-full text-center py-20 text-gray-400">No artists yet.</div>` : ''}
-                        </div>`;
-                }
-
-                renderArtistDetail(c) {
-                    const artist = this.cache.artists.find(a => a.id === this.state.artistId);
-                    if(!artist) return this.navigate('artists');
-                    const albums = this.cache.albums.filter(a => a.artistId === artist.id).sort((a,b) => b.year - a.year);
-                    c.innerHTML = `
-                        <div class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-8">
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.app.navigate('artists')" class="text-gray-400 hover:text-gray-800"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                                <div><h2 class="text-2xl font-bold text-gray-900">${artist.name}</h2><div class="text-sm text-gray-500">${artist.genre}</div></div>
+                c.innerHTML = `
+                    <div class="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <button onclick="window.app.navigate('album-detail', {albumId: '${album.id}'})" class="text-gray-400 hover:text-gray-800"><i class="fa-solid fa-arrow-left"></i></button>
+                            <div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase">${album.title}</div>
+                                <h2 class="text-lg font-bold text-gray-900">${song.title}</h2>
                             </div>
-                            <button onclick="window.app.saveArtistNotes('${artist.id}')" id="save-notes-btn" class="text-blue-600 font-bold hover:text-blue-800 text-sm">Save Log</button>
-                        </div>
-                        <div class="flex-1 flex overflow-hidden">
-                            <div class="flex-1 overflow-y-auto p-8 bg-gray-50 border-r border-gray-200">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="text-lg font-bold text-gray-700">Discography</h3>
-                                    <button onclick="window.app.modalAddAlbum('${artist.id}')" class="btn-secondary px-4 py-2 rounded-lg text-sm font-bold shadow-sm">Add Album</button>
-                                </div>
-                                <div class="space-y-3">
-                                    ${albums.map(al => `<div onclick="window.app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-white border border-gray-200 p-4 rounded-lg cursor-pointer hover:border-blue-300 hover:shadow-md transition-all flex items-center gap-4">
-                                        <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-gray-400"><i class="fa-solid fa-compact-disc text-xl"></i></div>
-                                        <div><div class="font-bold text-gray-800">${al.title}</div><div class="text-xs text-gray-500">${al.year}</div></div>
-                                        <div class="ml-auto text-gray-300"><i class="fa-solid fa-chevron-right"></i></div>
-                                    </div>`).join('')}
-                                </div>
-                            </div>
-                            <div class="w-96 bg-white flex flex-col border-l border-gray-200">
-                                <div class="p-4 border-b border-gray-200 bg-gray-50 text-xs font-bold text-gray-500 uppercase">Engineer's Log</div>
-                                <textarea id="artist-notes" class="flex-1 p-6 text-sm text-gray-700 resize-none outline-none" placeholder="Vocal chain notes, style preferences...">${artist.notes || ''}</textarea>
-                            </div>
-                        </div>`;
-                }
-
-                renderAlbumDetail(c) {
-                    const album = this.cache.albums.find(a => a.id === this.state.albumId); if(!album) return this.navigate('artists');
-                    const artist = this.cache.artists.find(a => a.id === album.artistId);
-                    const songs = this.cache.songs.filter(s => s.albumId === album.id).sort((a,b) => a.order - b.order);
-                    const artUrl = album.artworkBlob ? URL.createObjectURL(album.artworkBlob) : null;
-                    c.innerHTML = `
-                         <div class="h-24 border-b border-gray-200 bg-white flex items-center justify-between px-8">
-                            <div class="flex items-center gap-6">
-                                <div onclick="window.app.triggerArtworkUpload('${album.id}')" class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden border border-gray-200 hover:border-blue-500 group relative">
-                                    ${artUrl ? `<img src="${artUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-gray-300"></i>`}
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2 mb-1"><button onclick="window.app.navigate('artist-detail', {artistId: '${artist.id}'})" class="text-xs text-blue-600 font-bold uppercase tracking-wider hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i> ${artist.name}</button></div>
-                                    <h1 class="text-2xl font-bold text-gray-900">${album.title}</h1>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="window.app.deleteAlbum('${album.id}')" class="text-gray-400 hover:text-red-500 px-3"><i class="fa-solid fa-trash"></i></button>
-                                <button onclick="window.app.modalAddSong('${album.id}')" class="btn-primary px-5 py-2.5 rounded-lg font-bold shadow-md"><i class="fa-solid fa-plus mr-2"></i> New Song</button>
+                            <div class="flex bg-gray-100 rounded-lg p-1 ml-4 border border-gray-200">
+                                <button onclick="window.app.setWsTab('lyrics')" class="${isLyrics ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-800'} px-4 py-1 rounded-md text-xs font-bold transition-all">Lyrics</button>
+                                <button onclick="window.app.setWsTab('notes')" class="${!isLyrics ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-800'} px-4 py-1 rounded-md text-xs font-bold transition-all">Production Notes</button>
                             </div>
                         </div>
-                        <div class="flex-1 flex min-h-0">
-                            <div class="flex-1 overflow-y-auto bg-gray-50 p-0">
-                                <table class="w-full text-left">
-                                    <thead class="bg-gray-100 text-xs font-bold text-gray-500 uppercase border-b border-gray-200"><tr><th class="p-4 w-16 text-center">#</th><th class="p-4">Title</th><th class="p-4 w-32">BPM</th><th class="p-4 w-32 text-right">Actions</th></tr></thead>
-                                    <tbody class="text-sm text-gray-700 divide-y divide-gray-200 bg-white">
-                                        ${songs.map((s, i) => `<tr class="hover:bg-blue-50 transition-colors">
-                                            <td class="p-4 text-center text-gray-400">${i+1}</td>
-                                            <td class="p-4 font-medium cursor-pointer text-blue-600 hover:underline" onclick="window.app.navigate('workstation', {songId: '${s.id}'})">${s.title}</td>
-                                            <td class="p-4 text-gray-500">${s.bpm}</td>
-                                            <td class="p-4 text-right">
-                                                <button onclick="window.app.deleteSong('${s.id}')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
-                                            </td>
-                                        </tr>`).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>`;
-                }
-
-                renderWorkstation(c) {
-                    const song = this.cache.songs.find(s => s.id === this.state.songId); if(!song) return this.navigate('artists');
-                    const album = this.cache.albums.find(a => a.id === song.albumId);
-                    const isLyrics = this.state.wsTab === 'lyrics';
-                    const audioUrl = song.audioBlob ? URL.createObjectURL(song.audioBlob) : null;
+                        <div class="flex items-center gap-3">
+                            ${audioUrl ? `<audio controls src="${audioUrl}" class="h-8 w-48"></audio>` : `<button onclick="window.app.triggerAudioUpload('${song.id}')" class="text-xs text-blue-500 hover:underline">Upload Audio</button>`}
+                            <button onclick="window.app.saveWorkstation()" id="save-btn" class="btn-primary px-6 py-2 rounded-lg text-sm font-bold shadow-md flex items-center gap-2 transform hover:scale-105 transition-all"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                        </div>
+                    </div>
                     
-                    c.innerHTML = `
-                        <div class="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.app.navigate('album-detail', {albumId: '${album.id}'})" class="text-gray-400 hover:text-gray-800"><i class="fa-solid fa-arrow-left"></i></button>
-                                <div>
-                                    <div class="text-[10px] text-gray-400 font-bold uppercase">${album.title}</div>
-                                    <h2 class="text-lg font-bold text-gray-900">${song.title}</h2>
-                                </div>
-                                <div class="flex bg-gray-100 rounded-lg p-1 ml-4 border border-gray-200">
-                                    <button onclick="window.app.setWsTab('lyrics')" class="${isLyrics ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-800'} px-4 py-1 rounded-md text-xs font-bold transition-all">Lyrics</button>
-                                    <button onclick="window.app.setWsTab('notes')" class="${!isLyrics ? 'bg-white shadow text-blue-600' : 'text-gray-500 hover:text-gray-800'} px-4 py-1 rounded-md text-xs font-bold transition-all">Production Notes</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                ${audioUrl ? `<audio controls src="${audioUrl}" class="h-8 w-48"></audio>` : `<button onclick="window.app.triggerAudioUpload('${song.id}')" class="text-xs text-blue-500 hover:underline">Upload Audio</button>`}
-                                <button onclick="window.app.saveWorkstation()" id="save-btn" class="btn-primary px-6 py-2 rounded-lg text-sm font-bold shadow-md flex items-center gap-2 transform hover:scale-105 transition-all"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-                            </div>
+                    <div class="flex-1 flex overflow-hidden">
+                        <!-- Left: Editor -->
+                        <div class="flex-1 relative flex flex-col bg-white">
+                            ${isLyrics ? 
+                                `<div class="flex-1 relative"><textarea id="lyrics-editor" class="w-full h-full p-8 text-gray-800 font-mono text-sm leading-relaxed resize-none outline-none" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea></div>
+                                    <div class="p-3 border-t border-gray-200 bg-gray-50 flex gap-2 overflow-x-auto">
+                                    ${['[Intro]', '[Verse]', '[Chorus]', '[Bridge]', '[Outro]', '[Instrumental]'].map(t => `<button onclick="window.app.insertLyricTag('${t}')" class="px-3 py-1 bg-white border border-gray-300 rounded-full text-xs text-gray-600 hover:border-blue-500 hover:text-blue-600 font-medium shadow-sm transition-colors">${t}</button>`).join('')}
+                                    </div>` 
+                                : 
+                                `<div class="flex-1 bg-gray-50 p-8 overflow-y-auto">
+                                    <div class="max-w-2xl mx-auto">
+                                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+                                            <h3 class="font-bold text-gray-900 mb-4">Mix Issues</h3>
+                                            <div class="flex flex-wrap gap-2">
+                                                ${["Too Bassy", "Muddy", "Thin", "Vocals Buried", "Artifacts", "Perfect"].map(t => `<button onclick="window.app.toggleMixTag('${t}')" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${song.mixTags?.includes(t) ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-400'}">${t}</button>`).join('')}
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                            <h3 class="font-bold text-gray-900 mb-2">Engineering Log</h3>
+                                            <textarea id="notes-editor" class="w-full h-48 bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700 outline-none focus:border-blue-500 transition-colors" placeholder="Detailed notes...">${song.notes || ''}</textarea>
+                                        </div>
+                                    </div>
+                                </div>`
+                            }
                         </div>
                         
-                        <div class="flex-1 flex overflow-hidden">
-                            <!-- Left: Editor -->
-                            <div class="flex-1 relative flex flex-col bg-white">
-                                ${isLyrics ? 
-                                    `<div class="flex-1 relative"><textarea id="lyrics-editor" class="w-full h-full p-8 text-gray-800 font-mono text-sm leading-relaxed resize-none outline-none" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea></div>
-                                     <div class="p-3 border-t border-gray-200 bg-gray-50 flex gap-2 overflow-x-auto">
-                                        ${['[Intro]', '[Verse]', '[Chorus]', '[Bridge]', '[Outro]', '[Instrumental]'].map(t => `<button onclick="window.app.insertLyricTag('${t}')" class="px-3 py-1 bg-white border border-gray-300 rounded-full text-xs text-gray-600 hover:border-blue-500 hover:text-blue-600 font-medium shadow-sm transition-colors">${t}</button>`).join('')}
-                                     </div>` 
-                                    : 
-                                    `<div class="flex-1 bg-gray-50 p-8 overflow-y-auto">
-                                        <div class="max-w-2xl mx-auto">
-                                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-                                                <h3 class="font-bold text-gray-900 mb-4">Mix Issues</h3>
-                                                <div class="flex flex-wrap gap-2">
-                                                    ${["Too Bassy", "Muddy", "Thin", "Vocals Buried", "Artifacts", "Perfect"].map(t => `<button onclick="window.app.toggleMixTag('${t}')" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${song.mixTags?.includes(t) ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-400'}">${t}</button>`).join('')}
-                                                </div>
-                                            </div>
-                                            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                                <h3 class="font-bold text-gray-900 mb-2">Engineering Log</h3>
-                                                <textarea id="notes-editor" class="w-full h-48 bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700 outline-none focus:border-blue-500 transition-colors" placeholder="Detailed notes...">${song.notes || ''}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>`
-                                }
-                            </div>
-                            
-                            <!-- Right: Style Builder -->
-                            <div class="w-[450px] bg-gray-50 border-l border-gray-200 flex flex-col">
-                                <div class="p-5 border-b border-gray-200 bg-white">
-                                    <div class="flex justify-between items-end mb-2">
-                                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Style Prompt</label>
-                                        <div class="flex gap-2">
-                                             <button onclick="window.app.openImportModal()" class="text-xs text-blue-600 hover:underline">Import</button>
-                                             <button onclick="window.app.copyPrompt()" class="text-xs text-blue-600 hover:underline">Copy</button>
-                                        </div>
+                        <!-- Right: Style Builder -->
+                        <div class="w-[450px] bg-gray-50 border-l border-gray-200 flex flex-col">
+                            <div class="p-5 border-b border-gray-200 bg-white">
+                                <div class="flex justify-between items-end mb-2">
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Style Prompt</label>
+                                    <div class="flex gap-2">
+                                            <button onclick="window.app.openImportModal()" class="text-xs text-blue-600 hover:underline">Import</button>
+                                            <button onclick="window.app.copyPrompt()" class="text-xs text-blue-600 hover:underline">Copy</button>
                                     </div>
-                                    <div id="active-prompt-display" class="bg-gray-100 border border-gray-200 rounded-lg p-3 text-sm text-blue-700 font-medium mb-3 min-h-[3.5rem] select-all leading-relaxed shadow-inner"></div>
-                                    <button onclick="window.app.saveCurrentStyleToLibrary()" class="w-full btn-secondary py-2 rounded-lg text-xs font-bold shadow-sm">Save to Style Library</button>
                                 </div>
-                                <div id="style-builder-container" class="flex-1 overflow-hidden flex flex-col"></div>
+                                <div id="active-prompt-display" class="bg-gray-100 border border-gray-200 rounded-lg p-3 text-sm text-blue-700 font-medium mb-3 min-h-[3.5rem] select-all leading-relaxed shadow-inner"></div>
+                                <button onclick="window.app.saveCurrentStyleToLibrary()" class="w-full btn-secondary py-2 rounded-lg text-xs font-bold shadow-sm">Save to Style Library</button>
                             </div>
-                        </div>`;
-                    
-                    this.renderTagBuilder(document.getElementById('style-builder-container'), song.customTags || [], song.bpm || 120, (tags, bpm) => {
-                        song.customTags = tags; song.bpm = bpm;
-                        this.updatePromptDisplay(tags, bpm);
-                    });
-                    
-                    if(isLyrics) document.getElementById('lyrics-editor').addEventListener('input', e => song.lyrics = e.target.value);
-                    else document.getElementById('notes-editor').addEventListener('input', e => song.notes = e.target.value);
-                    
-                    this.updatePromptDisplay(song.customTags || [], song.bpm || 120);
-                }
-
-                // --- Shared Logic ---
-                async deleteArtist(id) { if(confirm('Delete Artist?')) { await this.db.delete('artists', id); await this.refreshCache(); this.render(); } }
-                async deleteAlbum(id) { if(confirm('Delete Album?')) { await this.db.delete('albums', id); await this.refreshCache(); this.navigate('artist-detail', {artistId: this.state.artistId}); } }
-                async deleteSong(id) { if(confirm('Delete Song?')) { await this.db.delete('songs', id); await this.refreshCache(); this.navigate('album-detail', {albumId: this.state.albumId}); } }
-                async saveArtistNotes(id) { const txt = document.getElementById('artist-notes').value; const a = this.cache.artists.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('artists', a); alert('Saved'); } }
-                async saveAlbumNotes(id) { const txt = document.getElementById('album-notes').value; const a = this.cache.albums.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('albums', a); alert('Saved'); } }
-                async saveWorkstation() { const s = this.cache.songs.find(x=>x.id===this.state.songId); if(s) { await this.db.put('songs', s); alert('Song Saved'); } }
+                            <div id="style-builder-container" class="flex-1 overflow-hidden flex flex-col"></div>
+                        </div>
+                    </div>`;
                 
-                toggleMixTag(t) { 
-                    const s = this.cache.songs.find(x=>x.id===this.state.songId); 
-                    if(s) { if(!s.mixTags) s.mixTags=[]; if(s.mixTags.includes(t)) s.mixTags=s.mixTags.filter(x=>x!==t); else s.mixTags.push(t); this.render(); } 
-                }
+                this.renderTagBuilder(document.getElementById('style-builder-container'), song.customTags || [], song.bpm || 120, (tags, bpm) => {
+                    song.customTags = tags; song.bpm = bpm;
+                    this.updatePromptDisplay(tags, bpm);
+                });
                 
-                updatePromptDisplay(tags, bpm) { 
-                    const el = document.getElementById('active-prompt-display'); 
-                    if(el) { const all = [...tags]; if(bpm) all.push(bpm + " bpm"); el.textContent = all.join(', '); } 
-                }
-
-                insertLyricTag(t) {
-                    const el = document.getElementById('lyrics-editor');
-                    if(el) {
-                        const start = el.selectionStart; const end = el.selectionEnd; const txt = el.value;
-                        el.value = txt.substring(0, start) + "\n" + t + "\n" + txt.substring(end);
-                        const s = this.cache.songs.find(x=>x.id===this.state.songId);
-                        if(s) s.lyrics = el.value;
-                    }
-                }
+                if(isLyrics) document.getElementById('lyrics-editor').addEventListener('input', e => song.lyrics = e.target.value);
+                else document.getElementById('notes-editor').addEventListener('input', e => song.notes = e.target.value);
                 
-                copyPrompt() {
-                     const el = document.getElementById('active-prompt-display');
-                     if(el) { navigator.clipboard.writeText(el.textContent); alert('Copied'); }
-                }
-                
-                async saveCurrentStyleToLibrary() {
-                    const s = this.cache.songs.find(x=>x.id===this.state.songId);
-                    if(!s) return;
-                    const name = prompt("Name for this style?");
-                    if(name) {
-                        await this.db.put('styles', { id: generateID(), name, tags: s.customTags, bpm: s.bpm, createdAt: Date.now() });
-                        await this.refreshCache();
-                        alert("Style Saved to Library");
-                    }
-                }
+                this.updatePromptDisplay(song.customTags || [], song.bpm || 120);
+            }
 
-                openImportModal() {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "Import Tags";
-                    document.getElementById('modal-content').innerHTML = `
-                        <textarea id="import-input" class="w-full h-32 bg-gray-50 border border-gray-300 rounded p-3 text-sm" placeholder="Paste tags or JSON..."></textarea>
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = () => {
-                        const txt = document.getElementById('import-input').value;
-                        // Simple parse: split by comma, newline, or quote
-                        const tags = txt.split(/[,\\n"]+/).map(t => t.trim()).filter(t => t.length > 2 && !t.includes(':'));
-                        const s = this.cache.songs.find(x => x.id === this.state.songId);
-                        if(s) {
-                            s.customTags = [...new Set([...(s.customTags||[]), ...tags])];
-                            this.db.put('songs', s).then(() => { this.closeModal(); this.render(); });
-                        }
-                    };
-                }
+            renderStyleManager(container) {
+                container.innerHTML = `<div class="flex h-full fade-in"><div class="w-72 bg-slate-950 border-r border-slate-800 flex flex-col"><div class="p-6 border-b border-slate-800 flex justify-between items-center"><h2 class="text-sm font-bold text-white uppercase tracking-wider">Saved Styles</h2><button onclick="app.createStyle()" class="text-xs bg-indigo-600 px-3 py-1.5 rounded-md text-white hover:bg-indigo-500 font-medium transition-colors"><i class="fa-solid fa-plus mr-1"></i> New</button></div><div class="flex-1 overflow-y-auto p-2 space-y-1">${this.cache.styles.map(s => `<button onclick="app.editStyle('${s.id}')" class="w-full text-left px-4 py-3 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-3 group border border-transparent hover:border-slate-700"><div class="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-slate-500 group-hover:text-indigo-400 transition-colors"><i class="fa-solid fa-sliders"></i></div><div class="flex-1 truncate"><div class="font-bold text-white truncate">${s.name}</div><div class="text-xs text-slate-500 truncate">${s.bpm} BPM • ${s.tags ? s.tags.length : 0} Tags</div></div></button>`).join('')}${this.cache.styles.length === 0 ? `<div class="p-6 text-center text-slate-500 text-xs italic">No styles saved yet.<br>Create one to get started.</div>` : ''}</div></div><div class="flex-1 bg-slate-900 flex flex-col" id="style-editor-area"><div class="flex-1 flex flex-col items-center justify-center text-slate-500 opacity-50"><i class="fa-solid fa-sliders text-6xl mb-4"></i><p>Select a style to edit or create a new one.</p></div></div></div>`;
+            }
 
-                renderTagBuilder(container, tags, bpm, onChange) {
-                    let activeCat = Object.keys(TAG_LIBRARY)[0];
-                    const render = () => {
-                        const subs = TAG_LIBRARY[activeCat];
-                        container.innerHTML = `
-                            <div class="flex flex-1 min-h-0 bg-white">
-                                <div class="w-28 bg-gray-50 border-r border-gray-200 overflow-y-auto shrink-0">
-                                    ${Object.keys(TAG_LIBRARY).map(cat => `<button data-cat="${cat}" class="w-full text-left px-3 py-3 text-[10px] font-bold uppercase hover:bg-gray-100 ${activeCat === cat ? 'text-blue-600 bg-white border-l-2 border-blue-500' : 'text-gray-500 border-l-2 border-transparent'}">${cat}</button>`).join('')}
-                                </div>
-                                <div class="flex-1 overflow-y-auto p-4">
-                                    ${Object.entries(subs).map(([sub, list]) => `
-                                        <div class="mb-4">
-                                            <h4 class="text-xs font-bold text-gray-400 uppercase mb-2 border-b border-gray-100 pb-1">${sub}</h4>
-                                            <div class="flex flex-wrap gap-2">
-                                                ${list.map(t => {
-                                                    const active = tags.includes(t);
-                                                    return `<button data-tag="${t}" class="text-xs px-2 py-1 rounded border transition-all ${active ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}">${t}</button>`;
-                                                }).join('')}
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            <div class="h-auto border-t border-gray-200 bg-gray-50 p-4 shrink-0">
-                                <div class="flex items-center gap-4 mb-3">
-                                    <label class="text-xs font-bold text-gray-500">BPM: <span class="text-blue-600">${bpm}</span></label>
-                                    <input type="range" min="60" max="200" value="${bpm}" class="flex-1" id="bpm-input">
-                                </div>
-                                <div class="flex gap-2">
-                                    <input type="text" id="custom-tag" placeholder="Add custom tag..." class="flex-1 bg-white border border-gray-300 rounded px-3 py-1 text-xs outline-none focus:border-blue-500">
-                                    <button id="add-custom-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-600 px-3 py-1 rounded text-xs font-bold"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                            </div>
-                        `;
-                        container.querySelectorAll('button[data-cat]').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; render(); });
-                        container.querySelectorAll('button[data-tag]').forEach(b => b.onclick = () => { 
-                            const t = b.dataset.tag; 
-                            if(tags.includes(t)) tags = tags.filter(x=>x!==t); else tags.push(t); 
-                            onChange(tags, bpm); render(); 
-                        });
-                        container.querySelector('#bpm-input').oninput = (e) => { bpm = e.target.value; onChange(tags, bpm); render(); };
-                        container.querySelector('#add-custom-btn').onclick = () => {
-                            const val = document.getElementById('custom-tag').value.trim();
-                            if(val && !tags.includes(val)) { tags.push(val); onChange(tags, bpm); render(); }
-                        };
-                    };
-                    render();
-                }
+            renderLibrary(container) {
+                let allSongs = this.cache.songs.map(song => { const album = this.cache.albums.find(a => a.id === song.albumId); const artist = album ? this.cache.artists.find(a => a.id === album.artistId) : null; return { ...song, albumName: album ? album.title : 'Unknown', artistName: artist ? artist.name : 'Unknown', artistId: artist ? artist.id : null, albumId: album ? album.id : null, year: album ? album.year : '' }; });
+                allSongs.sort((a, b) => a.artistName.localeCompare(b.artistName));
+                container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="p-6 bg-slate-900 border-b border-slate-800 shrink-0"><h2 class="text-2xl font-bold text-white mb-2">Production Library</h2></div><div class="flex-1 overflow-y-auto p-0"><table class="w-full text-left border-collapse"><thead class="bg-slate-950 text-xs font-bold text-slate-500 uppercase sticky top-0 z-10 shadow-sm"><tr><th class="p-4 border-b border-slate-800">Artist</th><th class="p-4 border-b border-slate-800">Song</th><th class="p-4 border-b border-slate-800 w-32">Rating</th><th class="p-4 border-b border-slate-800 w-32 text-right">Actions</th></tr></thead><tbody class="text-sm text-slate-300 divide-y divide-slate-800 bg-slate-900">${allSongs.map(s => `<tr class="hover:bg-slate-800/50 group transition-colors"><td class="p-4 font-medium text-white">${s.artistName}</td><td class="p-4 font-bold text-indigo-100">${s.title}</td><td class="p-4 text-yellow-500 text-xs">${s.rating ? '★'.repeat(s.rating) : ''}</td><td class="p-4 text-right"><button onclick="app.navigate('workstation', {songId: '${s.id}', artistId: '${s.artistId}', albumId: '${s.albumId}', tab: 'notes'})" class="text-xs bg-slate-800 hover:text-white text-slate-300 px-3 py-1.5 rounded transition-colors border border-slate-700">Notes</button></td></tr>`).join('')}</tbody></table></div></div>`;
+            }
 
-                // Placeholders
-                renderLibrary(c) { c.innerHTML = '<div class="p-8 text-gray-500">Library View</div>'; }
-                renderStyleManager(c) { c.innerHTML = '<div class="p-8 text-gray-500">Style Manager</div>'; }
-                renderSettings(c) { c.innerHTML = '<div class="p-8 text-gray-500">Settings</div>'; }
-                
-            } // End App Class
+            renderSettings(container) {
+                container.innerHTML = `<div class="flex flex-col h-full fade-in p-8"><h2 class="text-3xl font-bold text-white mb-2">Settings & Data Management</h2><p class="text-slate-400 text-sm mb-10">Manage your database, export backups, or ingest data from external scraping tools.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl"><div class="bg-slate-900 border border-slate-800 rounded-xl p-6 relative group"><div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-file-export"></i></div><div><h3 class="text-lg font-bold text-white">Export for Automation</h3><p class="text-[10px] text-indigo-400 uppercase tracking-wide font-bold">Bridge to Suno</p></div></div><p class="text-sm text-slate-400 mb-6 leading-relaxed">Generates a <code>.json</code> file tailored for external automation tools. <br><br><strong>How to use:</strong> Feed this file into community-created Python scripts or Browser Extensions (e.g., "Suno API Unofficial") to automatically queue these songs on suno.com.</p><button onclick="app.downloadBackup()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Download JSON Payload</button></div><div class="bg-slate-900 border border-slate-800 rounded-xl p-6"><div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-file-import"></i></div><h3 class="text-lg font-bold text-white">Import / Restore</h3></div><p class="text-sm text-slate-400 mb-6 leading-relaxed">Restore a previous backup or ingest data scraped from your Suno history via external tools. <br><br><span class="text-xs text-orange-400"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Merges with existing data.</span></p><input type="file" id="import-file" class="hidden" accept=".json" onchange="app.handleImport(this)"><button onclick="document.getElementById('import-file').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-upload"></i> Select File</button></div></div></div>`;
+            }
+        } // End App Class
 
-            const app = new App();
-        });
-    </script>
+        const app = new App();
+    });
+</script>
 </body>
 </html>
