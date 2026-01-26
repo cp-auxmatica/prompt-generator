@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suno Engineer's Companion v7.1</title>
+    <title>Suno Engineer's Companion v6.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,145 +19,127 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        /* Professional Technical Theme */
-        :root {
-            --bg-dark: #18181b; /* Zinc 900 */
-            --bg-panel: #27272a; /* Zinc 800 */
-            --bg-light: #f4f4f5; /* Zinc 100 */
-            --accent: #0ea5e9; /* Sky 500 */
-            --accent-hover: #0284c7; /* Sky 600 */
-            --text-main: #e4e4e7; /* Zinc 200 */
-            --text-muted: #a1a1aa; /* Zinc 400 */
-        }
-        
-        .bg-app-dark { background-color: var(--bg-dark); }
-        .bg-app-panel { background-color: var(--bg-panel); }
-        .bg-app-light { background-color: var(--bg-light); }
-        
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #52525b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #71717a; }
-
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
         input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -6px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #52525b; border-radius: 2px; }
-
-        .nav-item.active { background-color: #27272a; border-left: 3px solid var(--accent); color: #fff; }
-        .nav-item { border-left: 3px solid transparent; color: var(--text-muted); }
-        .nav-item:hover { color: #fff; background-color: #27272a; }
-
-        .btn-primary { background-color: var(--accent); color: white; font-weight: 600; transition: background-color 0.2s; }
-        .btn-primary:hover { background-color: var(--accent-hover); }
-        
-        .btn-secondary { background-color: #3f3f46; color: #e4e4e7; border: 1px solid #52525b; transition: all 0.2s; }
-        .btn-secondary:hover { background-color: #52525b; border-color: #71717a; }
-
-        .editor-light { background-color: #fafafa; color: #18181b; } /* Lighter editor requested */
-
-        #tooltip { position: absolute; z-index: 100; background: #27272a; border: 1px solid #52525b; color: #e4e4e7; padding: 6px 10px; border-radius: 4px; font-size: 0.75rem; pointer-events: none; display: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #6366f1; cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #334155; border-radius: 2px; }
+        .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(51, 65, 85, 0.4); }
+        .nav-item.active { background-color: rgba(99, 102, 241, 0.1); border-left: 3px solid #6366f1; color: #fff; }
+        .nav-item { border-left: 3px solid transparent; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        #tooltip { position: absolute; z-index: 100; background: rgba(15, 23, 42, 0.95); border: 1px solid #475569; color: #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; pointer-events: none; max-width: 250px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); display: none; }
+        .has-meta { border-color: #818cf8 !important; position: relative; }
+        .has-meta::after { content: ''; position: absolute; top: -3px; right: -3px; width: 8px; height: 8px; background: #6366f1; border: 1px solid #0f172a; border-radius: 50%; }
+        .tab-btn.active { border-bottom: 2px solid #6366f1; color: white; }
+        .tab-btn { border-bottom: 2px solid transparent; color: #64748b; }
+        audio { width: 100%; height: 32px; border-radius: 8px; }
+        audio::-webkit-media-controls-panel { background-color: #1e293b; }
+        audio::-webkit-media-controls-current-time-display, audio::-webkit-media-controls-time-remaining-display { color: #fff; }
     </style>
 </head>
-<body class="bg-app-dark text-zinc-200 h-screen flex overflow-hidden">
+<body class="bg-slate-950 text-slate-100 h-screen flex overflow-hidden selection:bg-indigo-500 selection:text-white">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col flex-shrink-0 z-20">
-        <div class="p-5 border-b border-zinc-800 flex items-center gap-3">
-            <div class="w-8 h-8 bg-sky-500 rounded flex items-center justify-center text-white font-bold"><i class="fa-solid fa-wave-square"></i></div>
-            <div>
-                <h1 class="font-bold text-sm text-white tracking-tight leading-tight">Sonic Shift</h1>
-                <div class="text-[10px] text-zinc-500 font-mono">ENGINEER v7.1</div>
+    <!-- App Container (Hidden until Auth) -->
+    <div id="app-container" class="flex h-screen hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
+            <div class="p-5 border-b border-slate-800">
+                <h1 class="font-bold text-lg tracking-tight text-indigo-400 flex items-center gap-2">
+                    <i class="fa-solid fa-wave-square"></i> Sonic Shift <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded ml-auto">v6.8</span>
+                </h1>
             </div>
-        </div>
-        
-        <nav class="flex-1 overflow-y-auto py-4 space-y-1" id="main-nav">
-            <button onclick="window.app.navigate('artists')" id="nav-artists" class="nav-item w-full text-left px-5 py-3 text-sm font-medium flex items-center gap-3">
-                <i class="fa-solid fa-users w-5 text-center"></i> Artists
-            </button>
-            <button onclick="window.app.navigate('library')" id="nav-library" class="nav-item w-full text-left px-5 py-3 text-sm font-medium flex items-center gap-3">
-                <i class="fa-solid fa-list w-5 text-center"></i> Production Library
-            </button>
-            <button onclick="window.app.navigate('styles')" id="nav-styles" class="nav-item w-full text-left px-5 py-3 text-sm font-medium flex items-center gap-3">
-                <i class="fa-solid fa-sliders w-5 text-center"></i> Style Manager
-            </button>
-            <div class="pt-4 mt-4 border-t border-zinc-800">
-                <button onclick="window.app.navigate('settings')" id="nav-settings" class="nav-item w-full text-left px-5 py-3 text-sm font-medium flex items-center gap-3">
-                    <i class="fa-solid fa-database w-5 text-center"></i> Settings & Data
+            
+            <nav class="flex-1 overflow-y-auto py-4 space-y-1" id="main-nav">
+                <button onclick="app.navigate('artists')" id="nav-artists" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
+                    <i class="fa-solid fa-users w-5 text-center"></i> Artists
                 </button>
-            </div>
-        </nav>
-
-        <div id="sidebar-context" class="p-4 border-t border-zinc-800 bg-zinc-900 hidden">
-            <div class="text-[10px] font-bold text-zinc-500 uppercase mb-2">Active Session</div>
-            <div id="ctx-artist" class="text-xs font-bold text-white truncate mb-0.5"></div>
-            <div id="ctx-album" class="text-xs text-zinc-400 truncate mb-0.5"></div>
-            <div id="ctx-song" class="text-xs text-sky-400 truncate"></div>
-        </div>
-        
-        <div id="user-profile" class="p-4 border-t border-zinc-800 flex justify-between items-center bg-zinc-950">
-            <div class="flex items-center gap-2 truncate">
-                <div class="w-2 h-2 rounded-full bg-green-500" title="Online"></div>
-                <span class="text-xs text-zinc-400 truncate w-24" id="user-email">User</span>
-            </div>
-            <button onclick="window.app.signOut()" class="text-xs text-zinc-500 hover:text-white transition-colors" title="Sign Out"><i class="fa-solid fa-right-from-bracket"></i></button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0 bg-app-dark relative overflow-hidden" id="main-content">
-        <!-- Views injected here -->
-    </main>
-
-    <!-- Auth Screen -->
-    <div id="auth-screen" class="fixed inset-0 bg-zinc-950 z-50 flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-8 text-center fade-in">
-            <div class="mb-8 flex flex-col items-center">
-                <div class="w-16 h-16 bg-sky-600 rounded-2xl flex items-center justify-center text-white text-3xl mb-4 shadow-lg shadow-sky-900/20">
-                    <i class="fa-solid fa-wave-square"></i>
+                <button onclick="app.navigate('library')" id="nav-library" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
+                    <i class="fa-solid fa-list w-5 text-center"></i> Production Library
+                </button>
+                <button onclick="app.navigate('styles')" id="nav-styles" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
+                    <i class="fa-solid fa-sliders w-5 text-center"></i> Style Manager
+                </button>
+                <div class="pt-4 mt-4 border-t border-slate-800">
+                    <button onclick="app.navigate('settings')" id="nav-settings" class="nav-item w-full text-left px-5 py-3 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-900 transition-all flex items-center gap-3">
+                        <i class="fa-solid fa-database w-5 text-center"></i> Settings & Data
+                    </button>
                 </div>
-                <h1 class="text-2xl font-bold text-white mb-1">Sonic Shift</h1>
-                <p class="text-zinc-400 text-sm">AI Audio Engineering Workspace</p>
+            </nav>
+
+            <div id="sidebar-context" class="p-4 border-t border-slate-800 bg-slate-900/50 hidden">
+                <div class="text-[10px] font-bold text-slate-500 uppercase mb-2">Active Session</div>
+                <div id="ctx-artist" class="text-xs font-medium text-white truncate mb-1"></div>
+                <div id="ctx-album" class="text-xs text-slate-400 truncate mb-1"></div>
+                <div id="ctx-song" class="text-xs text-indigo-400 truncate"></div>
             </div>
+            
+            <div id="user-profile" class="p-4 border-t border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-2 truncate">
+                    <div class="w-2 h-2 rounded-full bg-green-500" title="Online"></div>
+                    <span class="text-xs text-slate-400 truncate w-24" id="user-email">User</span>
+                </div>
+                <button onclick="app.signOut()" class="text-xs text-slate-500 hover:text-white" title="Sign Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-900 relative overflow-hidden" id="main-content"></main>
+    </div>
+
+    <!-- Auth Screen (Visible by default) -->
+    <div id="auth-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 text-center fade-in">
+            <div class="mb-8">
+                <i class="fa-solid fa-wave-square text-5xl text-indigo-500 mb-4"></i>
+                <h1 class="text-3xl font-bold text-white mb-2">Sonic Shift</h1>
+                <p class="text-slate-400 text-sm">Engineer's Companion for AI Music</p>
+            </div>
+
+            <!-- Login Button -->
             <div id="step-login">
-                <button onclick="window.app.signIn()" class="w-full bg-white hover:bg-zinc-100 text-zinc-900 font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-3 shadow-md">
+                <button onclick="app.signIn()" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3.5 rounded-lg transition-colors flex items-center justify-center gap-3 mb-4 shadow-lg">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> Sign in with Google
                 </button>
-                <div id="auth-error-msg" class="text-red-400 text-xs mt-4 hidden bg-red-900/20 p-2 rounded border border-red-900/50"></div>
+                <p class="text-[10px] text-slate-600">Secure Cloud Sync Enabled</p>
+                <div id="auth-error-msg" class="text-red-500 text-xs mt-2 hidden"></div>
             </div>
+            
+            <!-- Loading -->
             <div id="step-loading" class="hidden">
-                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500 mx-auto mb-3"></div>
-                <p class="text-zinc-500 text-xs">Accessing Secure Storage...</p>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+                <p class="text-slate-400 text-sm">Connecting to secure storage...</p>
             </div>
         </div>
     </div>
 
-    <!-- Generic Modal -->
-    <div id="generic-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
-            <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
-                <h3 id="modal-title" class="text-lg font-bold text-white">Title</h3>
-                <button onclick="window.app.closeModal()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
-            </div>
-            <div id="modal-content" class="p-5 overflow-y-auto"></div>
-            <div class="p-5 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-900 rounded-b-xl">
-                <button onclick="window.app.closeModal()" class="btn-secondary px-4 py-2 rounded text-sm font-medium">Cancel</button>
-                <button id="modal-confirm-btn" class="btn-primary px-4 py-2 rounded text-sm shadow-lg">Save</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Global Tooltip -->
     <div id="tooltip"></div>
+
+    <!-- Hidden Inputs -->
     <textarea id="fallback-clipboard" style="position: absolute; left: -9999px;"></textarea>
     <input type="file" id="global-file-input" class="hidden">
+
+    <!-- Generic Modal -->
+    <div id="generic-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-[500px] p-6 transform transition-all scale-100">
+            <h3 id="modal-title" class="text-xl font-bold text-white mb-4">Title</h3>
+            <div id="modal-content"></div>
+            <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-800">
+                <button onclick="app.closeModal()" class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">Cancel</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-lg transition-colors">Save</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         window.addEventListener('load', () => {
             const { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } = window.firebaseModules;
 
-            // --- 1. Constants & Utils ---
+            // --- 1. Constants (Updated with User Metadata) ---
             const TAG_LIBRARY = {
                 "Instruments": { 
                     "Key Elements": ["808 Drums", "Acoustic Guitar", "Slide Guitar", "Acoustic Nylon Guitar", "Heavy Fuzz Bass", "Simple Dry Drums", "Piano", "Rhodes Piano", "Hammond B3"],
@@ -185,19 +167,32 @@
                     "Negative Prompts": ["-Jazz", "-Punk", "-Rock", "-Hardcore"]
                 }
             };
+
             const MIX_TAGS = ["Too Bassy", "Thin/Harsh", "Muddy", "Vocals Buried", "Vocals Too Loud", "Too Dry", "Too Wet", "Distorted", "Bad Ending", "Hallucination", "Perfect Mix", "Dynamics Flat", "Stereo Too Wide", "Mono Issues"];
             const generateID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
-            // --- 2. Database ---
+            // --- 2. Database Wrapper ---
             class DB {
-                constructor(app) {
-                    this.app = app;
-                    // HARDCODED CONFIG
-                    this.config = { apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo", authDomain: "ai-audio-engineer.firebaseapp.com", projectId: "ai-audio-engineer", storageBucket: "ai-audio-engineer.firebasestorage.app", messagingSenderId: "150234414348", appId: "1:150234414348:web:6d38c836eae470cb559d29", measurementId: "G-W4572MB1QP" };
-                    this.appId = 'default-app';
-                    this.db = null; this.auth = null; this.user = null; this.idb = null;
+                constructor(appInstance) {
+                    this.app = appInstance;
+                    this.db = null;
+                    this.auth = null;
+                    this.user = null;
+                    this.idb = null;
+                    
+                    // USER PROVIDED CONFIG
+                    this.config = {
+                        apiKey: "AIzaSyDKXd3b1ypsAz0Pwsi9rr8DknYg3PzCSOo",
+                        authDomain: "ai-audio-engineer.firebaseapp.com",
+                        projectId: "ai-audio-engineer",
+                        storageBucket: "ai-audio-engineer.firebasestorage.app",
+                        messagingSenderId: "150234414348",
+                        appId: "1:150234414348:web:6d38c836eae470cb559d29",
+                        measurementId: "G-W4572MB1QP"
+                    };
+                    this.appId = 'default-app'; 
+                    
                     this.initIndexedDB();
-                    this.init();
                 }
 
                 init() {
@@ -205,501 +200,506 @@
                         const app = initializeApp(this.config);
                         this.auth = getAuth(app);
                         this.db = getFirestore(app);
+                        
+                        // Setup Auth Listener
                         onAuthStateChanged(this.auth, (user) => {
                             this.user = user;
-                            if (user) this.app.onLoginSuccess(user);
-                            else this.app.showAuthStep('login');
+                            if (user) {
+                                this.app.onLoginSuccess(user);
+                            } else {
+                                this.app.showAuthStep('login');
+                            }
                         });
                     } catch (e) {
-                        console.error("Firebase Init Error", e);
-                        document.getElementById('auth-error-msg').textContent = "Init Error: " + e.message;
-                        document.getElementById('auth-error-msg').classList.remove('hidden');
+                        console.error("Firebase Init Error:", e);
+                        const msg = document.getElementById('auth-error-msg');
+                        if(msg) {
+                             msg.textContent = "Initialization Failed: " + e.message;
+                             msg.classList.remove('hidden');
+                        }
                     }
                 }
 
                 async loginGoogle() {
-                    if (!this.auth) return;
-                    try { await signInWithPopup(this.auth, new GoogleAuthProvider()); } 
-                    catch (e) { 
+                    if (!this.auth) {
+                        console.error("Auth not initialized");
                         const msg = document.getElementById('auth-error-msg');
-                        msg.textContent = "Login Failed: " + e.message;
-                        msg.classList.remove('hidden');
-                        this.app.showAuthStep('login');
+                        if(msg) {
+                            msg.textContent = "System Initializing... please wait.";
+                            msg.classList.remove('hidden');
+                        }
+                        // Try re-init?
+                        this.init();
+                        return;
+                    }
+                    const provider = new GoogleAuthProvider();
+                    try {
+                        await signInWithPopup(this.auth, provider);
+                    } catch (error) {
+                        const msg = document.getElementById('auth-error-msg');
+                        if(msg) {
+                            msg.textContent = "Login Failed: " + error.message;
+                            msg.classList.remove('hidden');
+                        }
+                        this.app.showAuthStep('login'); // Reset UI state
                     }
                 }
 
-                async logout() { if(this.auth) await signOut(this.auth); window.location.reload(); }
-                
-                initIndexedDB() {
-                    const r = indexedDB.open('SunoCompanionBlobs', 1);
-                    r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains('blobs')) e.target.result.createObjectStore('blobs', {keyPath:'id'}); };
-                    r.onsuccess = e => { this.idb = e.target.result; };
+                async logout() {
+                    if (this.auth) {
+                        await signOut(this.auth);
+                        window.location.reload();
+                    }
                 }
 
-                async getCollection(name) { if(!this.user) throw new Error("Auth required"); return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name); }
-                async getDoc(name, id) { if(!this.user) throw new Error("Auth required"); return doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, name, id); }
+                // IDB for huge files
+                initIndexedDB() {
+                    const req = indexedDB.open('SunoCompanionBlobs', 1);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs', { keyPath: 'id' });
+                    };
+                    req.onsuccess = (e) => { this.idb = e.target.result; };
+                }
 
-                async getAll(name) {
-                    if(!this.user) return [];
+                // Firestore Helpers
+                async getCollection(name) {
+                    // Remove readyPromise wait, rely on user being set
+                    if (!this.user) throw new Error("Not authenticated");
+                    return collection(this.db, 'artifacts', this.appId, 'users', this.user.uid, name);
+                }
+                async getDoc(name, id) {
+                    if (!this.user) throw new Error("Not authenticated");
+                    return doc(this.db, 'artifacts', this.appId, 'users', this.user.uid, name, id);
+                }
+
+                // CRUD
+                async getAll(storeName) {
+                    if (!this.user) return [];
                     try {
-                        const s = await getDocs(await this.getCollection(name));
-                        const items = s.docs.map(d => d.data());
-                        if (name === 'songs' || name === 'albums') {
-                            return await Promise.all(items.map(async i => {
-                                const b = await this.getBlob(i.id);
-                                return b ? {...i, ...b} : i;
+                        const col = await this.getCollection(storeName);
+                        const snap = await getDocs(col);
+                        const items = snap.docs.map(d => d.data());
+                        
+                        if (storeName === 'songs' || storeName === 'albums') {
+                            // Merge blobs
+                            return await Promise.all(items.map(async (item) => {
+                                const blob = await this.getBlob(item.id);
+                                return blob ? { ...item, ...blob } : item;
                             }));
                         }
                         return items;
-                    } catch(e) { console.error(e); return []; }
+                    } catch (e) {
+                        console.error("Fetch Error", e);
+                        return [];
+                    }
                 }
 
-                async put(name, item) {
-                    if(!this.user) return;
-                    const meta = {...item}; const blobs = {}; let hasBlobs = false;
-                    if(meta.audioBlob) { blobs.audioBlob = meta.audioBlob; delete meta.audioBlob; hasBlobs = true; }
-                    if(meta.artworkBlob) { blobs.artworkBlob = meta.artworkBlob; delete meta.artworkBlob; hasBlobs = true; }
-                    await setDoc(await this.getDoc(name, item.id), meta);
-                    if(hasBlobs && this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').put({id: item.id, ...blobs});
+                async put(storeName, item) {
+                    if (!this.user) return;
+                    const meta = { ...item };
+                    const blobs = {};
+                    let hasBlobs = false;
+                    
+                    if (meta.audioBlob) { blobs.audioBlob = meta.audioBlob; delete meta.audioBlob; hasBlobs = true; }
+                    if (meta.artworkBlob) { blobs.artworkBlob = meta.artworkBlob; delete meta.artworkBlob; hasBlobs = true; }
+                    
+                    const ref = await this.getDoc(storeName, item.id);
+                    await setDoc(ref, meta);
+                    
+                    if (hasBlobs && this.idb) {
+                        const tx = this.idb.transaction('blobs', 'readwrite');
+                        tx.objectStore('blobs').put({ id: item.id, ...blobs });
+                    }
                 }
 
-                async delete(name, id) {
-                    if(!this.user) return;
-                    await deleteDoc(await this.getDoc(name, id));
-                    if(this.idb) this.idb.transaction('blobs', 'readwrite').objectStore('blobs').delete(id);
+                async delete(storeName, id) {
+                    if (!this.user) return;
+                    const ref = await this.getDoc(storeName, id);
+                    await deleteDoc(ref);
+                    if (this.idb) {
+                        const tx = this.idb.transaction('blobs', 'readwrite');
+                        tx.objectStore('blobs').delete(id);
+                    }
                 }
 
                 async getBlob(id) {
-                    if(!this.idb) return null;
-                    return new Promise(res => {
-                        const r = this.idb.transaction('blobs', 'readonly').objectStore('blobs').get(id);
-                        r.onsuccess = () => res(r.result); r.onerror = () => res(null);
+                    if (!this.idb) return null;
+                    return new Promise(resolve => {
+                        const tx = this.idb.transaction('blobs', 'readonly');
+                        const req = tx.objectStore('blobs').get(id);
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => resolve(null);
                     });
                 }
                 
-                async exportAll() { /* ... export logic ... */ return "{}"; } 
-                async importData(json) { /* ... import logic ... */ return true; }
+                async exportAll() {
+                    const data = {
+                        artists: await this.getAll('artists'),
+                        albums: await this.getAll('albums'),
+                        songs: await this.getAll('songs'),
+                        styles: await this.getAll('styles'),
+                        tag_metadata: await this.getAll('tag_metadata'),
+                        version: '6.0', timestamp: Date.now()
+                    };
+                    const strip = (obj) => { const c = {...obj}; delete c.audioBlob; delete c.artworkBlob; return c; };
+                    data.albums = data.albums.map(strip); data.songs = data.songs.map(strip);
+                    return JSON.stringify(data, null, 2);
+                }
+                
+                async importData(jsonString) {
+                    try {
+                        const data = JSON.parse(jsonString);
+                        if(data.artists) for(const i of data.artists) await this.put('artists', i);
+                        if(data.albums) for(const i of data.albums) await this.put('albums', i);
+                        if(data.songs) for(const i of data.songs) await this.put('songs', i);
+                        if(data.styles) for(const i of data.styles) await this.put('styles', i);
+                        if(data.tag_metadata) for(const i of data.tag_metadata) await this.put('tag_metadata', i);
+                        return true;
+                    } catch (e) { console.error(e); return false; }
+                }
             }
 
-            // --- 3. App Controller ---
+            // --- 3. Main App ---
             class App {
                 constructor() {
+                    // Make App global immediately
                     window.app = this;
+                    
                     this.db = new DB(this);
                     this.state = { view: 'artists', artistId: null, albumId: null, songId: null, wsTab: 'lyrics' };
                     this.cache = { artists: [], albums: [], songs: [], styles: [], tagMeta: {} };
+                    
+                    // Bindings - REMOVED problematic bindings for missing methods
+                    this.navigate = this.navigate.bind(this);
+                    this.signIn = this.signIn.bind(this);
+                    this.signOut = this.signOut.bind(this);
+                    this.modalAddArtist = this.modalAddArtist.bind(this);
+                    this.modalAddAlbum = this.modalAddAlbum.bind(this);
+                    this.modalAddSong = this.modalAddSong.bind(this);
+                    this.editStyle = this.editStyle.bind(this);
+                    this.createStyle = this.createStyle.bind(this);
+                    this.saveStyleFromEditor = this.saveStyleFromEditor.bind(this);
+                    this.handleImport = this.handleImport.bind(this);
+                    this.downloadBackup = this.downloadBackup.bind(this);
+                    this.saveCurrentStyleToLibrary = this.saveCurrentStyleToLibrary.bind(this);
+                    this.openImportModal = this.openImportModal.bind(this);
+                    this.processImport = this.processImport.bind(this);
+                    this.removeTag = this.removeTag.bind(this);
+
+                    this.db.init(); 
                 }
 
-                // Auth
-                showAuthStep(s) {
+                // --- Auth UI Logic ---
+                showAuthStep(step) {
                     document.getElementById('auth-screen').classList.remove('hidden');
-                    document.getElementById('step-loading').classList.toggle('hidden', s !== 'loading');
-                    document.getElementById('step-login').classList.toggle('hidden', s !== 'login');
+                    document.getElementById('step-loading').classList.add('hidden');
+                    document.getElementById('step-login').classList.add('hidden');
+                    
+                    if (step === 'login') document.getElementById('step-login').classList.remove('hidden');
+                    if (step === 'loading') document.getElementById('step-loading').classList.remove('hidden');
                 }
+
                 async onLoginSuccess(user) {
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('app-container').classList.remove('hidden');
-                    document.getElementById('user-email').textContent = user.email;
+                    document.getElementById('user-email').textContent = user.email || 'User';
                     await this.refreshCache();
                     this.navigate('artists');
+                    this.setupTooltip();
                 }
+
                 signIn() { this.showAuthStep('loading'); this.db.loginGoogle(); }
                 signOut() { this.db.logout(); }
 
                 async refreshCache() {
-                    if(!this.db.user) return;
+                    // Only fetch if user is logged in to avoid permission errors
+                    if (!this.db.user) return;
+                    
                     this.cache.artists = await this.db.getAll('artists');
                     this.cache.albums = await this.db.getAll('albums');
                     this.cache.songs = await this.db.getAll('songs');
                     this.cache.styles = await this.db.getAll('styles');
                     const metas = await this.db.getAll('tag_metadata');
-                    this.cache.tagMeta = {}; metas.forEach(m => this.cache.tagMeta[m.tagName] = m);
+                    this.cache.tagMeta = {};
+                    metas.forEach(m => this.cache.tagMeta[m.tagName] = m);
                 }
 
+                // --- Navigation ---
                 navigate(view, params = {}) {
                     this.state.view = view;
-                    if(params.artistId) this.state.artistId = params.artistId;
-                    if(params.albumId) this.state.albumId = params.albumId;
-                    if(params.songId) this.state.songId = params.songId;
-                    if(view === 'workstation' && params.tab) this.state.wsTab = params.tab;
+                    if (params.artistId) this.state.artistId = params.artistId;
+                    if (params.albumId) this.state.albumId = params.albumId;
+                    if (params.songId) this.state.songId = params.songId;
+                    if (view === 'workstation') this.state.wsTab = params.tab || 'lyrics';
+                    
                     this.updateSidebar();
                     this.render();
                 }
 
                 updateSidebar() {
                     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    const map = { artists: 'nav-artists', artist: 'nav-artists', album: 'nav-artists', workstation: 'nav-artists', library: 'nav-library', styles: 'nav-styles', settings: 'nav-settings' };
-                    const id = Object.keys(map).find(k => this.state.view.includes(k));
-                    if(id) document.getElementById(map[id]).classList.add('active');
+                    if (this.state.view.includes('artist') || this.state.view.includes('album') || this.state.view === 'workstation') document.getElementById('nav-artists').classList.add('active');
+                    else if (this.state.view === 'library') document.getElementById('nav-library').classList.add('active');
+                    else if (this.state.view === 'styles') document.getElementById('nav-styles').classList.add('active');
+                    else if (this.state.view === 'settings') document.getElementById('nav-settings').classList.add('active');
                     
                     const ctx = document.getElementById('sidebar-context');
-                    if(this.state.artistId) {
+                    if (this.state.artistId) {
                         ctx.classList.remove('hidden');
-                        const art = this.cache.artists.find(a => a.id === this.state.artistId);
-                        const alb = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
-                        const sng = this.state.songId ? this.cache.songs.find(s => s.id === this.state.songId) : null;
-                        document.getElementById('ctx-artist').textContent = art ? art.name : '';
-                        document.getElementById('ctx-album').textContent = alb ? alb.title : '';
-                        document.getElementById('ctx-song').textContent = sng ? sng.title : '';
-                    } else ctx.classList.add('hidden');
+                        const artist = this.cache.artists.find(a => a.id === this.state.artistId);
+                        document.getElementById('ctx-artist').textContent = artist ? artist.name : '';
+                        const album = this.state.albumId ? this.cache.albums.find(a => a.id === this.state.albumId) : null;
+                        document.getElementById('ctx-album').textContent = album ? album.title : '';
+                        const song = this.state.songId ? this.cache.songs.find(s => s.id === this.state.songId) : null;
+                        document.getElementById('ctx-song').textContent = song ? song.title : '';
+                    } else { ctx.classList.add('hidden'); }
                 }
 
                 render() {
-                    const c = document.getElementById('main-content'); c.innerHTML = '';
+                    const container = document.getElementById('main-content');
+                    container.innerHTML = '';
                     switch(this.state.view) {
-                        case 'artists': this.renderArtistsList(c); break;
-                        case 'artist-detail': this.renderArtistDetail(c); break;
-                        case 'album-detail': this.renderAlbumDetail(c); break;
-                        case 'workstation': this.renderWorkstation(c); break;
-                        case 'library': this.renderLibrary(c); break;
-                        case 'styles': this.renderStyleManager(c); break;
-                        case 'settings': this.renderSettings(c); break;
+                        case 'artists': this.renderArtistsList(container); break;
+                        case 'artist-detail': this.renderArtistDetail(container); break;
+                        case 'album-detail': this.renderAlbumDetail(container); break;
+                        case 'workstation': this.renderWorkstation(container); break;
+                        case 'library': this.renderLibrary(container); break;
+                        case 'styles': this.renderStyleManager(container); break;
+                        case 'settings': this.renderSettings(container); break;
                     }
                 }
-
-                // --- Modals (Fixed) ---
-                modalAddArtist() {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Artist";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Name</label>
-                        <input type="text" id="m-name" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4">
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Genre</label>
-                        <input type="text" id="m-genre" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4">
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Default Style</label>
-                        <select id="m-style" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none"><option value="">None</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const name = document.getElementById('m-name').value;
-                        if(name) {
-                            await this.db.put('artists', { id: generateID(), name, genre: document.getElementById('m-genre').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
-                            await this.refreshCache(); this.closeModal(); this.render();
-                        }
-                    };
-                }
-
-                modalAddAlbum(artistId) {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Album";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Title</label>
-                        <input type="text" id="m-title" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4">
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Year</label>
-                        <input type="number" id="m-year" value="${new Date().getFullYear()}" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4">
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Style</label>
-                        <select id="m-style" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none"><option value="">Use Artist Default</option>${this.cache.styles.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}</select>
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const title = document.getElementById('m-title').value;
-                        if(title) {
-                            await this.db.put('albums', { id: generateID(), artistId, title, year: document.getElementById('m-year').value, defaultStyleId: document.getElementById('m-style').value, notes: '', createdAt: Date.now() });
-                            await this.refreshCache(); this.closeModal(); this.render();
-                        }
-                    };
-                }
-
-                modalAddSong(albumId) {
-                    const m = document.getElementById('generic-modal');
-                    document.getElementById('modal-title').textContent = "New Song";
-                    document.getElementById('modal-content').innerHTML = `
-                        <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Song Title</label>
-                        <input type="text" id="m-title" class="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white outline-none focus:border-sky-500 mb-4">
-                    `;
-                    m.classList.remove('hidden');
-                    document.getElementById('modal-confirm-btn').onclick = async () => {
-                        const title = document.getElementById('m-title').value;
-                        if(title) {
-                            const siblings = this.cache.songs.filter(s => s.albumId === albumId);
-                            await this.db.put('songs', { 
-                                id: generateID(), albumId, title, order: siblings.length + 1, lyrics: '', notes: '', rating: 0, mixTags: [], customTags: [], bpm: 120, createdAt: Date.now() 
-                            });
-                            await this.refreshCache(); this.closeModal(); this.render();
-                        }
-                    };
-                }
-
-                closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
 
                 // --- Views ---
-                renderArtistsList(c) {
+                renderArtistsList(container) {
                     const artists = this.cache.artists.sort((a,b) => b.createdAt - a.createdAt);
-                    c.innerHTML = `
-                        <div class="h-16 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-8">
-                            <h2 class="text-lg font-bold text-white">All Artists</h2>
-                            <button onclick="window.app.modalAddArtist()" class="btn-primary px-4 py-2 rounded text-xs shadow-lg flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Artist</button>
-                        </div>
-                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto">
-                            ${artists.map(a => {
-                                const albums = this.cache.albums.filter(al => al.artistId === a.id).length;
-                                return `<div class="bg-app-panel border border-zinc-700/50 rounded-xl p-6 hover:border-sky-500/50 transition-all group relative">
-                                    <div onclick="window.app.navigate('artist-detail', {artistId: '${a.id}'})" class="cursor-pointer">
-                                        <div class="flex justify-between items-start mb-4">
-                                            <div class="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-zinc-400 font-bold text-lg">${a.name.substring(0,2).toUpperCase()}</div>
-                                            <i class="fa-solid fa-chevron-right text-zinc-600 group-hover:text-white transition-colors"></i>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-white mb-1">${a.name}</h3>
-                                        <div class="text-sm text-zinc-400">${a.genre || 'No Genre'} • ${albums} Albums</div>
-                                    </div>
-                                    <button onclick="window.app.deleteArtist('${a.id}')" class="absolute top-6 right-6 text-zinc-600 hover:text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
-                                </div>`;
-                            }).join('')}
-                            ${artists.length === 0 ? `<div class="col-span-full text-center py-20 text-zinc-500">No artists found. Create one to start.</div>` : ''}
-                        </div>
-                    `;
+                    container.innerHTML = `<div class="p-8 fade-in h-full overflow-y-auto"><div class="flex justify-between items-center mb-8"><div><h2 class="text-3xl font-bold text-white mb-2">Artists</h2></div><button onclick="app.modalAddArtist()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-colors flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Artist</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${artists.map(a => { const styleName = this.getStyleName(a.defaultStyleId); const albumCount = this.cache.albums.filter(al => al.artistId === a.id).length; return `<div class="group bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-indigo-500/50 hover:bg-slate-800/50 transition-all relative"><div onclick="app.navigate('artist-detail', {artistId: '${a.id}'})" class="cursor-pointer"><div class="flex justify-between items-start mb-4"><div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl font-bold text-white">${a.name.substring(0,2).toUpperCase()}</div><i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-indigo-400 transition-colors"></i></div><h3 class="text-xl font-bold text-white mb-1">${a.name}</h3><div class="text-sm text-slate-400 mb-4">${a.genre || 'No genre set'}</div><div class="flex items-center justify-between text-xs text-slate-500 border-t border-slate-800 pt-4"><span><i class="fa-solid fa-compact-disc mr-1"></i> ${albumCount} Albums</span><span>${styleName}</span></div></div><button onclick="app.deleteArtist('${a.id}')" class="absolute top-6 right-10 text-slate-600 hover:text-red-500 px-2 transition-colors" title="Delete Artist"><i class="fa-solid fa-trash"></i></button></div>`; }).join('')}</div>${artists.length === 0 ? `<div class="text-center text-slate-500 mt-20">No artists yet. Create one to get started.</div>` : ''}</div>`;
                 }
 
-                renderArtistDetail(c) {
-                    const artist = this.cache.artists.find(a => a.id === this.state.artistId);
-                    if(!artist) return this.navigate('artists');
+                renderArtistDetail(container) {
+                    const artist = this.cache.artists.find(a => a.id === this.state.artistId); if (!artist) return this.navigate('artists');
                     const albums = this.cache.albums.filter(a => a.artistId === artist.id).sort((a,b) => b.year - a.year);
-                    c.innerHTML = `
-                        <div class="h-16 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-6 shrink-0">
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.app.navigate('artists')" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button>
-                                <h2 class="text-lg font-bold text-white">${artist.name}</h2>
-                                <span class="text-xs px-2 py-0.5 bg-zinc-800 rounded text-zinc-400">${artist.genre || 'Genre'}</span>
-                            </div>
-                            <button onclick="window.app.saveArtistNotes('${artist.id}')" id="save-notes-btn" class="text-xs text-sky-400 font-bold hover:text-white">Save Notes</button>
-                        </div>
-                        <div class="flex-1 flex overflow-hidden">
-                            <div class="flex-1 overflow-y-auto p-8 border-r border-zinc-800">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="text-white font-bold">Discography</h3>
-                                    <button onclick="window.app.modalAddAlbum('${artist.id}')" class="btn-secondary px-3 py-1.5 rounded text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i> Add Album</button>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    ${albums.map(al => `<div onclick="window.app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-app-panel border border-zinc-700/50 p-4 rounded-lg cursor-pointer hover:border-sky-500/50 transition-all">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-12 h-12 bg-zinc-900 rounded flex items-center justify-center text-zinc-600"><i class="fa-solid fa-compact-disc text-xl"></i></div>
-                                            <div><div class="font-bold text-white">${al.title}</div><div class="text-xs text-zinc-500">${al.year}</div></div>
-                                        </div>
-                                    </div>`).join('')}
-                                </div>
-                            </div>
-                            <div class="w-96 bg-zinc-900 flex flex-col">
-                                <div class="p-3 bg-zinc-950 border-b border-zinc-800 text-xs font-bold text-zinc-500 uppercase">Engineer's Log</div>
-                                <textarea id="artist-notes" class="flex-1 bg-transparent p-4 text-sm text-zinc-300 resize-none outline-none focus:bg-zinc-800/50" placeholder="Notes on vocal chain, processing, etc...">${artist.notes || ''}</textarea>
-                            </div>
-                        </div>
-                    `;
+                    const styleName = this.getStyleName(artist.defaultStyleId);
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="h-48 bg-gradient-to-r from-slate-900 to-indigo-950 border-b border-slate-800 p-8 flex flex-col justify-end relative shrink-0"><button onclick="app.navigate('artists')" class="absolute top-6 left-6 text-slate-400 hover:text-white mb-4 flex items-center gap-2 text-sm font-medium transition-colors"><i class="fa-solid fa-arrow-left"></i> Back to Artists</button><h1 class="text-4xl font-bold text-white mb-2">${artist.name}</h1><div class="flex items-center gap-6 text-sm text-slate-300"><span class="bg-slate-800/50 px-2 py-1 rounded border border-slate-700">${artist.genre || 'No Genre'}</span><span class="flex items-center gap-2"><i class="fa-solid fa-sliders text-indigo-400"></i> Base Style: ${styleName}</span></div></div><div class="flex-1 flex min-h-0"><div class="flex-1 overflow-y-auto p-8 bg-slate-900 border-r border-slate-800"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white">Discography</h3><button onclick="app.modalAddAlbum('${artist.id}')" class="text-sm bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded border border-slate-700 transition-colors"><i class="fa-solid fa-plus mr-1"></i> Add Album</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${albums.map(al => { let imgUrl = al.artworkBlob ? URL.createObjectURL(al.artworkBlob) : null; return `<div onclick="app.navigate('album-detail', {albumId: '${al.id}'})" class="bg-slate-950 border border-slate-800 p-4 rounded-lg hover:border-indigo-500/50 cursor-pointer group transition-all relative"><div class="aspect-square bg-slate-900 rounded mb-3 flex items-center justify-center text-slate-700 group-hover:text-slate-600 overflow-hidden">${imgUrl ? `<img src="${imgUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-music text-4xl"></i>`}</div><div class="font-bold text-white truncate">${al.title}</div><div class="text-xs text-slate-500">${al.year} • ${this.getSongCount(al.id)} Songs</div></div>`; }).join('')}</div></div><div class="w-[400px] flex flex-col bg-slate-900/50"><div class="p-4 border-b border-slate-800 bg-slate-950"><h3 class="text-sm font-bold text-slate-400 uppercase tracking-wide">Engineer's Log: Artist Profile</h3></div><div class="flex-1 p-4"><textarea id="artist-notes" class="w-full h-full bg-slate-900/50 border border-slate-800 rounded p-4 text-sm text-slate-300 font-mono resize-none outline-none focus:border-indigo-500 transition-colors" placeholder="Track vocal chain settings...">${artist.notes || ''}</textarea></div><div class="p-4 border-t border-slate-800"><button onclick="app.saveArtistNotes('${artist.id}')" id="save-artist-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold py-2 rounded transition-colors">Save Notes</button></div></div></div></div>`;
                 }
 
-                renderAlbumDetail(c) {
-                    const album = this.cache.albums.find(a => a.id === this.state.albumId); if(!album) return this.navigate('artists');
+                renderAlbumDetail(container) {
+                    const album = this.cache.albums.find(a => a.id === this.state.albumId); if (!album) return this.navigate('artists');
                     const artist = this.cache.artists.find(a => a.id === album.artistId);
                     const songs = this.cache.songs.filter(s => s.albumId === album.id).sort((a,b) => a.order - b.order);
-                    c.innerHTML = `
-                         <div class="h-16 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-6 shrink-0">
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.app.navigate('artist-detail', {artistId: '${artist.id}'})" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button>
-                                <div>
-                                    <div class="text-[10px] text-sky-500 font-bold uppercase">${artist.name}</div>
-                                    <h2 class="text-lg font-bold text-white">${album.title}</h2>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="window.app.deleteAlbum('${album.id}')" class="text-zinc-600 hover:text-red-500 px-2"><i class="fa-solid fa-trash"></i></button>
-                                <button onclick="window.app.modalAddSong('${album.id}')" class="btn-primary px-4 py-2 rounded text-xs shadow-lg"><i class="fa-solid fa-plus mr-1"></i> New Song</button>
-                            </div>
-                        </div>
-                        <div class="flex-1 flex overflow-hidden">
-                             <div class="flex-1 overflow-y-auto p-2 border-r border-zinc-800">
-                                <table class="w-full text-left border-collapse">
-                                    <thead class="text-xs font-bold text-zinc-500 uppercase border-b border-zinc-800"><tr><th class="p-3 w-12 text-center">#</th><th class="p-3">Title</th><th class="p-3 w-24">BPM</th><th class="p-3 w-24 text-right">Actions</th></tr></thead>
-                                    <tbody class="text-sm text-zinc-300 divide-y divide-zinc-800">
-                                        ${songs.map((s, i) => `<tr class="hover:bg-zinc-800/50 group">
-                                            <td class="p-3 text-center text-zinc-500">${i+1}</td>
-                                            <td class="p-3 font-medium text-white cursor-pointer hover:text-sky-400" onclick="window.app.navigate('workstation', {songId: '${s.id}'})">${s.title}</td>
-                                            <td class="p-3 text-zinc-500">${s.bpm}</td>
-                                            <td class="p-3 text-right">
-                                                <button onclick="window.app.moveSong('${s.id}', -1)" class="px-1 hover:text-white"><i class="fa-solid fa-arrow-up"></i></button>
-                                                <button onclick="window.app.moveSong('${s.id}', 1)" class="px-1 hover:text-white"><i class="fa-solid fa-arrow-down"></i></button>
-                                                <button onclick="window.app.deleteSong('${s.id}')" class="px-1 hover:text-red-400 ml-2"><i class="fa-solid fa-trash"></i></button>
-                                            </td>
-                                        </tr>`).join('')}
-                                    </tbody>
-                                </table>
-                             </div>
-                             <div class="w-96 bg-zinc-900 flex flex-col">
-                                <div class="p-3 bg-zinc-950 border-b border-zinc-800 text-xs font-bold text-zinc-500 uppercase">Album Notes</div>
-                                <textarea id="album-notes" class="flex-1 bg-transparent p-4 text-sm text-zinc-300 resize-none outline-none focus:bg-zinc-800/50" placeholder="Notes on album mastering, cohesion...">${album.notes || ''}</textarea>
-                                <div class="p-3 border-t border-zinc-800"><button onclick="window.app.saveAlbumNotes('${album.id}')" id="save-album-btn" class="w-full btn-secondary py-2 rounded text-xs font-bold">Save Notes</button></div>
-                            </div>
-                        </div>
-                    `;
+                    const styleName = this.getStyleName(album.defaultStyleId) || 'Inherit Artist';
+                    const artUrl = album.artworkBlob ? URL.createObjectURL(album.artworkBlob) : null;
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="bg-slate-900 border-b border-slate-800 p-6 flex items-center justify-between shrink-0"><div class="flex items-center gap-6"><div onclick="app.triggerArtworkUpload('${album.id}')" class="w-20 h-20 bg-slate-800 rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 overflow-hidden relative border border-slate-700 group">${artUrl ? `<img src="${artUrl}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-slate-600 text-2xl"></i>`}<div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-xs text-white">Change</div></div><div><div class="flex items-center gap-2 mb-1"><button onclick="app.navigate('artist-detail', {artistId: '${artist.id}'})" class="text-xs text-indigo-400 font-bold uppercase tracking-wider hover:text-white transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> ${artist.name}</button></div><h1 class="text-2xl font-bold text-white">${album.title} <span class="text-slate-500 font-normal ml-2 text-lg">(${album.year})</span></h1></div></div><div class="flex items-center gap-3"><span class="text-xs text-slate-500 bg-slate-950 px-3 py-1 rounded border border-slate-800">Style: ${styleName}</span><button onclick="app.modalAddSong('${album.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-bold text-sm shadow-lg transition-colors"><i class="fa-solid fa-plus mr-1"></i> New Song</button><button onclick="app.deleteAlbum('${album.id}')" class="bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-200 px-3 py-2 rounded border border-slate-700 transition-colors" title="Delete Album"><i class="fa-solid fa-trash"></i></button></div></div><div class="flex-1 flex min-h-0"><div class="flex-1 overflow-y-auto p-2 bg-slate-900 border-r border-slate-800"><table class="w-full text-left border-collapse"><thead class="bg-slate-950 text-xs font-bold text-slate-500 uppercase"><tr><th class="p-3 w-16 text-center">#</th><th class="p-3">Title</th><th class="p-3">Rating</th><th class="p-3 w-32 text-right">Action</th></tr></thead><tbody class="text-sm text-slate-300 divide-y divide-slate-800">${songs.map((s, idx) => `<tr class="hover:bg-slate-800/50 group transition-colors"><td class="p-3 text-center text-slate-500 font-mono">${idx + 1}</td><td class="p-3"><a onclick="app.navigate('workstation', {songId: '${s.id}'})" class="font-bold text-white hover:text-indigo-400 cursor-pointer block flex items-center gap-2">${s.title} ${s.audioBlob ? '<i class="fa-solid fa-file-audio text-green-500 text-xs"></i>' : ''}</a><span class="text-xs text-slate-500">${s.bpm ? s.bpm + ' BPM' : ''}</span></td><td class="p-3 text-yellow-500 text-xs">${s.rating ? '★'.repeat(s.rating) : '<span class="text-slate-700">Unrated</span>'}</td><td class="p-3 text-right"><button onclick="app.moveSong('${s.id}', -1)" class="text-slate-600 hover:text-white px-1"><i class="fa-solid fa-arrow-up"></i></button><button onclick="app.moveSong('${s.id}', 1)" class="text-slate-600 hover:text-white px-1"><i class="fa-solid fa-arrow-down"></i></button><button onclick="app.deleteSong('${s.id}')" class="text-slate-600 hover:text-red-400 px-1 ml-2"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('')}</tbody></table>${songs.length === 0 ? `<div class="text-center text-slate-500 mt-10">No songs yet.</div>` : ''}</div><div class="w-[350px] flex flex-col bg-slate-950/50"><div class="p-4 border-b border-slate-800 bg-slate-950"><h3 class="text-sm font-bold text-slate-400 uppercase tracking-wide">Album Production Notes</h3></div><div class="flex-1 p-4"><textarea id="album-notes" class="w-full h-full bg-slate-900/50 border border-slate-800 rounded p-4 text-sm text-slate-300 font-mono resize-none outline-none focus:border-indigo-500 transition-colors" placeholder="Track album concept...">${album.notes || ''}</textarea></div><div class="p-4 border-t border-slate-800"><button onclick="app.saveAlbumNotes('${album.id}')" id="save-album-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold py-2 rounded transition-colors">Save Notes</button></div></div></div></div>`;
                 }
-                
-                renderWorkstation(c) {
-                    const song = this.cache.songs.find(s => s.id === this.state.songId); if(!song) return this.navigate('artists');
+
+                renderWorkstation(container) {
+                    const song = this.cache.songs.find(s => s.id === this.state.songId); if (!song) return this.navigate('artists');
                     const album = this.cache.albums.find(a => a.id === song.albumId);
+                    let activeTags = song.customTags || [], activeBpm = song.bpm || 120, currentRating = song.rating || 0, currentMixTags = song.mixTags || [];
                     const isLyrics = this.state.wsTab === 'lyrics';
-                    
-                    c.innerHTML = `
-                        <div class="h-16 border-b border-zinc-800 bg-zinc-950 flex items-center justify-between px-6 shrink-0">
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.app.navigate('album-detail', {albumId: '${album.id}'})" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button>
-                                <div>
-                                    <div class="text-[10px] text-zinc-500 font-bold uppercase">${album.title}</div>
-                                    <div class="flex items-center gap-3">
-                                        <h2 class="text-lg font-bold text-white">${song.title}</h2>
-                                        <div class="flex bg-zinc-800 rounded p-0.5 gap-1">
-                                            <button onclick="window.app.setWsTab('lyrics')" class="${isLyrics ? 'bg-zinc-600 text-white' : 'text-zinc-400 hover:text-white'} px-3 py-0.5 rounded text-[10px] font-bold transition-colors">Lyrics</button>
-                                            <button onclick="window.app.setWsTab('notes')" class="${!isLyrics ? 'bg-zinc-600 text-white' : 'text-zinc-400 hover:text-white'} px-3 py-0.5 rounded text-[10px] font-bold transition-colors">Notes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <button onclick="window.app.saveWorkstation()" id="save-btn" class="btn-primary px-6 py-2 rounded text-sm shadow-lg flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> SAVE</button>
-                            </div>
-                        </div>
-                        
-                        <div class="flex-1 flex overflow-hidden">
-                            <!-- Left: Editor -->
-                            <div class="flex-1 relative flex flex-col bg-white">
-                                ${isLyrics ? 
-                                    `<textarea id="lyrics-editor" class="flex-1 w-full h-full p-8 text-zinc-800 font-mono text-sm leading-relaxed resize-none outline-none editor-light" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea>
-                                     <div class="p-2 border-t border-zinc-200 bg-zinc-50 flex gap-2 overflow-x-auto">
-                                        ${['[Intro]', '[Verse]', '[Chorus]', '[Bridge]', '[Outro]', '[Instrumental]'].map(t => `<button onclick="window.app.insertLyricTag('${t}')" class="px-2 py-1 bg-white border border-zinc-300 rounded text-xs text-zinc-600 hover:border-sky-500 hover:text-sky-600 font-medium shadow-sm">${t}</button>`).join('')}
-                                     </div>` 
-                                    : 
-                                    `<div class="flex-1 bg-zinc-900 p-8 overflow-y-auto text-zinc-200">
-                                        <h3 class="font-bold text-white mb-4">Production Report</h3>
-                                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Mix Flags</label>
-                                        <div class="flex flex-wrap gap-2 mb-6">
-                                            ${["Too Bassy", "Muddy", "Thin", "Vocals Buried", "Artifacts", "Perfect"].map(t => `<button onclick="window.app.toggleMixTag('${t}')" class="px-3 py-1 rounded border text-xs ${song.mixTags?.includes(t) ? 'bg-sky-900 border-sky-500 text-sky-100' : 'bg-zinc-800 border-zinc-700 text-zinc-400'}">${t}</button>`).join('')}
-                                        </div>
-                                        <label class="block text-xs font-bold text-zinc-500 uppercase mb-2">Engineering Notes</label>
-                                        <textarea id="notes-editor" class="w-full h-64 bg-zinc-950 border border-zinc-800 rounded p-4 text-sm text-zinc-300 outline-none focus:border-sky-500 font-mono">${song.notes || ''}</textarea>
-                                    </div>`
-                                }
-                            </div>
-                            
-                            <!-- Right: Style Builder -->
-                            <div class="w-[420px] bg-zinc-900 border-l border-zinc-800 flex flex-col">
-                                <div class="p-4 border-b border-zinc-800 bg-zinc-950">
-                                    <div class="text-[10px] font-bold text-zinc-500 uppercase mb-2">Style Prompt</div>
-                                    <div id="active-prompt-display" class="bg-zinc-900 border border-zinc-800 rounded p-3 text-sm text-sky-300 font-medium mb-3 min-h-[3rem] select-all"></div>
-                                    <div class="flex gap-2">
-                                        <button onclick="window.app.copyPrompt()" id="copy-btn" class="flex-1 btn-secondary py-2 rounded text-xs font-bold"><i class="fa-regular fa-copy"></i> Copy</button>
-                                        <button onclick="window.app.saveCurrentStyleToLibrary()" class="flex-1 btn-secondary py-2 rounded text-xs font-bold"><i class="fa-solid fa-bookmark"></i> Save Style</button>
-                                    </div>
-                                </div>
-                                <div id="style-builder-container" class="flex-1 overflow-hidden flex flex-col"></div>
-                            </div>
-                        </div>
+                    const audioUrl = song.audioBlob ? URL.createObjectURL(song.audioBlob) : null;
+                    container.innerHTML = `<div class="flex h-full fade-in"><div class="flex-1 flex flex-col border-r border-slate-800 min-w-[50%]"><div class="border-b border-slate-800 bg-slate-950 px-4 py-2 shrink-0"><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-4 text-sm"><button onclick="app.navigate('album-detail', {albumId: '${album.id}'})" class="text-slate-500 hover:text-white"><i class="fa-solid fa-arrow-left"></i></button><div class="flex gap-4 ml-2"><button onclick="app.setWsTab('lyrics')" class="tab-btn pb-3 ${isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Lyrics</button><button onclick="app.setWsTab('notes')" class="tab-btn pb-3 ${!isLyrics ? 'active' : ''} text-xs font-bold uppercase tracking-wide transition-colors">Production Report</button></div></div><div class="flex gap-1 ${!isLyrics ? 'invisible' : ''}">${['Intro','Verse','Chorus','Bridge','Outro'].map(t => `<button onclick="app.insertLyricTag('[${t}]')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-[10px] rounded border border-slate-700 text-slate-300 transition-colors">[${t}]</button>`).join('')}</div><button onclick="app.saveWorkstation()" id="save-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-1.5 rounded-full font-bold shadow text-xs transition-colors flex items-center gap-2 border border-indigo-400/50"><i class="fa-solid fa-floppy-disk"></i> SAVE</button></div><div class="flex items-center gap-3 bg-slate-900 rounded p-2 border border-slate-800">${audioUrl ? `<audio controls src="${audioUrl}" class="flex-1"></audio><button onclick="app.triggerAudioUpload('${song.id}')" class="text-[10px] text-slate-500 hover:text-white whitespace-nowrap"><i class="fa-solid fa-rotate mr-1"></i> Replace</button>` : `<button onclick="app.triggerAudioUpload('${song.id}')" class="w-full text-center py-1 text-xs text-indigo-400 hover:text-white border border-dashed border-indigo-900/50 hover:border-indigo-500 rounded transition-colors"><i class="fa-solid fa-cloud-arrow-up mr-2"></i> Upload Audio File (MP3/WAV)</button>`}</div></div><div class="flex-1 bg-slate-900 relative"><textarea id="lyrics-editor" class="absolute inset-0 w-full h-full bg-slate-900 p-6 text-slate-200 font-mono text-sm resize-none focus:outline-none focus:bg-slate-800/30 transition-colors ${!isLyrics ? 'hidden' : ''}" placeholder="Enter lyrics here...">${song.lyrics || ''}</textarea><div id="prod-report" class="absolute inset-0 w-full h-full bg-slate-900 p-6 overflow-y-auto ${isLyrics ? 'hidden' : ''}"><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Final Rating</label><div class="flex gap-1 text-2xl text-slate-600 cursor-pointer" id="rating-stars">${[1,2,3,4,5].map(i => `<span class="${i <= currentRating ? 'text-yellow-500' : 'hover:text-yellow-400'}" onclick="app.setRating(${i})">★</span>`).join('')}</div></div><div class="mb-6"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Mix Issues</label><div class="flex flex-wrap gap-2">${MIX_TAGS.map(tag => { const isActive = currentMixTags.includes(tag); return `<button onclick="app.toggleMixTag('${tag}')" class="text-xs px-3 py-1.5 rounded border transition-all ${isActive ? 'bg-red-900/40 border-red-500 text-red-200' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'}">${tag}</button>`; }).join('')}</div></div><div class="flex-1 h-full min-h-[200px]"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Notes</label><textarea id="notes-editor" class="w-full h-64 bg-slate-800/50 border border-slate-700 rounded p-4 text-indigo-100 font-mono text-sm resize-none focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Log details...">${song.notes || ''}</textarea></div></div></div><div class="p-3 border-t border-slate-800 bg-slate-950 flex justify-between"><div class="text-xs text-slate-500 italic" id="save-status-bar">Changes not saved</div><div class="flex gap-3"><button onclick="app.deleteSong('${song.id}')" class="text-xs text-red-900 hover:text-red-500"><i class="fa-solid fa-trash"></i> Delete Song</button><button onclick="app.copyLyrics()" class="text-xs text-slate-500 hover:text-white"><i class="fa-regular fa-copy"></i> Copy Lyrics</button></div></div></div><div class="w-[450px] flex flex-col bg-slate-900"><div class="p-4 bg-slate-950 border-b border-slate-800 shrink-0"><div class="flex justify-between items-end mb-2"><label class="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Active Prompt</label><span class="text-[10px] text-slate-500 italic">Right-click tags to annotate</span></div><div id="active-prompt-display" class="bg-slate-900 border border-slate-800 rounded p-3 text-sm text-indigo-300 font-medium mb-3 min-h-[3rem]"></div><div class="flex gap-2"><button onclick="app.copyPrompt()" id="copy-prompt-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded text-xs font-bold shadow-lg transition-colors"><i class="fa-regular fa-copy mr-1"></i> Copy Prompt</button><select id="style-preset-select" onchange="app.applyPresetStyle(this.value)" class="bg-slate-800 text-xs text-white border border-slate-700 rounded px-2 outline-none w-1/3"><option value="">-- Load Preset --</option>${this.cache.styles.map(st => `<option value="${st.id}">${st.name}</option>`).join('')}</select></div><div class="flex gap-2 mt-2"><button onclick="app.saveCurrentStyleToLibrary()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded text-xs font-bold shadow transition-colors"><i class="fa-solid fa-bookmark mr-1"></i> Save as Style</button><button onclick="app.openImportModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded text-xs font-bold shadow transition-colors"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Magic Import</button></div></div><div class="flex-1 overflow-hidden flex flex-col" id="style-builder-container"></div></div></div>`;
+                    this.renderTagBuilder(document.getElementById('style-builder-container'), activeTags, activeBpm, (tags, bpm) => { song.customTags = tags; song.bpm = bpm; this.updatePromptDisplay(tags, bpm); });
+                    const lEditor = document.getElementById('lyrics-editor'); if(lEditor) lEditor.addEventListener('input', (e) => { song.lyrics = e.target.value; });
+                    const nEditor = document.getElementById('notes-editor'); if(nEditor) nEditor.addEventListener('input', (e) => { song.notes = e.target.value; });
+                    this.updatePromptDisplay(activeTags, activeBpm);
+                }
+
+                renderStyleManager(container) {
+                    container.innerHTML = `<div class="flex h-full fade-in"><div class="w-72 bg-slate-950 border-r border-slate-800 flex flex-col"><div class="p-6 border-b border-slate-800 flex justify-between items-center"><h2 class="text-sm font-bold text-white uppercase tracking-wider">Saved Styles</h2><button onclick="app.createStyle()" class="text-xs bg-indigo-600 px-3 py-1.5 rounded-md text-white hover:bg-indigo-500 font-medium transition-colors"><i class="fa-solid fa-plus mr-1"></i> New</button></div><div class="flex-1 overflow-y-auto p-2 space-y-1">${this.cache.styles.map(s => `<button onclick="app.editStyle('${s.id}')" class="w-full text-left px-4 py-3 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-3 group border border-transparent hover:border-slate-700"><div class="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-slate-500 group-hover:text-indigo-400 transition-colors"><i class="fa-solid fa-sliders"></i></div><div class="flex-1 truncate"><div class="font-bold text-white truncate">${s.name}</div><div class="text-xs text-slate-500 truncate">${s.bpm} BPM • ${s.tags ? s.tags.length : 0} Tags</div></div></button>`).join('')}${this.cache.styles.length === 0 ? `<div class="p-6 text-center text-slate-500 text-xs italic">No styles saved yet.<br>Create one to get started.</div>` : ''}</div></div><div class="flex-1 bg-slate-900 flex flex-col" id="style-editor-area"><div class="flex-1 flex flex-col items-center justify-center text-slate-500 opacity-50"><i class="fa-solid fa-sliders text-6xl mb-4"></i><p>Select a style to edit or create a new one.</p></div></div></div>`;
+                }
+
+                renderLibrary(container) {
+                    let allSongs = this.cache.songs.map(song => { const album = this.cache.albums.find(a => a.id === song.albumId); const artist = album ? this.cache.artists.find(a => a.id === album.artistId) : null; return { ...song, albumName: album ? album.title : 'Unknown', artistName: artist ? artist.name : 'Unknown', artistId: artist ? artist.id : null, albumId: album ? album.id : null, year: album ? album.year : '' }; });
+                    allSongs.sort((a, b) => a.artistName.localeCompare(b.artistName));
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="p-6 bg-slate-900 border-b border-slate-800 shrink-0"><h2 class="text-2xl font-bold text-white mb-2">Production Library</h2></div><div class="flex-1 overflow-y-auto p-0"><table class="w-full text-left border-collapse"><thead class="bg-slate-950 text-xs font-bold text-slate-500 uppercase sticky top-0 z-10 shadow-sm"><tr><th class="p-4 border-b border-slate-800">Artist</th><th class="p-4 border-b border-slate-800">Song</th><th class="p-4 border-b border-slate-800 w-32">Rating</th><th class="p-4 border-b border-slate-800 w-32 text-right">Actions</th></tr></thead><tbody class="text-sm text-slate-300 divide-y divide-slate-800 bg-slate-900">${allSongs.map(s => `<tr class="hover:bg-slate-800/50 group transition-colors"><td class="p-4 font-medium text-white">${s.artistName}</td><td class="p-4 font-bold text-indigo-100">${s.title}</td><td class="p-4 text-yellow-500 text-xs">${s.rating ? '★'.repeat(s.rating) : ''}</td><td class="p-4 text-right"><button onclick="app.navigate('workstation', {songId: '${s.id}', artistId: '${s.artistId}', albumId: '${s.albumId}', tab: 'notes'})" class="text-xs bg-slate-800 hover:text-white text-slate-300 px-3 py-1.5 rounded transition-colors border border-slate-700">Notes</button></td></tr>`).join('')}</tbody></table></div></div>`;
+                }
+
+                renderSettings(container) {
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in p-8"><h2 class="text-3xl font-bold text-white mb-2">Settings & Data Management</h2><p class="text-slate-400 text-sm mb-10">Manage your database, export backups, or ingest data from external scraping tools.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl"><div class="bg-slate-900 border border-slate-800 rounded-xl p-6 relative group"><div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400"><i class="fa-solid fa-file-export"></i></div><div><h3 class="text-lg font-bold text-white">Export for Automation</h3><p class="text-[10px] text-indigo-400 uppercase tracking-wide font-bold">Bridge to Suno</p></div></div><p class="text-sm text-slate-400 mb-6 leading-relaxed">Generates a <code>.json</code> file tailored for external automation tools. <br><br><strong>How to use:</strong> Feed this file into community-created Python scripts or Browser Extensions (e.g., "Suno API Unofficial") to automatically queue these songs on suno.com.</p><button onclick="app.downloadBackup()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Download JSON Payload</button></div><div class="bg-slate-900 border border-slate-800 rounded-xl p-6"><div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-file-import"></i></div><h3 class="text-lg font-bold text-white">Import / Restore</h3></div><p class="text-sm text-slate-400 mb-6 leading-relaxed">Restore a previous backup or ingest data scraped from your Suno history via external tools. <br><br><span class="text-xs text-orange-400"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Merges with existing data.</span></p><input type="file" id="import-file" class="hidden" accept=".json" onchange="app.handleImport(this)"><button onclick="document.getElementById('import-file').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-upload"></i> Select File</button></div></div></div>`;
+                }
+
+                // --- Shared Components ---
+                setWsTab(tab) { this.state.wsTab = tab; this.render(); }
+                setRating(val) { const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) { song.rating = val; this.render(); } }
+                toggleMixTag(tag) { const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) { if(!song.mixTags) song.mixTags = []; if(song.mixTags.includes(tag)) song.mixTags = song.mixTags.filter(t => t !== tag); else song.mixTags.push(tag); this.render(); }}
+                async deleteArtist(id) { if(!confirm('Delete Artist?')) return; const albums = this.cache.albums.filter(a => a.artistId === id); for(const alb of albums) await this.deleteAlbum(alb.id, true); await this.db.delete('artists', id); await this.refreshCache(); this.navigate('artists'); }
+                async deleteAlbum(id, skipConfirm = false) { if(!skipConfirm && !confirm('Delete Album?')) return; const songs = this.cache.songs.filter(s => s.albumId === id); for(const s of songs) await this.db.delete('songs', s.id); await this.db.delete('albums', id); if(!skipConfirm) { await this.refreshCache(); this.navigate('artist-detail', {artistId: this.state.artistId}); } }
+                async deleteSong(id) { if(!confirm('Delete Song?')) return; await this.db.delete('songs', id); await this.refreshCache(); this.navigate('album-detail', {albumId: this.state.albumId}); }
+                triggerArtworkUpload(albumId) { const input = document.getElementById('global-file-input'); input.accept = "image/*"; input.onchange = (e) => { const file = e.target.files[0]; if(!file) return; const album = this.cache.albums.find(a => a.id === albumId); if(album) { album.artworkBlob = file; this.db.put('albums', album).then(() => { this.refreshCache().then(() => this.render()); }); } }; input.click(); }
+                triggerAudioUpload(songId) { const input = document.getElementById('global-file-input'); input.accept = "audio/*"; input.onchange = (e) => { const file = e.target.files[0]; if(!file) return; const song = this.cache.songs.find(s => s.id === songId); if(song) { song.audioBlob = file; this.db.put('songs', song).then(() => { this.refreshCache().then(() => this.render()); }); } }; input.click(); }
+                async downloadBackup() { const json = await this.db.exportAll(); const blob = new Blob([json], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'backup.json'; a.click(); }
+                handleImport(input) { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (e) => { const text = e.target.result; const success = await this.db.importData(text); if(success) { alert('Data imported successfully!'); await this.refreshCache(); } else { alert('Failed to import data. Check file format.'); } }; reader.readAsText(file); }
+                
+                // New Methods for v6.7 features
+                openImportModal() {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Magic Import Tags';
+                    document.getElementById('modal-content').innerHTML = `
+                        <textarea id="import-text" class="w-full h-40 bg-slate-800 border border-slate-700 rounded p-3 text-white text-xs font-mono" placeholder='Paste JSON from Suno (e.g. {"genre": "...", "style_tags": "..."}) or a comma-separated list of tags here...'></textarea>
                     `;
-                    
-                    // Render Builder
-                    this.renderTagBuilder(document.getElementById('style-builder-container'), song.customTags || [], song.bpm || 120, (tags, bpm) => {
-                        song.customTags = tags; song.bpm = bpm;
-                        this.updatePromptDisplay(tags, bpm);
-                    });
-                    
-                    // Listeners
-                    if(isLyrics) document.getElementById('lyrics-editor').addEventListener('input', e => song.lyrics = e.target.value);
-                    else document.getElementById('notes-editor').addEventListener('input', e => song.notes = e.target.value);
-                    
-                    this.updatePromptDisplay(song.customTags || [], song.bpm || 120);
+                    modal.classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').onclick = () => {
+                        const text = document.getElementById('import-text').value;
+                        this.processImport(text);
+                        this.closeModal();
+                    };
                 }
 
-                // --- Shared Logic ---
-                async deleteArtist(id) { if(confirm('Delete Artist?')) { await this.db.delete('artists', id); await this.refreshCache(); this.render(); } }
-                async deleteAlbum(id) { if(confirm('Delete Album?')) { await this.db.delete('albums', id); await this.refreshCache(); this.navigate('artist-detail', {artistId: this.state.artistId}); } }
-                async deleteSong(id) { if(confirm('Delete Song?')) { await this.db.delete('songs', id); await this.refreshCache(); this.navigate('album-detail', {albumId: this.state.albumId}); } }
-                async saveArtistNotes(id) { const txt = document.getElementById('artist-notes').value; const a = this.cache.artists.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('artists', a); alert('Saved'); } }
-                async saveAlbumNotes(id) { const txt = document.getElementById('album-notes').value; const a = this.cache.albums.find(x=>x.id===id); if(a){ a.notes=txt; await this.db.put('albums', a); alert('Saved'); } }
-                async saveWorkstation() { const s = this.cache.songs.find(x=>x.id===this.state.songId); if(s) { await this.db.put('songs', s); alert('Song Saved'); } }
-                
-                toggleMixTag(t) { 
-                    const s = this.cache.songs.find(x=>x.id===this.state.songId); 
-                    if(s) { if(!s.mixTags) s.mixTags=[]; if(s.mixTags.includes(t)) s.mixTags=s.mixTags.filter(x=>x!==t); else s.mixTags.push(t); this.render(); } 
-                }
-                
-                updatePromptDisplay(tags, bpm) { 
-                    const el = document.getElementById('active-prompt-display'); 
-                    if(el) { const all = [...tags]; if(bpm) all.push(bpm + " bpm"); el.textContent = all.join(', '); } 
-                }
-
-                insertLyricTag(t) {
-                    const el = document.getElementById('lyrics-editor');
-                    if(el) {
-                        const start = el.selectionStart; const end = el.selectionEnd; const txt = el.value;
-                        el.value = txt.substring(0, start) + "\n" + t + "\n" + txt.substring(end);
-                        const s = this.cache.songs.find(x=>x.id===this.state.songId);
-                        if(s) s.lyrics = el.value;
+                processImport(input) {
+                    let tags = [];
+                    let remainingInput = input;
+                    // Extract JSON objects
+                    const jsonRegex = /\{[^}]+\}/g;
+                    const jsonMatches = input.match(jsonRegex);
+                    if (jsonMatches) {
+                        jsonMatches.forEach(jsonStr => {
+                            try {
+                                const obj = JSON.parse(jsonStr);
+                                Object.values(obj).forEach(val => {
+                                    if (typeof val === 'string') {
+                                        tags.push(...val.split(',').map(s => s.trim()));
+                                    }
+                                });
+                                remainingInput = remainingInput.replace(jsonStr, '');
+                            } catch (e) { console.log("JSON parse error", e); }
+                        });
+                    }
+                    // Process remaining text
+                    const rawTags = remainingInput.split(/[,\n]/).map(s => s.trim()).filter(s => s && !s.match(/^[{}]/));
+                    tags.push(...rawTags);
+                    
+                    // Update current song
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (song) {
+                        // Merge unique
+                        const existing = new Set(song.customTags || []);
+                        tags.forEach(t => existing.add(t));
+                        song.customTags = [...existing];
+                        this.db.put('songs', song).then(() => {
+                            this.render(); // Re-render workstation
+                        });
                     }
                 }
                 
-                copyPrompt() {
-                     const el = document.getElementById('active-prompt-display');
-                     if(el) { navigator.clipboard.writeText(el.textContent); alert('Copied to clipboard'); }
+                removeTag(tagToRemove) {
+                   const song = this.cache.songs.find(s => s.id === this.state.songId);
+                   if (song && song.customTags) {
+                       song.customTags = song.customTags.filter(t => t !== tagToRemove);
+                       this.updatePromptDisplay(song.customTags, song.bpm);
+                       this.render(); // Re-render to update the active tag chips
+                   }
                 }
-                
-                async saveCurrentStyleToLibrary() {
-                    const s = this.cache.songs.find(x=>x.id===this.state.songId);
-                    if(!s) return;
-                    const name = prompt("Name for this style?");
-                    if(name) {
-                        await this.db.put('styles', { id: generateID(), name, tags: s.customTags, bpm: s.bpm, createdAt: Date.now() });
+
+                saveCurrentStyleToLibrary() {
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if (!song) return;
+                    
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'Save Style to Library';
+                    document.getElementById('modal-content').innerHTML = `
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Style Name</label>
+                        <input type="text" id="new-style-name" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white" placeholder="e.g., Atmospheric Techno">
+                    `;
+                    modal.classList.remove('hidden');
+                    
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const name = document.getElementById('new-style-name').value.trim();
+                        if (!name) return alert("Name required");
+                        
+                        const style = {
+                            id: generateID(),
+                            name: name,
+                            tags: song.customTags || [],
+                            bpm: song.bpm || 120,
+                            createdAt: Date.now()
+                        };
+                        
+                        await this.db.put('styles', style);
                         await this.refreshCache();
-                        alert("Style Saved to Library");
-                    }
-                }
-                
-                async moveSong(id, dir) {
-                    // Implementation skipped for brevity, logic remains same
+                        this.closeModal();
+                        alert("Style saved!");
+                    };
                 }
 
-                renderTagBuilder(container, tags, bpm, onChange) {
-                    let activeCat = Object.keys(TAG_LIBRARY)[0];
+                // Helper Methods
+                renderTagBuilder(container, initialTags, initialBpm, onChange) {
+                    let activeCat = Object.keys(TAG_LIBRARY)[0]; let tags = [...initialTags]; let bpm = initialBpm;
                     const render = () => {
-                        const subs = TAG_LIBRARY[activeCat];
+                        const activeSubCats = TAG_LIBRARY[activeCat];
+                        
+                        // Active Tags Chip Display
+                        const activeTagsHtml = tags.map(t => 
+                            `<span class="inline-flex items-center gap-1 bg-indigo-900/50 text-indigo-200 border border-indigo-500/30 px-2 py-1 rounded text-xs">
+                                ${t} <button onclick="app.removeTag('${t}')" class="hover:text-white"><i class="fa-solid fa-times"></i></button>
+                            </span>`
+                        ).join('');
+
                         container.innerHTML = `
-                            <div class="flex flex-1 min-h-0 bg-zinc-900">
-                                <div class="w-24 bg-zinc-950 border-r border-zinc-800 overflow-y-auto shrink-0">
-                                    ${Object.keys(TAG_LIBRARY).map(cat => `<button data-cat="${cat}" class="w-full text-left px-3 py-3 text-[10px] font-bold uppercase hover:bg-zinc-800 ${activeCat === cat ? 'text-sky-400 bg-zinc-900 border-l-2 border-sky-500' : 'text-zinc-500 border-l-2 border-transparent'}">${cat}</button>`).join('')}
+                            <div class="p-3 border-b border-slate-800 bg-slate-900 flex flex-wrap gap-2 min-h-[40px] items-center">
+                                ${activeTagsHtml || '<span class="text-xs text-slate-600 italic">No tags selected</span>'}
+                            </div>
+                            <div class="flex flex-1 min-h-0">
+                                <div class="w-24 bg-slate-950 border-r border-slate-800 overflow-y-auto shrink-0">
+                                    ${Object.keys(TAG_LIBRARY).map(cat => `<button onclick="document.getElementById('cat-${cat}').click()" id="cat-${cat}" class="w-full text-left px-2 py-3 text-[10px] font-bold uppercase hover:bg-slate-800 ${activeCat === cat ? 'text-indigo-400 bg-slate-900 border-l-2 border-indigo-500' : 'text-slate-500 border-l-2 border-transparent'}">${cat}</button>`).join('')}
                                 </div>
-                                <div class="flex-1 overflow-y-auto p-4">
-                                    ${Object.entries(subs).map(([sub, list]) => `
+                                <div class="flex-1 overflow-y-auto p-4 bg-slate-900">
+                                    ${Object.entries(activeSubCats).map(([sub, tagList]) => `
                                         <div class="mb-4">
-                                            <h4 class="text-xs font-bold text-zinc-500 uppercase mb-2 border-b border-zinc-800 pb-1">${sub}</h4>
+                                            <h4 class="text-xs font-bold text-slate-500 uppercase mb-2 border-b border-slate-800 pb-1">${sub}</h4>
                                             <div class="flex flex-wrap gap-2">
-                                                ${list.map(t => {
-                                                    const active = tags.includes(t);
-                                                    return `<button data-tag="${t}" class="text-xs px-2 py-1 rounded border transition-all ${active ? 'bg-sky-600 text-white border-sky-500 shadow' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-zinc-500'}">${t}</button>`;
+                                                ${tagList.map(t => { 
+                                                    // Enhanced matching: check strictly but also case-insensitive if needed
+                                                    const isActive = tags.includes(t); 
+                                                    return `<button class="tag-btn text-xs px-2 py-1 rounded border transition-all ${isActive ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-slate-800 text-slate-400 border-slate-700'}" data-tag="${t}">${t}</button>`; 
                                                 }).join('')}
                                             </div>
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
-                            <div class="h-auto border-t border-zinc-800 bg-zinc-950 p-4 shrink-0">
+                            <div class="h-auto border-t border-slate-800 bg-slate-950 p-4 shrink-0">
                                 <div class="flex items-center gap-4 mb-3">
-                                    <label class="text-xs font-bold text-zinc-500">BPM: <span class="text-sky-400">${bpm}</span></label>
+                                    <label class="text-xs font-bold text-slate-500">BPM: <span id="bpm-val" class="text-indigo-400">${bpm}</span></label>
                                     <input type="range" min="60" max="200" value="${bpm}" class="flex-1" id="bpm-input">
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="custom-tag" placeholder="Add custom tag..." class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1 text-xs text-white outline-none">
+                                    <button id="add-custom-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1 rounded text-xs border border-slate-700"><i class="fa-solid fa-plus"></i></button>
                                 </div>
                             </div>
                         `;
-                        container.querySelectorAll('button[data-cat]').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; render(); });
-                        container.querySelectorAll('button[data-tag]').forEach(b => b.onclick = () => { 
-                            const t = b.dataset.tag; 
-                            if(tags.includes(t)) tags = tags.filter(x=>x!==t); else tags.push(t); 
-                            onChange(tags, bpm); render(); 
-                        });
-                        container.querySelector('#bpm-input').oninput = (e) => { bpm = e.target.value; onChange(tags, bpm); render(); };
+                        
+                        container.querySelectorAll('[id^="cat-"]').forEach(btn => btn.addEventListener('click', () => { activeCat = btn.id.replace('cat-', ''); render(); }));
+                        container.querySelectorAll('.tag-btn').forEach(btn => btn.addEventListener('click', () => { const t = btn.dataset.tag; if (tags.includes(t)) tags = tags.filter(x => x !== t); else tags.push(t); onChange(tags, bpm); render(); }));
+                        container.querySelector('#bpm-input').addEventListener('input', (e) => { bpm = parseInt(e.target.value); container.querySelector('#bpm-val').textContent = bpm; onChange(tags, bpm); });
+                        container.querySelector('#add-custom-btn').addEventListener('click', () => { const val = container.querySelector('#custom-tag').value.trim(); if (val && !tags.includes(val)) { tags.push(val); onChange(tags, bpm); render(); }});
                     };
                     render();
                 }
-
-                // Placeholders for other views
-                renderLibrary(c) { c.innerHTML = '<div class="p-8 text-zinc-500">Library View</div>'; }
-                renderStyleManager(c) { c.innerHTML = '<div class="p-8 text-zinc-500">Style Manager</div>'; }
-                renderSettings(c) { c.innerHTML = '<div class="p-8 text-zinc-500">Settings</div>'; }
+                updatePromptDisplay(tags, bpm) { const el = document.getElementById('active-prompt-display'); if (el) { const all = [...tags]; if(bpm) all.push(`${bpm} bpm`); el.textContent = all.join(', '); } }
+                getStyleName(id) { if (!id) return ''; const s = this.cache.styles.find(x => x.id === id); return s ? s.name : 'Unknown Style'; }
+                getSongCount(albumId) { return this.cache.songs.filter(s => s.albumId === albumId).length; }
+                async saveArtistNotes(id) { const artist = this.cache.artists.find(a => a.id === id); const txt = document.getElementById('artist-notes').value; if(artist) { artist.notes = txt; await this.db.put('artists', artist); } const btn = document.getElementById('save-artist-btn'); btn.textContent = 'Saved!'; setTimeout(() => btn.textContent = 'Save Notes', 2000); }
+                async saveAlbumNotes(id) { const album = this.cache.albums.find(a => a.id === id); const txt = document.getElementById('album-notes').value; if(album) { album.notes = txt; await this.db.put('albums', album); } const btn = document.getElementById('save-album-btn'); btn.textContent = 'Saved!'; setTimeout(() => btn.textContent = 'Save Notes', 2000); }
+                safeCopy(text) { const el = document.getElementById('fallback-clipboard'); el.value = text; el.select(); document.execCommand('copy'); }
+                copyPrompt() { const song = this.cache.songs.find(s => s.id === this.state.songId); const tags = song.customTags || []; const bpm = song.bpm ? `${song.bpm} bpm` : ''; this.safeCopy([...tags, bpm].join(', ')); const btn = document.getElementById('copy-prompt-btn'); btn.innerHTML = '<i class="fa-solid fa-check"></i>'; setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i> Copy Prompt', 2000); }
+                copyLyrics() { const song = this.cache.songs.find(s => s.id === this.state.songId); this.safeCopy(song.lyrics); }
+                setupTooltip() { /* ... */ }
+                insertLyricTag(tag) { const ta = document.getElementById('lyrics-editor'); const start = ta.selectionStart; const end = ta.selectionEnd; const txt = ta.value; ta.value = txt.substring(0, start) + (start > 0 && txt[start-1] !== '\n' ? '\n' : '') + tag + '\n' + txt.substring(end); ta.focus(); const song = this.cache.songs.find(s => s.id === this.state.songId); if(song) song.lyrics = ta.value; }
                 
-            } // End App Class
+                editStyle(id) { const style = this.cache.styles.find(s => s.id === id); this.renderStyleEditor(style); }
+                createStyle() { this.renderStyleEditor(null); }
+                renderStyleEditor(style) {
+                    const container = document.getElementById('style-editor-area');
+                    const tempData = style ? { ...style } : { id: generateID(), name: 'New Style', tags: [], bpm: 120 };
+                    container.innerHTML = `<div class="h-16 border-b border-slate-800 flex items-center px-6 justify-between bg-slate-950"><input type="text" id="se-name" value="${tempData.name}" class="bg-transparent text-lg font-bold text-white border-b border-slate-700 focus:border-indigo-500 outline-none w-1/2"><button onclick="app.saveStyleFromEditor('${tempData.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded font-bold text-sm shadow-lg">Save Style</button></div><div class="flex-1 overflow-hidden flex flex-col p-4" id="se-builder"></div>`;
+                    this.tempStyle = tempData;
+                    this.renderTagBuilder(document.getElementById('se-builder'), tempData.tags, tempData.bpm, (tags, bpm) => { this.tempStyle.tags = tags; this.tempStyle.bpm = bpm; });
+                    document.getElementById('se-name').addEventListener('input', (e) => this.tempStyle.name = e.target.value);
+                }
+                async saveStyleFromEditor(id) { await this.db.put('styles', this.tempStyle); await this.refreshCache(); this.render(); }
+            }
 
             const app = new App();
         });
