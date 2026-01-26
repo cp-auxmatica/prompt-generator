@@ -472,11 +472,15 @@
             select.innerHTML = '<option value="">(Select Artist Profile)</option>';
 
             artistsCache.forEach(a => {
+                // SAFETY: Handle Legacy Data
+                const persona = a.persona || { vocalType: 'Legacy Artist', tone: '', refs: '', defaults: '' };
+                const membersCount = a.members ? a.members.length : 0;
+
                 // Roster Item
                 const item = document.createElement('div');
                 item.className = "p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer flex justify-between items-center";
                 item.onclick = () => loadArtistToEditor(a);
-                item.innerHTML = `<div><div class="font-bold text-sm">${a.name}</div><div class="text-[10px] text-slate-500">${a.persona.vocalType} • ${a.members ? a.members.length : 0} members</div></div><button class="text-xs text-indigo-600 font-bold">Edit</button>`;
+                item.innerHTML = `<div><div class="font-bold text-sm">${a.name}</div><div class="text-[10px] text-slate-500">${persona.vocalType} • ${membersCount} members</div></div><button class="text-xs text-indigo-600 font-bold">Edit</button>`;
                 list.appendChild(item);
 
                 // Select Option
@@ -488,11 +492,14 @@
         }
 
         function loadArtistToEditor(a) {
+            // SAFETY: Defaults for Legacy Data
+            const persona = a.persona || { vocalType: '', tone: '', refs: '', defaults: '' };
+
             document.getElementById('p-name').value = a.name;
-            document.getElementById('p-vocal-type').value = a.persona.vocalType;
-            document.getElementById('p-tone').value = a.persona.tone;
-            document.getElementById('p-refs').value = a.persona.refs;
-            document.getElementById('p-defaults').value = a.persona.defaults;
+            document.getElementById('p-vocal-type').value = persona.vocalType;
+            document.getElementById('p-tone').value = persona.tone;
+            document.getElementById('p-refs').value = persona.refs;
+            document.getElementById('p-defaults').value = persona.defaults;
             
             const mList = document.getElementById('band-members-list');
             mList.innerHTML = '';
@@ -564,7 +571,9 @@
             const lPersona = document.getElementById('layer-persona');
             if(currentState.artist) {
                 lPersona.classList.remove('hidden');
-                const pText = [currentState.artist.persona.vocalType, currentState.artist.persona.tone, currentState.artist.persona.defaults].filter(Boolean).join(", ");
+                // SAFETY: Check for persona existence
+                const p = currentState.artist.persona || {};
+                const pText = [p.vocalType, p.tone, p.defaults].filter(Boolean).join(", ");
                 lPersona.querySelector('.content').textContent = pText;
                 fullPrompt.push(pText);
             } else { lPersona.classList.add('hidden'); }
