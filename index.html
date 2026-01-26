@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         window.firebaseModules = { initializeApp, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query };
     </script>
@@ -211,7 +211,7 @@
                         messagingSenderId: "150234414348",
                         appId: "1:150234414348:web:6d38c836eae470cb559d29"
                     };
-                    // FIXED: Restored original App ID to recover data
+                    // Restored app ID to allow data recovery
                     this.appId = 'default-app';
                     this.initIndexedDB();
                 }
@@ -938,4 +938,157 @@
                 applyPresetStyle(styleId) {
                     if(!styleId) return;
                     const style = this.cache.styles.find(s => s.id === styleId);
-                    const song = this.cache.songs.find(
+                    const song = this.cache.songs.find(s => s.id === this.state.songId);
+                    if(style && song) {
+                        if(confirm(`Overwrite current settings with preset "${style.name}"?`)) {
+                            song.customTags = [...style.tags];
+                            song.bpm = style.bpm;
+                            this.render(); // Re-render workstation
+                            this.showToast("Preset Loaded");
+                        }
+                    }
+                }
+
+                // --- Helpers ---
+                setWsTab(tab) { this.state.wsTab = tab; this.render(); }
+                getSongCount(albumId) { return this.cache.songs.filter(s => s.albumId === albumId).length; }
+                
+                async deleteArtist(id) { 
+                    if (!confirm('Delete Artist and all associated data?')) return; 
+                    const albums = this.cache.albums.filter(a => a.artistId === id); 
+                    for (const alb of albums) await this.deleteAlbum(alb.id, true); 
+                    await this.db.delete('artists', id); 
+                    await this.refreshCache(); 
+                    this.navigate('artists'); 
+                }
+                async deleteAlbum(id, skipConfirm = false) { 
+                    if (!skipConfirm && !confirm('Delete Album?')) return; 
+                    const songs = this.cache.songs.filter(s => s.albumId === id); 
+                    for (const s of songs) await this.db.delete('songs', s.id); 
+                    await this.db.delete('albums', id); 
+                    if (!skipConfirm) { await this.refreshCache(); this.navigate('artist-detail', { artistId: this.state.artistId }); } 
+                }
+                async deleteSong(id) { 
+                    if (!confirm('Delete Song?')) return; 
+                    await this.db.delete('songs', id); 
+                    await this.refreshCache(); 
+                    this.navigate('album-detail', { albumId: this.state.albumId }); 
+                }
+                
+                // --- Modals & Uploads ---
+                triggerArtworkUpload(albumId) { 
+                    const input = document.getElementById('global-file-input'); 
+                    input.accept = "image/*"; 
+                    input.onchange = (e) => { 
+                        const file = e.target.files[0]; 
+                        if (!file) return; 
+                        const album = this.cache.albums.find(a => a.id === albumId); 
+                        if (album) { album.artworkBlob = file; this.db.put('albums', album).then(() => { this.refreshCache().then(() => this.render()); }); } 
+                    }; 
+                    input.click(); 
+                }
+                triggerAudioUpload(songId) { 
+                    const input = document.getElementById('global-file-input'); 
+                    input.accept = "audio/*"; 
+                    input.onchange = (e) => { 
+                        const file = e.target.files[0]; 
+                        if (!file) return; 
+                        const song = this.cache.songs.find(s => s.id === songId); 
+                        if (song) { song.audioBlob = file; this.db.put('songs', song).then(() => { this.refreshCache().then(() => this.render()); }); } 
+                    }; 
+                    input.click(); 
+                }
+                
+                modalAddArtist() {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'New Artist / Band';
+                    document.getElementById('modal-content').innerHTML = `
+                        <div class="space-y-4">
+                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Name</label><input id="new-artist-name" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
+                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Primary Genre</label><input id="new-artist-genre" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
+                        </div>`;
+                    modal.classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const name = document.getElementById('new-artist-name').value;
+                        const genre = document.getElementById('new-artist-genre').value;
+                        if (!name) return;
+                        await this.db.put('artists', { id: generateID(), name, genre, createdAt: Date.now() });
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('artists');
+                    };
+                }
+                
+                modalAddAlbum(artistId) {
+                    const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'New Release';
+                    document.getElementById('modal-content').innerHTML = `
+                        <div class="space-y-4">
+                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Title</label><input id="new-album-title" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
+                            <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Year</label><input id="new-album-year" type="number" value="${new Date().getFullYear()}" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>
+                        </div>`;
+                    modal.classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const title = document.getElementById('new-album-title').value;
+                        const year = document.getElementById('new-album-year').value;
+                        if (!title) return;
+                        const id = generateID();
+                        await this.db.put('albums', { id, artistId, title, year, createdAt: Date.now() });
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('album-detail', { albumId: id });
+                    };
+                }
+
+                modalAddSong(albumId) {
+                     const modal = document.getElementById('generic-modal');
+                    document.getElementById('modal-title').textContent = 'New Track';
+                    document.getElementById('modal-content').innerHTML = `
+                        <div><label class="block text-[10px] font-bold text-daw-muted uppercase mb-1">Track Title</label><input id="new-song-title" class="w-full bg-daw-bg border border-daw-border rounded p-2 text-white outline-none focus:border-cyan-500"></div>`;
+                    modal.classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').onclick = async () => {
+                        const title = document.getElementById('new-song-title').value;
+                        if (!title) return;
+                        const id = generateID();
+                        const count = this.getSongCount(albumId);
+                        await this.db.put('songs', { id, albumId, title, order: count + 1, createdAt: Date.now() });
+                        await this.refreshCache();
+                        this.closeModal();
+                        this.navigate('workstation', { songId: id });
+                    };
+                }
+
+                closeModal() { document.getElementById('generic-modal').classList.add('hidden'); }
+                copyPrompt() { 
+                    const text = document.getElementById('active-prompt-display').textContent;
+                    navigator.clipboard.writeText(text).then(() => this.showToast('Prompt copied to clipboard'));
+                }
+                
+                // --- Settings / Library (Simplified) ---
+                renderLibrary(container) {
+                     let allSongs = this.cache.songs.map(song => { const album = this.cache.albums.find(a => a.id === song.albumId); const artist = album ? this.cache.artists.find(a => a.id === album.artistId) : null; return { ...song, albumName: album ? album.title : 'Unknown', artistName: artist ? artist.name : 'Unknown', artistId: artist ? artist.id : null, albumId: album ? album.id : null, year: album ? album.year : '' }; });
+                    allSongs.sort((a, b) => a.artistName.localeCompare(b.artistName));
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in"><div class="p-6 bg-daw-panel border-b border-daw-border shrink-0"><h2 class="text-2xl font-bold text-white mb-2 font-mono">MASTER LIBRARY</h2></div><div class="flex-1 overflow-y-auto p-0"><table class="w-full text-left border-collapse"><thead class="bg-daw-surface text-[10px] font-bold text-daw-muted uppercase sticky top-0 z-10 shadow-sm"><tr><th class="p-4 border-b border-daw-border">Artist</th><th class="p-4 border-b border-daw-border">Song</th><th class="p-4 border-b border-daw-border w-32">Rating</th><th class="p-4 border-b border-daw-border w-32 text-right">Actions</th></tr></thead><tbody class="text-sm text-daw-text divide-y divide-daw-border bg-daw-bg">${allSongs.map(s => `<tr class="hover:bg-daw-surface/50 group transition-colors"><td class="p-4 font-medium text-white">${s.artistName}</td><td class="p-4 font-bold text-cyan-100 font-mono">${s.title}</td><td class="p-4 text-yellow-500 text-[10px]">${s.rating ? '★'.repeat(s.rating) : ''}</td><td class="p-4 text-right"><button onclick="app.navigate('workstation', {songId: '${s.id}'})" class="text-[10px] bg-daw-surface hover:text-white text-daw-muted px-3 py-1.5 rounded transition-colors border border-daw-border uppercase font-bold">Open Session</button></td></tr>`).join('')}</tbody></table></div></div>`;
+                }
+
+                renderSettings(container) {
+                    container.innerHTML = `<div class="flex flex-col h-full fade-in p-8"><h2 class="text-3xl font-bold text-white mb-2 font-mono">SYSTEM DATA</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mt-8"><div class="bg-daw-panel border border-daw-border rounded-xl p-6 relative group hover:border-cyan-500/50 transition-colors"><h3 class="text-lg font-bold text-white font-mono mb-2">JSON Export</h3><p class="text-sm text-daw-muted mb-6">Download full database dump for backup or automation.</p><button onclick="app.downloadBackup()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors flex items-center justify-center gap-2 text-xs uppercase tracking-wider"><i class="fa-solid fa-download"></i> Download Payload</button></div></div></div>`;
+                }
+                
+                async downloadBackup() { 
+                    const json = await this.db.exportAll(); 
+                    // FIXED: Typo from previous copy
+                    const blob = new Blob([json], { type: 'application/json' }); 
+                    const url = URL.createObjectURL(blob); 
+                    const a = document.createElement('a'); 
+                    a.href = url; 
+                    a.download = `suno_companion_backup_${new Date().toISOString().split('T')[0]}.json`; 
+                    a.click(); 
+                }
+            }
+
+            const app = new App();
+        });
+    </script>
+</body>
+</html>
