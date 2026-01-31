@@ -7,7 +7,7 @@
     <title>Suno Architect: AI Artist Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -18,20 +18,62 @@
 
     <style>
         /* Modern Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        body { overscroll-behavior: none; background-color: #f8fafc; color: #0f172a; }
-        .tab-content { display: none; animation: fadeIn 0.2s ease-out; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        body {
+            overscroll-behavior: none;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         /* Custom UI Elements */
-        .layer-block { border-left: 3px solid transparent; transition: all 0.2s; }
-        .layer-block:hover { border-left-color: #6366f1; background-color: #f8fafc; }
-        
+        .layer-block {
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .layer-block:hover {
+            border-left-color: #6366f1;
+            background-color: #f8fafc;
+        }
+
         .toggle-checkbox:checked {
             background-color: #4f46e5;
             border-color: #4f46e5;
@@ -39,13 +81,47 @@
         }
 
         /* Nav */
-        .nav-btn { color: #64748b; background: transparent; border-radius: 0.5rem; }
-        .nav-btn:hover { color: #0f172a; background: #f1f5f9; }
-        .nav-btn.active { background: #ffffff; color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
-        
-        input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #4f46e5; cursor: pointer; margin-top: -6px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #e2e8f0; border-radius: 9999px; }
+        .nav-btn {
+            color: #64748b;
+            background: transparent;
+            border-radius: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+
+        .nav-btn.active {
+            background: #ffffff;
+            color: #4f46e5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            margin-top: -6px;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+        }
     </style>
 </head>
 
@@ -54,14 +130,17 @@
     <div id="auth-screen" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-white border border-slate-200 rounded-xl shadow-2xl p-8 text-center fade-in">
             <div class="mb-8">
-                <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-inner">
+                <div
+                    class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100 shadow-inner">
                     <i data-lucide="mic-2" class="w-8 h-8 text-indigo-600"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-slate-900 mb-2 font-mono">AI Artist<span class="text-indigo-600">Studio</span></h1>
+                <h1 class="text-2xl font-bold text-slate-900 mb-2 font-mono">AI Artist<span
+                        class="text-indigo-600">Studio</span></h1>
                 <p class="text-slate-500 text-sm">Professional Prompt Engineering Environment</p>
             </div>
             <div id="step-login">
-                <button onclick="app.signIn()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-lg border border-slate-200 transition-colors flex items-center justify-center gap-3 mb-4 shadow-sm">
+                <button onclick="app.signIn()"
+                    class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-lg border border-slate-200 transition-colors flex items-center justify-center gap-3 mb-4 shadow-sm">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
                     Sign in with Google
                 </button>
@@ -87,38 +166,50 @@
                     </div>
                 </div>
                 <div class="flex space-x-1 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
-                    <button onclick="switchTab('artist')" id="tab-btn-artist" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Artist & Band</button>
-                    <button onclick="switchTab('blueprint')" id="tab-btn-blueprint" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Blueprint</button>
-                    <button onclick="switchTab('tuner')" id="tab-btn-tuner" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Behavior</button>
-                    <button onclick="switchTab('memory')" id="tab-btn-memory" class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Memory</button>
-                    <button onclick="app.signOut()" class="nav-btn px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50" title="Sign Out"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                    <button onclick="switchTab('artist')" id="tab-btn-artist"
+                        class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Artist &
+                        Band</button>
+                    <button onclick="switchTab('blueprint')" id="tab-btn-blueprint"
+                        class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Blueprint</button>
+                    <button onclick="switchTab('tuner')" id="tab-btn-tuner"
+                        class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Behavior</button>
+                    <button onclick="switchTab('memory')" id="tab-btn-memory"
+                        class="nav-btn px-4 py-2 text-sm font-medium whitespace-nowrap transition-all">Memory</button>
+                    <button onclick="app.signOut()"
+                        class="nav-btn px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50" title="Sign Out"><i
+                            data-lucide="log-out" class="w-4 h-4"></i></button>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow hidden" id="app-main">
-        
+
         <div id="tab-artist" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-7 space-y-6">
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
-                             <div class="p-2 bg-pink-50 rounded-lg"><i data-lucide="user-cog" class="w-5 h-5 text-pink-500"></i></div>
-                             <div>
+                            <div class="p-2 bg-pink-50 rounded-lg"><i data-lucide="user-cog"
+                                    class="w-5 h-5 text-pink-500"></i></div>
+                            <div>
                                 <h2 class="text-base font-bold text-slate-900">Persona Profile</h2>
                                 <p class="text-xs text-slate-500">The "Soul" of the AI generation</p>
-                             </div>
+                            </div>
                         </div>
-                        
+
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Artist Name / Alias</label>
-                                <input type="text" id="p-name" placeholder="e.g., Neon Wraith" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 focus:outline-none focus:border-pink-500">
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Artist Name /
+                                    Alias</label>
+                                <input type="text" id="p-name" placeholder="e.g., Neon Wraith"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 focus:outline-none focus:border-pink-500">
                             </div>
                             <div>
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Vocal Gender/Type</label>
-                                <select id="p-vocal-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Vocal
+                                    Gender/Type</label>
+                                <select id="p-vocal-type"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
                                     <option value="Male Vocals">Male</option>
                                     <option value="Female Vocals">Female</option>
                                     <option value="Androgynous Vocals">Androgynous</option>
@@ -128,30 +219,41 @@
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Vocal Tone</label>
-                                <input type="text" id="p-tone" placeholder="e.g. Breathy, Baritone, Belting" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
+                                <input type="text" id="p-tone" placeholder="e.g. Breathy, Baritone, Belting"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
                             </div>
                             <div class="col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Style References (Influence)</label>
-                                <input type="text" id="p-refs" placeholder="e.g. Trent Reznor meets Enya" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Style References
+                                    (Influence)</label>
+                                <input type="text" id="p-refs" placeholder="e.g. Trent Reznor meets Enya"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900">
                             </div>
                             <div class="col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Default Prompt Injection</label>
-                                <textarea id="p-defaults" placeholder="Always add this to prompt (e.g. 'intimate close mic, lo-fi')" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900 h-16 resize-none"></textarea>
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Default Prompt
+                                    Injection</label>
+                                <textarea id="p-defaults"
+                                    placeholder="Always add this to prompt (e.g. 'intimate close mic, lo-fi')"
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900 h-16 resize-none"></textarea>
                             </div>
                         </div>
 
                         <div class="border-t border-slate-100 pt-6">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-sm font-bold text-slate-900 flex items-center"><i data-lucide="users" class="w-4 h-4 mr-2 text-purple-500"></i> Virtual Band Members</h3>
-                                <button onclick="addMemberInput()" class="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded hover:bg-purple-100 font-bold">+ Add Member</button>
+                                <h3 class="text-sm font-bold text-slate-900 flex items-center"><i data-lucide="users"
+                                        class="w-4 h-4 mr-2 text-purple-500"></i> Virtual Band Members</h3>
+                                <button onclick="addMemberInput()"
+                                    class="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded hover:bg-purple-100 font-bold">+
+                                    Add Member</button>
                             </div>
                             <div id="band-members-list" class="space-y-2">
-                                </div>
-                            <div class="text-[10px] text-slate-400 mt-2 italic">Define members here. You can toggle them ON/OFF in the Blueprint tab.</div>
+                            </div>
+                            <div class="text-[10px] text-slate-400 mt-2 italic">Define members here. You can toggle them
+                                ON/OFF in the Blueprint tab.</div>
                         </div>
 
                         <div class="mt-6 pt-6 border-t border-slate-100">
-                            <button onclick="saveArtistToCloud()" class="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 shadow-lg flex items-center justify-center gap-2">
+                            <button onclick="saveArtistToCloud()"
+                                class="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 shadow-lg flex items-center justify-center gap-2">
                                 <i data-lucide="save" class="w-4 h-4"></i> Save Artist Profile
                             </button>
                         </div>
@@ -162,7 +264,7 @@
                     <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 h-full flex flex-col">
                         <h3 class="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wide">Saved Artists</h3>
                         <div id="roster-list" class="space-y-3 flex-1 overflow-y-auto pr-2">
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,17 +272,20 @@
 
         <div id="tab-blueprint" class="tab-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
+
                 <div class="lg:col-span-7 space-y-6">
-                    
+
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center"><i data-lucide="layers" class="w-4 h-4 mr-2 text-indigo-600"></i> Stack Configuration</h2>
+                            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center"><i
+                                    data-lucide="layers" class="w-4 h-4 mr-2 text-indigo-600"></i> Stack Configuration
+                            </h2>
                         </div>
-                        
+
                         <div class="mb-4">
                             <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Active Persona</label>
-                            <select id="bp-artist-select" onchange="loadArtistIntoBlueprint()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold text-indigo-700">
+                            <select id="bp-artist-select" onchange="loadArtistIntoBlueprint()"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-bold text-indigo-700">
                                 <option value="">(Select Artist Profile)</option>
                             </select>
                         </div>
@@ -188,30 +293,42 @@
                         <div id="bp-band-section" class="mb-4 hidden">
                             <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Active Members</label>
                             <div id="bp-band-toggles" class="grid grid-cols-2 gap-2">
-                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Project / Album Defaults</label>
-                            <input type="text" id="bp-album-defaults" placeholder="e.g. Lo-fi aesthetic, tape saturation, minimal" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-mono" oninput="updateStack()">
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Project / Album
+                                Defaults</label>
+                            <input type="text" id="bp-album-defaults"
+                                placeholder="e.g. Lo-fi aesthetic, tape saturation, minimal"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-mono"
+                                oninput="updateStack()">
                         </div>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4 flex items-center"><i data-lucide="music" class="w-4 h-4 mr-2 text-blue-600"></i> Song DNA</h2>
-                        
+                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4 flex items-center"><i
+                                data-lucide="music" class="w-4 h-4 mr-2 text-blue-600"></i> Song DNA</h2>
+
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Main Style / Genre</label>
-                                <input type="text" id="bp-style" placeholder="e.g. Darkwave, Industrial Pop" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900" oninput="updateStack()">
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Main Style /
+                                    Genre</label>
+                                <input type="text" id="bp-style" placeholder="e.g. Darkwave, Industrial Pop"
+                                    class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900"
+                                    oninput="updateStack()">
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Mood</label>
-                                <input type="text" id="bp-mood" placeholder="e.g. Melancholic" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900" oninput="updateStack()">
+                                <input type="text" id="bp-mood" placeholder="e.g. Melancholic"
+                                    class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900"
+                                    oninput="updateStack()">
                             </div>
                             <div>
                                 <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Tempo</label>
-                                <select id="bp-tempo" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900" onchange="updateStack()">
+                                <select id="bp-tempo"
+                                    class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900"
+                                    onchange="updateStack()">
                                     <option value="">Any</option>
                                     <option value="Slow">Slow</option>
                                     <option value="Mid-Tempo">Mid-Tempo</option>
@@ -220,8 +337,11 @@
                                 </select>
                             </div>
                             <div class="col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Additional Tags</label>
-                                <input type="text" id="bp-tags" placeholder="e.g. heavy reverb, syncopated" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900" oninput="updateStack()">
+                                <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Additional
+                                    Tags</label>
+                                <input type="text" id="bp-tags" placeholder="e.g. heavy reverb, syncopated"
+                                    class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900"
+                                    oninput="updateStack()">
                             </div>
                         </div>
                     </div>
@@ -236,35 +356,44 @@
                             </div>
 
                             <div class="space-y-2 mb-6 font-mono text-xs">
-                                <div id="layer-persona" class="hidden p-2 bg-indigo-900/50 border-l-2 border-indigo-500 rounded text-indigo-100">
+                                <div id="layer-persona"
+                                    class="hidden p-2 bg-indigo-900/50 border-l-2 border-indigo-500 rounded text-indigo-100">
                                     <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 1: Persona</span>
                                     <span class="content"></span>
                                 </div>
-                                <div id="layer-band" class="hidden p-2 bg-purple-900/50 border-l-2 border-purple-500 rounded text-purple-100">
+                                <div id="layer-band"
+                                    class="hidden p-2 bg-purple-900/50 border-l-2 border-purple-500 rounded text-purple-100">
                                     <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 2: Band</span>
                                     <span class="content"></span>
                                 </div>
-                                <div id="layer-album" class="hidden p-2 bg-slate-800 border-l-2 border-slate-500 rounded text-slate-300">
-                                    <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 3: Album Defaults</span>
+                                <div id="layer-album"
+                                    class="hidden p-2 bg-slate-800 border-l-2 border-slate-500 rounded text-slate-300">
+                                    <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 3: Album
+                                        Defaults</span>
                                     <span class="content"></span>
                                 </div>
-                                <div id="layer-song" class="p-2 bg-blue-900/50 border-l-2 border-blue-500 rounded text-blue-100">
+                                <div id="layer-song"
+                                    class="p-2 bg-blue-900/50 border-l-2 border-blue-500 rounded text-blue-100">
                                     <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 4: Song DNA</span>
                                     <span class="content"></span>
                                 </div>
-                                <div id="layer-behavior" class="hidden p-2 bg-emerald-900/50 border-l-2 border-emerald-500 rounded text-emerald-100">
+                                <div id="layer-behavior"
+                                    class="hidden p-2 bg-emerald-900/50 border-l-2 border-emerald-500 rounded text-emerald-100">
                                     <span class="text-[10px] uppercase opacity-50 block mb-1">Layer 5: Behavior</span>
                                     <span class="content"></span>
                                 </div>
-                                <div id="layer-exclusion" class="hidden p-2 bg-red-900/30 border-l-2 border-red-500 rounded text-red-200">
+                                <div id="layer-exclusion"
+                                    class="hidden p-2 bg-red-900/30 border-l-2 border-red-500 rounded text-red-200">
                                     <span class="text-[10px] uppercase opacity-50 block mb-1">Negative</span>
                                     <span class="content"></span>
                                 </div>
                             </div>
 
-                            <textarea id="final-prompt-output" readonly class="w-full h-32 bg-slate-950 text-green-400 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:outline-none mb-4 resize-none"></textarea>
+                            <textarea id="final-prompt-output" readonly
+                                class="w-full h-32 bg-slate-950 text-green-400 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:outline-none mb-4 resize-none"></textarea>
 
-                            <button onclick="copyPrompt()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <button onclick="copyPrompt()"
+                                class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
                                 <i data-lucide="copy" class="w-4 h-4"></i> Copy Final Prompt
                             </button>
                         </div>
@@ -275,10 +404,11 @@
 
         <div id="tab-tuner" class="tab-content">
             <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                
+
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-6 flex items-center"><i data-lucide="sliders" class="w-4 h-4 mr-2 text-orange-500"></i> Behavior Controls</h2>
-                    
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-6 flex items-center"><i
+                            data-lucide="sliders" class="w-4 h-4 mr-2 text-orange-500"></i> Behavior Controls</h2>
+
                     <div class="space-y-6">
                         <div>
                             <div class="flex justify-between mb-2">
@@ -294,7 +424,7 @@
                             </div>
                             <input type="range" id="sl-style" min="0" max="100" value="50" oninput="updateStack()">
                         </div>
-                         <div>
+                        <div>
                             <div class="flex justify-between mb-2">
                                 <label class="text-xs font-bold text-slate-600 uppercase">Audio Quality</label>
                                 <span id="val-audio" class="text-xs font-mono text-slate-500">50</span>
@@ -302,18 +432,22 @@
                             <input type="range" id="sl-audio" min="0" max="100" value="50" oninput="updateStack()">
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-6 italic">These sliders append weights (e.g., "weirdness 70") to the prompt.</p>
+                    <p class="text-[10px] text-slate-400 mt-6 italic">These sliders append weights (e.g., "weirdness
+                        70") to the prompt.</p>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-6 flex items-center"><i data-lucide="ban" class="w-4 h-4 mr-2 text-red-500"></i> Exclusions (Negative Prompt)</h2>
-                    
+                    <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-6 flex items-center"><i
+                            data-lucide="ban" class="w-4 h-4 mr-2 text-red-500"></i> Exclusions (Negative Prompt)</h2>
+
                     <div class="mb-4">
-                        <input type="text" id="negative-input" placeholder="Type & Enter to exclude (e.g. jazz)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-red-600 placeholder-red-200 focus:border-red-500 outline-none" onkeydown="if(event.key === 'Enter') addExclusion(this.value)">
+                        <input type="text" id="negative-input" placeholder="Type & Enter to exclude (e.g. jazz)"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-red-600 placeholder-red-200 focus:border-red-500 outline-none"
+                            onkeydown="if(event.key === 'Enter') addExclusion(this.value)">
                     </div>
 
                     <div id="exclusion-chips" class="flex flex-wrap gap-2">
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -322,19 +456,27 @@
             <div class="max-w-4xl mx-auto">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center mb-8">
                     <h2 class="text-xl font-bold text-slate-900 mb-2">Prompt Snapshots</h2>
-                    <p class="text-sm text-slate-500 mb-6">Found a "Golden Generation"? Paste the details here to remember the DNA.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <input id="snap-id" placeholder="Generation ID / URL" class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
-                        <input id="snap-prompt" placeholder="Paste the exact prompt used..." class="bg-white border border-slate-200 rounded px-3 py-2 text-xs md:col-span-2">
-                        <input id="snap-name" placeholder="Snapshot Name (e.g. Perfect Chorus)" class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
-                        <input id="snap-rating" type="number" max="5" min="1" placeholder="Stars (1-5)" class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
-                        <button onclick="saveSnapshot()" class="bg-indigo-600 text-white rounded font-bold text-xs py-2 hover:bg-indigo-700">Save Snapshot</button>
+                    <p class="text-sm text-slate-500 mb-6">Found a "Golden Generation"? Paste the details here to
+                        remember the DNA.</p>
+
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <input id="snap-id" placeholder="Generation ID / URL"
+                            class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
+                        <input id="snap-prompt" placeholder="Paste the exact prompt used..."
+                            class="bg-white border border-slate-200 rounded px-3 py-2 text-xs md:col-span-2">
+                        <input id="snap-name" placeholder="Snapshot Name (e.g. Perfect Chorus)"
+                            class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
+                        <input id="snap-rating" type="number" max="5" min="1" placeholder="Stars (1-5)"
+                            class="bg-white border border-slate-200 rounded px-3 py-2 text-xs">
+                        <button onclick="saveSnapshot()"
+                            class="bg-indigo-600 text-white rounded font-bold text-xs py-2 hover:bg-indigo-700">Save
+                            Snapshot</button>
                     </div>
                 </div>
 
                 <div id="snapshot-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    </div>
+                </div>
             </div>
         </div>
 
@@ -342,7 +484,7 @@
 
     <script>
         // --- APP STATE & LOGIC ---
-        
+
         let currentState = {
             artist: null, // Active artist object
             activeMembers: [], // IDs of active members
@@ -358,11 +500,11 @@
         // --- INIT ---
         const app = {
             db: null,
-            init: function() {
+            init: function () {
                 this.db = new DB(this);
                 this.db.init();
             },
-            onLoginSuccess: function(user) {
+            onLoginSuccess: function (user) {
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-header').classList.remove('hidden');
                 document.getElementById('app-main').classList.remove('hidden');
@@ -370,14 +512,14 @@
                 loadSnapshots();
                 lucide.createIcons();
             },
-            showAuthStep: function(step) {
-                if(step === 'loading') {
+            showAuthStep: function (step) {
+                if (step === 'loading') {
                     document.getElementById('step-login').classList.add('hidden');
                     document.getElementById('step-loading').classList.remove('hidden');
                 }
             },
-            signIn: function() { this.db.loginGoogle(); },
-            signOut: function() { this.db.logout(); }
+            signIn: function () { this.db.loginGoogle(); },
+            signOut: function () { this.db.logout(); }
         };
 
         class DB {
@@ -391,26 +533,26 @@
                     const fApp = initializeApp(this.config);
                     this.auth = getAuth(fApp);
                     this.db = getFirestore(fApp);
-                    onAuthStateChanged(this.auth, u => { this.user = u; if(u) this.app.onLoginSuccess(u); });
-                } catch(e) { console.error(e); }
+                    onAuthStateChanged(this.auth, u => { this.user = u; if (u) this.app.onLoginSuccess(u); });
+                } catch (e) { console.error(e); }
             }
             async loginGoogle() { const { signInWithPopup, GoogleAuthProvider } = window.firebaseModules; await signInWithPopup(this.auth, new GoogleAuthProvider()); }
             async logout() { const { signOut } = window.firebaseModules; await signOut(this.auth); window.location.reload(); }
             async put(colName, item) {
-                if(!this.user) return;
+                if (!this.user) return;
                 const { doc, setDoc } = window.firebaseModules;
                 await setDoc(doc(this.db, 'artifacts', 'suno-architect', 'users', this.user.uid, colName, item.id.toString()), item);
                 return true;
             }
             async getAll(colName) {
-                if(!this.user) return [];
+                if (!this.user) return [];
                 const { collection, getDocs } = window.firebaseModules;
                 const snap = await getDocs(collection(this.db, 'artifacts', 'suno-architect', 'users', this.user.uid, colName));
                 return snap.docs.map(d => d.data());
             }
             async delete(colName, id) {
-                 const { doc, deleteDoc } = window.firebaseModules;
-                 await deleteDoc(doc(this.db, 'artifacts', 'suno-architect', 'users', this.user.uid, colName, id.toString()));
+                const { doc, deleteDoc } = window.firebaseModules;
+                await deleteDoc(doc(this.db, 'artifacts', 'suno-architect', 'users', this.user.uid, colName, id.toString()));
             }
         }
 
@@ -433,15 +575,15 @@
 
         async function saveArtistToCloud() {
             const name = document.getElementById('p-name').value;
-            if(!name) return alert("Artist Name Required");
+            if (!name) return alert("Artist Name Required");
 
             // Collect Members
             const memberDivs = document.getElementById('band-members-list').children;
             const members = [];
-            for(let div of memberDivs) {
+            for (let div of memberDivs) {
                 const inputs = div.querySelectorAll('input');
-                if(inputs[0].value) {
-                    members.push({ id: Math.random().toString(36).substr(2,9), name: inputs[0].value, role: inputs[1].value, prompt: inputs[2].value });
+                if (inputs[0].value) {
+                    members.push({ id: Math.random().toString(36).substr(2, 9), name: inputs[0].value, role: inputs[1].value, prompt: inputs[2].value });
                 }
             }
 
@@ -467,7 +609,7 @@
             artistsCache = await app.db.getAll('artists');
             const list = document.getElementById('roster-list');
             const select = document.getElementById('bp-artist-select');
-            
+
             list.innerHTML = '';
             select.innerHTML = '<option value="">(Select Artist Profile)</option>';
 
@@ -500,10 +642,10 @@
             document.getElementById('p-tone').value = persona.tone;
             document.getElementById('p-refs').value = persona.refs;
             document.getElementById('p-defaults').value = persona.defaults;
-            
+
             const mList = document.getElementById('band-members-list');
             mList.innerHTML = '';
-            if(a.members) {
+            if (a.members) {
                 a.members.forEach(m => {
                     const id = Date.now() + Math.random();
                     const div = document.createElement('div');
@@ -525,13 +667,13 @@
             const id = document.getElementById('bp-artist-select').value;
             const artist = artistsCache.find(a => a.id == id);
             currentState.artist = artist;
-            
+
             // Render Band Toggles
             const bandSec = document.getElementById('bp-band-section');
             const bandTogs = document.getElementById('bp-band-toggles');
             bandTogs.innerHTML = '';
-            
-            if(artist && artist.members && artist.members.length > 0) {
+
+            if (artist && artist.members && artist.members.length > 0) {
                 bandSec.classList.remove('hidden');
                 artist.members.forEach(m => {
                     const label = document.createElement('label');
@@ -556,7 +698,7 @@
             currentState.song.mood = document.getElementById('bp-mood').value;
             currentState.song.tempo = document.getElementById('bp-tempo').value;
             currentState.song.tags = document.getElementById('bp-tags').value;
-            
+
             // Sliders
             ['weird', 'style', 'audio'].forEach(k => {
                 const val = document.getElementById(`sl-${k}`).value;
@@ -566,10 +708,10 @@
 
             // 2. Build Layers
             let fullPrompt = [];
-            
+
             // Layer 1: Persona
             const lPersona = document.getElementById('layer-persona');
-            if(currentState.artist) {
+            if (currentState.artist) {
                 lPersona.classList.remove('hidden');
                 // SAFETY: Check for persona existence
                 const p = currentState.artist.persona || {};
@@ -581,9 +723,9 @@
             // Layer 2: Band
             const lBand = document.getElementById('layer-band');
             const checkedMembers = Array.from(document.querySelectorAll('#bp-band-toggles input:checked')).map(cb => cb.value);
-            if(currentState.artist && currentState.artist.members) {
+            if (currentState.artist && currentState.artist.members) {
                 const activeM = currentState.artist.members.filter(m => checkedMembers.includes(m.id));
-                if(activeM.length > 0) {
+                if (activeM.length > 0) {
                     lBand.classList.remove('hidden');
                     const bText = activeM.map(m => m.prompt).join(", ");
                     lBand.querySelector('.content').textContent = bText;
@@ -593,7 +735,7 @@
 
             // Layer 3: Album
             const lAlbum = document.getElementById('layer-album');
-            if(currentState.albumDefaults) {
+            if (currentState.albumDefaults) {
                 lAlbum.classList.remove('hidden');
                 lAlbum.querySelector('.content').textContent = currentState.albumDefaults;
                 fullPrompt.push(currentState.albumDefaults);
@@ -602,7 +744,7 @@
             // Layer 4: Song DNA
             const lSong = document.getElementById('layer-song');
             const sParts = [currentState.song.style, currentState.song.mood, currentState.song.tempo, currentState.song.tags].filter(Boolean);
-            if(sParts.length > 0) {
+            if (sParts.length > 0) {
                 const sText = sParts.join(", ");
                 lSong.querySelector('.content').textContent = sText;
                 fullPrompt.push(sText);
@@ -611,9 +753,9 @@
             // Layer 5: Behavior (Weights)
             const lBeh = document.getElementById('layer-behavior');
             const bWeights = [];
-            if(currentState.behavior.weirdness != 50) bWeights.push(`weirdness ${currentState.behavior.weirdness}%`);
+            if (currentState.behavior.weirdness != 50) bWeights.push(`weirdness ${currentState.behavior.weirdness}%`);
             // Note: Suno usually just parses text, but adding these as pseudo-weights for user reference or v3 features
-            if(bWeights.length > 0) {
+            if (bWeights.length > 0) {
                 lBeh.classList.remove('hidden');
                 lBeh.querySelector('.content').textContent = bWeights.join(", ");
                 // fullPrompt.push(bWeights.join(" ")); // Optional: Decide if we append this to prompt string
@@ -621,7 +763,7 @@
 
             // Layer 6: Exclusions
             const lExc = document.getElementById('layer-exclusion');
-            if(currentState.exclusions.length > 0) {
+            if (currentState.exclusions.length > 0) {
                 lExc.classList.remove('hidden');
                 const negText = currentState.exclusions.map(e => `--no ${e}`).join(" ");
                 lExc.querySelector('.content').textContent = negText;
@@ -630,16 +772,16 @@
 
             // Final Assembly
             let finalText = fullPrompt.join(", ");
-            if(currentState.exclusions.length > 0) finalText += " " + currentState.exclusions.map(e => `--no ${e}`).join(" ");
-            
+            if (currentState.exclusions.length > 0) finalText += " " + currentState.exclusions.map(e => `--no ${e}`).join(" ");
+
             document.getElementById('final-prompt-output').value = finalText;
             document.getElementById('char-count').textContent = finalText.length + " chars";
         }
 
         // --- TUNER LOGIC ---
         function addExclusion(val) {
-            if(!val) return;
-            if(!currentState.exclusions.includes(val)) {
+            if (!val) return;
+            if (!currentState.exclusions.includes(val)) {
                 currentState.exclusions.push(val);
                 renderExclusions();
                 document.getElementById('negative-input').value = '';
@@ -655,7 +797,7 @@
 
         function renderExclusions() {
             const div = document.getElementById('exclusion-chips');
-            div.innerHTML = currentState.exclusions.map(e => 
+            div.innerHTML = currentState.exclusions.map(e =>
                 `<span class="bg-red-50 text-red-600 border border-red-100 px-2 py-1 rounded text-xs flex items-center gap-1 font-bold">--no ${e} <button onclick="removeExclusion('${e}')" class="hover:text-red-800">×</button></span>`
             ).join('');
         }
@@ -669,8 +811,8 @@
                 rating: document.getElementById('snap-rating').value,
                 createdAt: Date.now()
             };
-            if(!snap.prompt) return alert("Prompt required");
-            
+            if (!snap.prompt) return alert("Prompt required");
+
             await app.db.put('snapshots', snap);
             alert("Snapshot Saved");
             loadSnapshots();
@@ -680,7 +822,7 @@
             const snaps = await app.db.getAll('snapshots');
             const div = document.getElementById('snapshot-list');
             div.innerHTML = '';
-            snaps.sort((a,b) => b.createdAt - a.createdAt).forEach(s => {
+            snaps.sort((a, b) => b.createdAt - a.createdAt).forEach(s => {
                 const el = document.createElement('div');
                 el.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm";
                 el.innerHTML = `
@@ -714,4 +856,5 @@
         window.onload = () => app.init();
     </script>
 </body>
+
 </html>
